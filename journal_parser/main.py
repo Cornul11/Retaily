@@ -60,15 +60,15 @@ def parse_journal_data(string):
 
 def parse_products(string):
     products = []
-    product_plu = None
-    product_name = None
-    product_amount = None
-    product_price = None
-    product_discount = None
-    product_total = None
-    product_canceled = False
 
     for product in string.strip().split('*')[1:]:
+        product_plu = None
+        product_name = None
+        product_amount = None
+        product_price = None
+        product_discount = None
+        product_total = None
+        product_canceled = False
         if 'PaymentRoundingCompensation' in product:
             continue  # TODO: specify what is this
 
@@ -77,6 +77,7 @@ def parse_products(string):
         for line in product.strip().split('\n'):
             if 'PLU' in line:
                 if 'CANCELED' in line:
+                    print('LINE contains CANCELED: ' + line)
                     product_canceled = True
                     product_plu = line.split('#')[1].strip().split(' ')[0]
                 else:
@@ -107,5 +108,5 @@ def parse_products(string):
 
 
 local_data = parse_file('testing.txt')
-pp = pprint.PrettyPrinter(indent=4)
+pp = pprint.PrettyPrinter(indent=4, width=100)
 pp.pprint(local_data)
