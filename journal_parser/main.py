@@ -11,11 +11,11 @@ def parse_file(filepath):
     with open(filepath, 'r') as file_object:
         file_contents = file_object.read().strip()
         journal_records = file_contents.split('===')[1:-1]
+
         for journal_record in journal_records:
             if 'Aborted Sale' in journal_record:
                 splitter_string = '---\n'
                 aborted_sale = True
-
             else:
                 splitter_string = '---\n---'
                 aborted_sale = False
@@ -39,6 +39,7 @@ def parse_file(filepath):
                             'journal_record_products': products}
 
             records.append(dict(local_record))
+
     return records
 
 
@@ -47,6 +48,7 @@ def parse_journal_data(string):
     journal_record_date = None
     journal_record_cashier = None
     journal_record_type = None
+
     for line in string.split('\n'):
         if 'Journal Record' in line:
             splitted_line = line.rsplit('/', 1)
@@ -56,6 +58,7 @@ def parse_journal_data(string):
             journal_record_cashier = line.split(':')[1].strip()
         if 'Record Type' in line:
             journal_record_type = line.split(':')[1].strip()
+
     return journal_record_no, journal_record_date, journal_record_cashier, journal_record_type
 
 
@@ -70,21 +73,26 @@ def parse_products(string):
         product_discount = None
         product_total = None
         product_canceled = False
+
         if 'PaymentRoundingCompensation' in product:
             prc_amount = None
             prc_payment_no = None
             prc_cancelable = None
+
             for line in product.strip().split('\n'):
-                if 'Amount' in line:  # TODO: specify what is this
+                if 'Amount' in line:
                     prc_amount = line.split(':')[1].strip()
                 elif 'PaymentNumber' in line:
                     prc_payment_no = line.split(':')[1].strip()
                 elif 'IsCancelable' in line:
                     prc_cancelable = line.split(':')[1].strip()
+
             prc = {'prc_amount': prc_amount,
                    'prc_payment_no': prc_payment_no,
                    'prc_cancelable': prc_cancelable}
+
             products.append(dict(prc))
+
         elif 'MixAndMatchDiscountItem' in product:
             mm_discount_text = None
             mm_discount_amount = None
@@ -92,6 +100,7 @@ def parse_products(string):
             mm_number = None
             mm_discount_number = None
             mm_cancelable = None
+
             for line in product.strip().split('\n'):
                 if 'DiscountText' in line:
                     mm_discount_text = line.split(':')[1].strip()
@@ -105,13 +114,16 @@ def parse_products(string):
                     mm_discount_number = line.split(':')[1].strip()
                 elif 'IsCancelable' in line:
                     mm_cancelable = line.split(':')[1].strip()
+
             mm = {'mm_discount_text': mm_discount_text,
                   'mm_discount_amount': mm_discount_amount,
                   'mm_discount_type_name': mm_discount_type_name,
                   'mm_number': mm_number,
                   'mm_discount_number': mm_discount_number,
                   'mm_cancelable': mm_cancelable}
+
             products.append(dict(mm))
+
         elif 'CashPayment' in product:
             cp_text = None
             cp_is_change = None
@@ -121,6 +133,7 @@ def parse_products(string):
             cp_drawer_id = None
             cp_drawer_number = None
             cp_cancelable = None
+
             for line in product.strip().split('\n'):
                 if 'Text' in line:
                     cp_text = line.split(':')[1].strip()
@@ -139,6 +152,7 @@ def parse_products(string):
                     cp_drawer_number = line.split(':')[1].strip()
                 elif 'IsCancelable' in line:
                     cp_cancelable = line.split(':')[1].strip()
+
             cp = {'cp_text': cp_text,
                   'cp_is_change': cp_is_change,
                   'cp_amount': cp_amount,
@@ -147,7 +161,9 @@ def parse_products(string):
                   'cp_drawer_id': cp_drawer_id,
                   'cp_drawer_number': cp_drawer_number,
                   'cp_cancelable': cp_cancelable}
+
             products.append(dict(cp))
+
         else:
             line_num = 0
 
@@ -181,6 +197,7 @@ def parse_products(string):
                              'product_total': product_total}
 
             products.append(dict(local_product))
+
     return products
 
 
