@@ -26,7 +26,10 @@ def parse_file(filepath):
             record_no, record_date, record_cashier, record_type = parse_journal_data(temp_splitted[0])
 
             # Parsing the purchased products
-            if aborted_sale:
+            if 'NoSale' in journal_record:
+                products = []
+                pass
+            elif aborted_sale:
                 products = parse_products(temp_splitted[2])
             else:
                 products = parse_products(temp_splitted[1])
@@ -75,6 +78,7 @@ def parse_products(string):
         product_canceled = False
 
         if 'PaymentRoundingCompensation' in product:
+            # prc stands for PaymentRoundingCompensation
             prc_amount = None
             prc_payment_no = None
             prc_cancelable = None
@@ -93,7 +97,96 @@ def parse_products(string):
 
             products.append(dict(prc))
 
+        elif 'SubtotalSaleItem' in product:
+            # ssi stands for SubtotalSaleItem
+            ssi_value = None
+            ssi_use_swiss_rounding = None
+            ssi_cancelable = None
+
+            for line in product.strip().split('\n'):
+                if 'Value' in line:
+                    ssi_value = line.split(':')[1].strip()
+                elif 'UseSwissRounding' in line:
+                    ssi_use_swiss_rounding = line.split(':')[1].strip()
+                elif 'IsCancelable' in line:
+                    ssi_cancelable = line.split(':')[1].strip()
+
+            ssi = {'ssi_value': ssi_value,
+                   'ssi_use_swiss_rounding': ssi_use_swiss_rounding,
+                   'ssi_cancelable': ssi_cancelable}
+
+            products.append(dict(ssi))
+
+        elif 'Vic107Payment' in product:
+            # cp stands for cash payment
+            cp_poi = None
+            cp_terminal = None
+            cp_merchant = None
+            cp_period = None
+            cp_transaction = None
+            cp_card = None
+            cp_card_serial_number = None
+            cp_date = None
+            cp_authorisation_code = None
+            cp_total = None
+            cp_card_type_id = None
+            cp_card_type_text = None
+            cp_drawer_id = None
+            cp_drawer_amount = None
+            cp_cancelable = None
+
+            for line in product.strip().split('\n'):
+                if 'POI' in line:
+                    cp_poi = line.split(':')[1].strip()
+                elif 'Terminal' in line:
+                    cp_terminal = line.split(':')[1].strip()
+                elif 'Merchant' in line:
+                    cp_merchant = line.split(':')[1].strip()
+                elif 'Periode' in line:
+                    cp_period = line.split(':')[1].strip()
+                elif 'Transactie' in line:
+                    cp_transaction = line.split(':')[1].strip()
+                elif 'Kaart:' in line:
+                    cp_card = line.split(':')[1].strip()
+                elif 'Kaartserienummer' in line:
+                    cp_card_serial_number = line.split(':')[1].strip()
+                elif 'Datum' in line:
+                    cp_date = line.split(':')[1].strip()
+                elif 'Autorisatiecode' in line:
+                    cp_authorisation_code = line.split(':')[1].strip()
+                elif 'Totaal' in line:
+                    cp_total = line.split(':')[1].strip()
+                elif 'CardTypeId' in line:
+                    cp_card_type_id = line.split(':')[1].strip()
+                elif 'CardTypeText' in line:
+                    cp_card_type_text = line.split(':')[1].strip()
+                elif 'DrawerAmount' in line:
+                    cp_drawer_amount = line.split(':')[1].strip()
+                elif 'DrawerId' in line:
+                    cp_drawer_id = line.split(':')[1].strip()
+                elif 'Cancelable' in line:
+                    cp_cancelable = line.split(':')[1].strip()
+
+            cp = {'cp_poi': cp_poi,
+                  'cp_terminal': cp_terminal,
+                  'cp_merchant': cp_merchant,
+                  'cp_period': cp_period,
+                  'cp_transaction': cp_transaction,
+                  'cp_card': cp_card,
+                  'cp_card_serial_number': cp_card_serial_number,
+                  'cp_date': cp_date,
+                  'cp_authorisation_code': cp_authorisation_code,
+                  'cp_total': cp_total,
+                  'cp_card_type_id': cp_card_type_id,
+                  'cp_card_type_text': cp_card_type_text,
+                  'cp_drawer_id': cp_drawer_id,
+                  'cp_drawer_amount': cp_drawer_amount,
+                  'cp_cancelable': cp_cancelable}
+
+            products.append(dict(cp))
+
         elif 'MixAndMatchDiscountItem' in product:
+            # mm stands for MixAndMatchDiscountItem
             mm_discount_text = None
             mm_discount_amount = None
             mm_discount_type_name = None
@@ -125,6 +218,7 @@ def parse_products(string):
             products.append(dict(mm))
 
         elif 'CashPayment' in product:
+            # cp stands for CashPayment
             cp_text = None
             cp_is_change = None
             cp_amount = None
