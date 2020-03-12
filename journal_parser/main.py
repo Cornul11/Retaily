@@ -134,6 +134,7 @@ def parse_products(string):
             cp_drawer_id = None
             cp_drawer_amount = None
             cp_cancelable = None
+            cp_card_type = None
 
             for line in product.strip().split('\n'):
                 if 'POI' in line:
@@ -166,6 +167,8 @@ def parse_products(string):
                     cp_drawer_id = line.split(':')[1].strip()
                 elif 'Cancelable' in line:
                     cp_cancelable = line.split(':')[1].strip()
+                elif 'Leesmethode' in line:
+                    cp_card_type = line.split(':')[1].strip()
 
             cp = {'cp_poi': cp_poi,
                   'cp_terminal': cp_terminal,
@@ -181,7 +184,8 @@ def parse_products(string):
                   'cp_card_type_text': cp_card_type_text,
                   'cp_drawer_id': cp_drawer_id,
                   'cp_drawer_amount': cp_drawer_amount,
-                  'cp_cancelable': cp_cancelable}
+                  'cp_cancelable': cp_cancelable,
+                  'cp_card_type': cp_card_type}
 
             products.append(dict(cp))
 
@@ -217,6 +221,46 @@ def parse_products(string):
 
             products.append(dict(mm))
 
+        elif 'CashWithdrawal' in product:
+            # cw stands for CashWithdrawal
+            cw_canceled = None
+            cw_withdrawal_amount = None
+            cw_drawer_amount = None
+            cw_gross_amount = None
+            cw_drawer_id = None
+            cw_drawer_number = None
+            cw_amount = None
+            cw_cancelable = None
+
+            for line in product.strip().split('\n'):
+                if 'CANCELED' in line:
+                    cw_canceled = True
+                elif 'WithdrawalAmount' in line:
+                    cw_withdrawal_amount = line.split(':')[1].strip()
+                elif 'DrawerAmount' in line:
+                    cw_drawer_amount = line.split(':')[1].strip()
+                elif 'GrossAmount' in line:
+                    cw_gross_amount = line.split(':')[1].strip()
+                elif 'DrawerId' in line:
+                    cw_drawer_id = line.split(':')[1].strip()
+                elif 'DrawerNumber' in line:
+                    cw_drawer_number = line.split(':')[1].strip()
+                elif ' Amount' in line:
+                    cw_amount = line.split(':')[1].strip()
+                elif 'IsCancelable' in line:
+                    cw_cancelable = line.split(':')[1].strip()
+
+            cw = {'cw_canceled': cw_canceled,
+                  'cw_withdrawal_amount': cw_withdrawal_amount,
+                  'cw_drawer_amount': cw_drawer_amount,
+                  'cw_gross_amount': cw_gross_amount,
+                  'cw_drawer_id': cw_drawer_id,
+                  'cw_drawer_number': cw_drawer_number,
+                  'cw_amount': cw_amount,
+                  'cw_cancelable': cw_cancelable}
+
+            products.append(dict(cw))
+
         elif 'CashPayment' in product:
             # cp stands for CashPayment
             cp_text = None
@@ -242,7 +286,6 @@ def parse_products(string):
                 elif 'DrawerId' in line:
                     cp_drawer_id = line.split(':')[1].strip()
                 elif 'DrawerNumber' in line:
-                    print('WE HERE')
                     cp_drawer_number = line.split(':')[1].strip()
                 elif 'IsCancelable' in line:
                     cp_cancelable = line.split(':')[1].strip()
@@ -258,13 +301,12 @@ def parse_products(string):
 
             products.append(dict(cp))
 
-        else:
+        elif 'PLU' in product:
             line_num = 0
 
             for line in product.strip().split('\n'):
                 if 'PLU' in line:
                     if 'CANCELED' in line:
-                        print('LINE contains CANCELED: ' + line)
                         product_canceled = True
                         product_plu = line.split('#')[1].strip().split(' ')[0]
                     else:
@@ -291,10 +333,12 @@ def parse_products(string):
                              'product_total': product_total}
 
             products.append(dict(local_product))
+        else:
+            print(product + 'XXXXXXXXXXX\n')
 
     return products
 
 
-local_data = parse_file('testing.txt')
+local_data = parse_file('journal_parser/journal_2017-09-01_19-30.txt')
 pp = pprint.PrettyPrinter(indent=4, width=100)
-pp.pprint(local_data)
+# pp.pprint(local_data)
