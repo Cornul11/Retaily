@@ -1,5 +1,6 @@
 import pprint
 import sys
+import time
 
 
 def parse_file(filepath):
@@ -377,6 +378,11 @@ def parse_cash_payment(product):
     return cp
 
 
+start_time = time.time()
 local_data = parse_file('journal_parser/journal_2017-09-01_19-30.txt')
+
+# debug info
+print("parsed %d receipts in %s seconds" % (len(local_data), (time.time() - start_time)))
+
 pp = pprint.PrettyPrinter(indent=4, width=100)
 pp.pprint(local_data)
