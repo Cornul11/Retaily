@@ -10,6 +10,10 @@ def parse_file(filepath):
     records = []
     with open(filepath, 'r') as file_object:
         file_contents = file_object.read().strip()
+
+        # fix for *FOUT NR* getting filtered out as a separate product because of stars
+        file_contents = file_contents.replace('*FOUT NR*)', '[FOUT NR])')
+
         journal_records = file_contents.split('===')[1:-1]
 
         for journal_record in journal_records:
@@ -28,6 +32,11 @@ def parse_file(filepath):
             # Parsing the purchased products
             if 'NoSale' in journal_record:
                 products = []
+            elif 'NeutralList' in journal_record:
+                neutral_list_split = temp_splitted[0].split('---\n')
+                products = parse_products(neutral_list_split[2])
+            elif 'ReportRecord' in journal_record:
+                # these can supposedly be ignored?
                 pass
             elif aborted_sale:
                 products = parse_products(temp_splitted[2])
@@ -341,4 +350,4 @@ def parse_products(string):
 
 local_data = parse_file('journal_parser/journal_2017-09-01_19-30.txt')
 pp = pprint.PrettyPrinter(indent=4, width=100)
-# pp.pprint(local_data)
+pp.pprint(local_data)
