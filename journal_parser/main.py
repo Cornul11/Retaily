@@ -200,12 +200,12 @@ CARD_PAYMENT_ITEMS = {'cp_poi': 'POI', 'cp_terminal': 'Terminal',
 
 def parse_card_payment(product):
     # cp stands for card payment
-    cp = dict.fromkeys(CASH_PAYMENT_ITEMS.keys())
+    cp = dict.fromkeys(CARD_PAYMENT_ITEMS.keys())
 
     for line in product.splitlines():
-        for key, value in CASH_PAYMENT_ITEMS.items():
+        for key, value in CARD_PAYMENT_ITEMS.items():
             if value in line:
-                cp[key] = line.split(':')[1].strip()
+                cp[key] = line.split(': ')[-1].strip()
     return cp
 
 
@@ -238,7 +238,10 @@ def parse_cash_withdrawal(product):
     for line in product.splitlines():
         for key, value in CASH_WITHDRAWAL_ITEMS.items():
             if value in line:
-                cw[key] = line.split(':')[1].strip()
+                if value is 'CANCELED':
+                    cw[key] = True
+                else:
+                    cw[key] = line.split(':')[1].strip()
     return cw
 
 
