@@ -116,24 +116,6 @@ def parse_components(string):
     return products
 
 
-def parse_payment_rounding(product):
-    # prc stands for PaymentRoundingCompensation
-    prc_amount = None
-    prc_payment_no = None
-    prc_cancelable = None
-    for line in product.strip().split('\n'):
-        if 'Amount' in line:
-            prc_amount = line.split(':')[1].strip()
-        elif 'PaymentNumber' in line:
-            prc_payment_no = line.split(':')[1].strip()
-        elif 'IsCancelable' in line:
-            prc_cancelable = line.split(':')[1].strip()
-    prc = {'prc_amount': prc_amount,
-           'prc_payment_no': prc_payment_no,
-           'prc_cancelable': prc_cancelable}
-    return prc
-
-
 def parse_product(product):
     product_plu = None
     product_name = None
@@ -175,206 +157,105 @@ def parse_product(product):
     return local_product
 
 
+PAYMENT_ROUNDING_ITEMS = {'prc_amount': 'Amount', 'prc_payment_no': 'PaymentNumber',
+                          'prc_cancelable': 'IsCancelable'}
+
+
+def parse_payment_rounding(product):
+    # prc stands for PaymentRoundingCompensation
+    prc = dict.fromkeys(PAYMENT_ROUNDING_ITEMS.keys())
+
+    for line in product.splitlines():
+        for key, value in PAYMENT_ROUNDING_ITEMS.items():
+            if value in line:
+                prc[key] = line.split(':')[1].strip()
+    return prc
+
+
+SUBTOTAL_SALE_ITEMS = {'ssi_value': 'Value', 'ssi_use_swiss_rounding': 'UseSwissRounding',
+                       'ssi_cancelable': 'IsCancelable'}
+
+
 def parse_subtotal(product):
     # ssi stands for SubtotalSaleItem
-    ssi_value = None
-    ssi_use_swiss_rounding = None
-    ssi_cancelable = None
+    ssi = dict.fromkeys(SUBTOTAL_SALE_ITEMS.keys())
 
-    for line in product.strip().split('\n'):
-        if 'Value' in line:
-            ssi_value = line.split(':')[1].strip()
-        elif 'UseSwissRounding' in line:
-            ssi_use_swiss_rounding = line.split(':')[1].strip()
-        elif 'IsCancelable' in line:
-            ssi_cancelable = line.split(':')[1].strip()
-
-    ssi = {'ssi_value': ssi_value,
-           'ssi_use_swiss_rounding': ssi_use_swiss_rounding,
-           'ssi_cancelable': ssi_cancelable}
+    for line in product.splitlines():
+        for key, value in SUBTOTAL_SALE_ITEMS.items():
+            if value in line:
+                ssi[key] = line.split(':')[1].strip()
     return ssi
+
+
+CARD_PAYMENT_ITEMS = {'cp_poi': 'POI', 'cp_terminal': 'Terminal',
+                      'cp_merchant': 'Merchant', 'cp_period': 'Periode',
+                      'cp_transaction': 'Transactie', 'cp_card': 'Kaart',
+                      'cp_card_serial_number': 'Kaartserienummer', 'cp_date': 'Datum',
+                      'cp_authorisation_code': 'Autorisatiecode',
+                      'cp_total': 'Autorisatiecode', 'cp_card_type_id': 'CardTypeId',
+                      'cp_card_type_text': 'CardTypeText',
+                      'cp_drawer_amount': 'DrawerAmount', 'cp_drawer_id': 'DrawerId',
+                      'cp_cancelable': 'Cancelable', 'cp_card_type': 'Leesmethode'}
 
 
 def parse_card_payment(product):
     # cp stands for card payment
-    cp_poi = None
-    cp_terminal = None
-    cp_merchant = None
-    cp_period = None
-    cp_transaction = None
-    cp_card = None
-    cp_card_serial_number = None
-    cp_date = None
-    cp_authorisation_code = None
-    cp_total = None
-    cp_card_type_id = None
-    cp_card_type_text = None
-    cp_drawer_id = None
-    cp_drawer_amount = None
-    cp_cancelable = None
-    cp_card_type = None
+    cp = dict.fromkeys(CASH_PAYMENT_ITEMS.keys())
 
-    for line in product.strip().split('\n'):
-        if 'POI' in line:
-            cp_poi = line.split(':')[1].strip()
-        elif 'Terminal' in line:
-            cp_terminal = line.split(':')[1].strip()
-        elif 'Merchant' in line:
-            cp_merchant = line.split(':')[1].strip()
-        elif 'Periode' in line:
-            cp_period = line.split(':')[1].strip()
-        elif 'Transactie' in line:
-            cp_transaction = line.split(':')[1].strip()
-        elif 'Kaart:' in line:
-            cp_card = line.split(':')[1].strip()
-        elif 'Kaartserienummer' in line:
-            cp_card_serial_number = line.split(':')[1].strip()
-        elif 'Datum' in line:
-            cp_date = line.split(':')[1].strip()
-        elif 'Autorisatiecode' in line:
-            cp_authorisation_code = line.split(':')[1].strip()
-        elif 'Totaal' in line:
-            cp_total = line.split(':')[1].strip()
-        elif 'CardTypeId' in line:
-            cp_card_type_id = line.split(':')[1].strip()
-        elif 'CardTypeText' in line:
-            cp_card_type_text = line.split(':')[1].strip()
-        elif 'DrawerAmount' in line:
-            cp_drawer_amount = line.split(':')[1].strip()
-        elif 'DrawerId' in line:
-            cp_drawer_id = line.split(':')[1].strip()
-        elif 'Cancelable' in line:
-            cp_cancelable = line.split(':')[1].strip()
-        elif 'Leesmethode' in line:
-            cp_card_type = line.split(':')[1].strip()
-
-    cp = {'cp_poi': cp_poi,
-          'cp_terminal': cp_terminal,
-          'cp_merchant': cp_merchant,
-          'cp_period': cp_period,
-          'cp_transaction': cp_transaction,
-          'cp_card': cp_card,
-          'cp_card_serial_number': cp_card_serial_number,
-          'cp_date': cp_date,
-          'cp_authorisation_code': cp_authorisation_code,
-          'cp_total': cp_total,
-          'cp_card_type_id': cp_card_type_id,
-          'cp_card_type_text': cp_card_type_text,
-          'cp_drawer_id': cp_drawer_id,
-          'cp_drawer_amount': cp_drawer_amount,
-          'cp_cancelable': cp_cancelable,
-          'cp_card_type': cp_card_type}
+    for line in product.splitlines():
+        for key, value in CASH_PAYMENT_ITEMS.items():
+            if value in line:
+                cp[key] = line.split(':')[1].strip()
     return cp
+
+
+MIX_MATCH_ITEMS = {'mm_discount_text': 'DiscountText', 'mm_discount_amount': 'DiscountAmount',
+                   'mm_discount_type_name': 'DiscountTypeName', 'mm_number': 'MixMatchNumber',
+                   'mm_discount_number': 'DiscountNumber', 'mm_cancelable': 'IsCancelable'}
 
 
 def parse_mix_match(product):
     # mm stands for MixAndMatchDiscountItem
-    mm_discount_text = None
-    mm_discount_amount = None
-    mm_discount_type_name = None
-    mm_number = None
-    mm_discount_number = None
-    mm_cancelable = None
+    mm = dict.fromkeys(MIX_MATCH_ITEMS.keys())
 
-    for line in product.strip().split('\n'):
-        if 'DiscountText' in line:
-            mm_discount_text = line.split(':')[1].strip()
-        elif 'DiscountAmount' in line:
-            mm_discount_amount = line.split(':')[1].strip()
-        elif 'DiscountTypeName' in line:
-            mm_discount_type_name = line.split(':')[1].strip()
-        elif 'MixMatchNumber' in line:
-            mm_number = line.split(':')[1].strip()
-        elif 'DiscountNumber' in line:
-            mm_discount_number = line.split(':')[1].strip()
-        elif 'IsCancelable' in line:
-            mm_cancelable = line.split(':')[1].strip()
-
-    mm = {'mm_discount_text': mm_discount_text,
-          'mm_discount_amount': mm_discount_amount,
-          'mm_discount_type_name': mm_discount_type_name,
-          'mm_number': mm_number,
-          'mm_discount_number': mm_discount_number,
-          'mm_cancelable': mm_cancelable}
+    for line in product.splitlines():
+        for key, value in MIX_MATCH_ITEMS.items():
+            if value in line:
+                mm[key] = line.split(':')[1].strip()
     return mm
 
 
+CASH_WITHDRAWAL_ITEMS = {'cw_canceled': 'CANCELED', 'cw_withdrawal_amount': 'WithdrawalAmount',
+                         'cw_drawer_amount': 'DrawerAmount', 'cw_gross_amount': 'GrossAmount',
+                         'cw_drawer_id': 'DrawerId', 'cw_drawer_number': 'DrawerNumber',
+                         'cw_amount': ' Amount', 'cw_cancelable': 'IsCancelable'}
+
+
 def parse_cash_withdrawal(product):
-    cw_canceled = None
-    cw_withdrawal_amount = None
-    cw_drawer_amount = None
-    cw_gross_amount = None
-    cw_drawer_id = None
-    cw_drawer_number = None
-    cw_amount = None
-    cw_cancelable = None
+    # cw stands for CashWithdrawal
+    cw = dict.fromkeys(CASH_WITHDRAWAL_ITEMS.keys())
 
-    for line in product.strip().split('\n'):
-        if 'CANCELED' in line:
-            cw_canceled = True
-        elif 'WithdrawalAmount' in line:
-            cw_withdrawal_amount = line.split(':')[1].strip()
-        elif 'DrawerAmount' in line:
-            cw_drawer_amount = line.split(':')[1].strip()
-        elif 'GrossAmount' in line:
-            cw_gross_amount = line.split(':')[1].strip()
-        elif 'DrawerId' in line:
-            cw_drawer_id = line.split(':')[1].strip()
-        elif 'DrawerNumber' in line:
-            cw_drawer_number = line.split(':')[1].strip()
-        elif ' Amount' in line:
-            cw_amount = line.split(':')[1].strip()
-        elif 'IsCancelable' in line:
-            cw_cancelable = line.split(':')[1].strip()
-
-    cw = {'cw_canceled': cw_canceled,
-          'cw_withdrawal_amount': cw_withdrawal_amount,
-          'cw_drawer_amount': cw_drawer_amount,
-          'cw_gross_amount': cw_gross_amount,
-          'cw_drawer_id': cw_drawer_id,
-          'cw_drawer_number': cw_drawer_number,
-          'cw_amount': cw_amount,
-          'cw_cancelable': cw_cancelable}
+    for line in product.splitlines():
+        for key, value in CASH_WITHDRAWAL_ITEMS.items():
+            if value in line:
+                cw[key] = line.split(':')[1].strip()
     return cw
+
+
+CASH_PAYMENT_ITEMS = {'cp_text': 'Text', 'cp_is_change': 'IsChange',
+                      'cp_amount': ' Amount', 'cp_drawer_amount': 'DrawerAmount',
+                      'cp_number': ' Number', 'cp_drawer_id': 'DrawerId',
+                      'cp_drawer_number': 'DrawerNumber', 'cp_cancelable': 'IsCancelable'}
 
 
 def parse_cash_payment(product):
     # cp stands for CashPayment
-    cp_text = None
-    cp_is_change = None
-    cp_amount = None
-    cp_drawer_amount = None
-    cp_number = None
-    cp_drawer_id = None
-    cp_drawer_number = None
-    cp_cancelable = None
+    cp = dict.fromkeys(CASH_PAYMENT_ITEMS.keys())
 
-    for line in product.strip().split('\n'):
-        if 'Text' in line:
-            cp_text = line.split(':')[1].strip()
-        elif 'IsChange' in line:
-            cp_is_change = line.split(':')[1].strip()
-        elif ' Amount' in line:
-            cp_amount = line.split(':')[1].strip()
-        elif 'DrawerAmount' in line:
-            cp_drawer_amount = line.split(':')[1].strip()
-        elif ' Number' in line:
-            cp_number = line.split(':')[1].strip()
-        elif 'DrawerId' in line:
-            cp_drawer_id = line.split(':')[1].strip()
-        elif 'DrawerNumber' in line:
-            cp_drawer_number = line.split(':')[1].strip()
-        elif 'IsCancelable' in line:
-            cp_cancelable = line.split(':')[1].strip()
-
-    cp = {'cp_text': cp_text,
-          'cp_is_change': cp_is_change,
-          'cp_amount': cp_amount,
-          'cp_drawer_amount': cp_drawer_amount,
-          'cp_number': cp_number,
-          'cp_drawer_id': cp_drawer_id,
-          'cp_drawer_number': cp_drawer_number,
-          'cp_cancelable': cp_cancelable}
+    for line in product.splitlines():
+        for key, value in CASH_PAYMENT_ITEMS.items():
+            if value in line:
+                cp[key] = line.split(':')[1].strip()
     return cp
 
 
