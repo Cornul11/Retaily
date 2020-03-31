@@ -9,24 +9,24 @@ after `@app.route('...')` you create a method which will be executed when the en
 In that method you can do a few things.
 
 The first thing you can do is add a tuple to the database:
-`newTuple = TableName(columnname=parameter1, columname=parameter2)`
-`db.session.add(newTuple)`
-`db.session.commit()`
-`return '<h1>Success</h1>'`
+`newTuple = TableName(columnname=parameter1, columname=parameter2)
+db.session.add(newTuple)
+db.session.commit()
+return '<h1>Success</h1>'`
 
 Another thing you can do is a query on the database:
 `Tablename.query.#here you specify the query properties e.g. all()`
 
 Examples:
-`@app.route('/addproduct/plu=<plu>/name=<name>')`
-`def addProduct(plu, name):`
-`    newProduct = Product(plu=plu, name=name)`
-`    db.session.add(newProduct)`
-`    db.session.commit()`
-`    return '<h1>Success</h1>`
+`@app.route('/addproduct/plu=<plu>/name=<name>')
+def addProduct(plu, name):
+    newProduct = Product(plu=plu, name=name)
+    db.session.add(newProduct)
+    db.session.commit()
+    return '<h1>Success</h1>`
 
 
-`@app.route('/getproducts')`
-`def getProducts():`
-`    print(Product.query.all())`
-`    return '<h1>Success</h1>'`
+`@app.route('/getproducts')
+def getProducts():
+    print(Product.query.all())
+    return '<h1>Success</h1>'`
