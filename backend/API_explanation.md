@@ -28,5 +28,5 @@ Examples:
 
 `@app.route('/getproducts')`\
 `def getProducts():`\
-`    print(Product.query.all())`\
-`    return '<h1>Success</h1>'`
+    `print(Product.query.all())`\
+    `return '<h1>Success</h1>'`
