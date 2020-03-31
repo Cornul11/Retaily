@@ -1,16 +1,24 @@
 from flask import Flask, escape, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-
+import configparser
 
 app = Flask(__name__)
-app.config["DEBUG"] = True
+app.config['DEBUG'] = True
+
+config = configparser.ConfigParser()
+config.read('credentials.ini')
+
+db_username = config['database']['db_username']
+db_password = config['database']['db_password']
+db_hostname = config['database']['db_hostname']
+db_port = config['database']['db_port']
+db_database = config['database']['db_database']
 
 # app configurations for database
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config[
-    "SQLALCHEMY_DATABASE_URI"
-] = "mysql+pymysql://tm69H1sxd0:xnSlasPerh@remotemysql.com:3306/tm69H1sxd0?charset=utf8mb4"
+    'SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://' + db_username + ':' + db_password + '@' + db_hostname + ':' + db_port + '/' + db_database + '?charset=utf8mb4'
 
 db = SQLAlchemy(app)
 
@@ -74,8 +82,8 @@ def hello():
 def getSalesByPlu(plu, dt1, dt2):
     products = (
         db.session.query(Product)
-        .join(Transaction)
-        .filter(
+            .join(Transaction)
+            .filter(
             (Product.plu == plu)
             & (Transaction.date_time >= dt1)
             & (Transaction.date_time <= dt2)
@@ -89,8 +97,8 @@ def getSalesByPlu(plu, dt1, dt2):
 def getSalesByName(name, dt1, dt2):
     products = (
         db.session.query(Product)
-        .join(Transaction)
-        .filter(
+            .join(Transaction)
+            .filter(
             (Product.name == name)
             & (Transaction.date_time >= dt1)
             & (Transaction.date_time <= dt2)
@@ -104,8 +112,8 @@ def getSalesByName(name, dt1, dt2):
 def getAllSales(dt1, dt2):
     products = (
         db.session.query(Product)
-        .join(Transaction)
-        .filter((Transaction.date_time >= dt1) & (Transaction.date_time <= dt2))
+            .join(Transaction)
+            .filter((Transaction.date_time >= dt1) & (Transaction.date_time <= dt2))
     )
     return jsonify({"products": [product.serialized for product in products]})
 
