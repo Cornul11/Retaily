@@ -6,7 +6,7 @@ app.config['DEBUG'] = True
 
 # app configurations for database
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://username:password@localhost/dbname?charset=utf8mb4'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://tm69H1sxd0:xnSlasPerh@remotemysql.com:3306/tm69H1sxd0?charset=utf8mb4'
 
 db = SQLAlchemy(app)
 
