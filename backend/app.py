@@ -88,7 +88,7 @@ def hello():
 
 # routes for retrieving sales between certain datetimes (dt)
 # http://127.0.0.1:5000/get/sales/plu=10/dt1=2020-03-31%2021:40:39/dt2=2020-03-31%2023:40:39
-@app.route("/get/salesByPlu/plu=<plu>/dt1=<dt1>/dt2=<dt2>")
+@app.route("/get/sales/plu=<plu>/dt1=<dt1>/dt2=<dt2>")
 def get_sales_by_plu(plu, dt1, dt2):
     products = (
         db.session.query(Product)
@@ -132,12 +132,14 @@ def get_all_sales(dt1, dt2):
 # http://127.0.0.1:5000/get/inventory
 @app.route("/get/inventory")
 def get_inventory():
-    products = Product.query.filter(Product.transaction_id is None)
+    products = Product.query.filter(Product.transaction_id == None).order_by(
+        Product.name
+    )
     return jsonify({"products": [product.serialized for product in products]})
 
 
 # http://127.0.0.1:5000/get/product/plu=10
-@app.route("/get/product/plu=<plu>")
+@app.route("/get/product/plu=<plu>") 5
 def get_product_by_plu(plu):
     products = Product.query.filter(Product.plu == plu)
     return jsonify({"products": [product.serialized for product in products]})
