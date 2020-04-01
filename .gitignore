@@ -1,2 +1,8 @@
+# Configuration files
+*.ini
+
+# IDE related stuff
 .idea/
+
+# Python related stuff
 venv
