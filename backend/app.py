@@ -139,7 +139,7 @@ def get_inventory():
 
 
 # http://127.0.0.1:5000/get/product/plu=10
-@app.route("/get/product/plu=<plu>") 5
+@app.route("/get/product/plu=<plu>")
 def get_product_by_plu(plu):
     products = Product.query.filter(Product.plu == plu)
     return jsonify({"products": [product.serialized for product in products]})
