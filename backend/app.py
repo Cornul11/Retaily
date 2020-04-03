@@ -86,99 +86,93 @@ def hello():
     return f"Hello, {escape(name)}!"
 
 
-# routes for retrieving sales between certain datetimes (dt)
-# http://127.0.0.1:5000/get/sales/plu=10/dt1=2020-03-31%2021:40:39/dt2=2020-03-31%2023:40:39
-@app.route("/get/sales/plu=<plu>/dt1=<dt1>/dt2=<dt2>")
-def get_sales_by_plu(plu, dt1, dt2):
-    products = (
-        db.session.query(Product)
-        .join(Transaction)
-        .filter(
-            (Product.plu == plu)
-            & (Transaction.date_time >= dt1)
-            & (Transaction.date_time <= dt2)
+@app.route("/sales", methods=["GET"])
+def sales():
+    plu = request.args.get("plu", None)
+    name = request.args.get("name", None)
+    dt1 = request.args.get("dt1", None)
+    dt2 = request.args.get("dt2", None)
+    if plu is not None:
+        products = (
+            db.session.query(Product)
+            .join(Transaction)
+            .filter(
+                (Product.plu == plu)
+                & (Transaction.date_time >= dt1)
+                & (Transaction.date_time <= dt2)
+            )
         )
-    )
-    return jsonify({"products": [product.serialized for product in products]})
-
-
-# http://127.0.0.1:5000/get/sales/name=banana/dt1=2020-03-31%2021:40:39/dt2=2020-03-31%2023:40:39
-@app.route("/get/sales/name=<name>/dt1=<dt1>/dt2=<dt2>")
-def get_sales_by_name(name, dt1, dt2):
-    products = (
-        db.session.query(Product)
-        .join(Transaction)
-        .filter(
-            (Product.name == name)
-            & (Transaction.date_time >= dt1)
-            & (Transaction.date_time <= dt2)
+    elif name is not None:
+        products = (
+            db.session.query(Product)
+            .join(Transaction)
+            .filter(
+                (Product.name == name)
+                & (Transaction.date_time >= dt1)
+                & (Transaction.date_time <= dt2)
+            )
         )
-    )
+    else:
+        products = (
+            db.session.query(Product)
+            .join(Transaction)
+            .filter((Transaction.date_time >= dt1) & (Transaction.date_time <= dt2))
+        )
     return jsonify({"products": [product.serialized for product in products]})
 
 
-# http://127.0.0.1:5000/get/sales/dt1=2020-03-31%2021:40:39/dt2=2020-03-31%2023:40:39
-@app.route("/get/sales/dt1=<dt1>/dt2=<dt2>")
-def get_all_sales(dt1, dt2):
-    products = (
-        db.session.query(Product)
-        .join(Transaction)
-        .filter((Transaction.date_time >= dt1) & (Transaction.date_time <= dt2))
-    )
-    return jsonify({"products": [product.serialized for product in products]})
+@app.route("/product", methods=["GET"])
+def product():
+    if request.method == "GET":
+        plu = request.args.get("plu", None)
+        name = request.args.get("name", None)
+        if plu is not None:
+            products = Product.query.filter(Product.plu == plu)
+        elif name is not None:
+            products = Product.query.filter(Product.name == name)
+        return jsonify({"products": [product.serialized for product in products]})
 
 
-# items that are not sold have no transaction_id
-# http://127.0.0.1:5000/get/inventory
-@app.route("/get/inventory")
-def get_inventory():
-    products = Product.query.filter(Product.transaction_id == None).order_by(
-        Product.name
-    )
-    return jsonify({"products": [product.serialized for product in products]})
+@app.route("/inventory", methods=["GET"])
+def inventory():
+    if request.method == "GET":
+        products = Product.query.filter(Product.transaction_id == None).order_by(
+            Product.name
+        )
+        return jsonify({"products": [product.serialized for product in products]})
 
 
-# http://127.0.0.1:5000/get/product/plu=10
-@app.route("/get/product/plu=<plu>")
-def get_product_by_plu(plu):
-    products = Product.query.filter(Product.plu == plu)
-    return jsonify({"products": [product.serialized for product in products]})
+@app.route("/product/buyprice", methods=["PUT"])
+def product_buyprice():
+    if request.method == "PUT":
+        plu = request.args.get("plu", None)
+        name = request.args.get("name", None)
+        price = request.args.get("price", None)
+        if plu is not None:
+            Product.query.filter(Product.plu == plu).update(
+                {Product.buying_price: price}
+            )
+        elif name is not None:
+            Product.query.filter(Product.name == name).update(
+                {Product.buying_price: price}
+            )
+        db.session.commit()
+        return "<h1>Updated buyprice</h1>"
 
 
-# http://127.0.0.1:5000/get/product/name=banana
-@app.route("/get/product/name=<name>")
-def get_product_by_name(name):
-    products = Product.query.filter(Product.name == name)
-    return jsonify({"products": [product.serialized for product in products]})
-
-
-# http://127.0.0.1:5000/update/product/buyprice/plu=10/price=69
-@app.route("/update/product/buyprice/plu=<plu>/price=<price>")
-def update_product_buyprice_plu(plu, price):
-    Product.query.filter(Product.plu == plu).update({Product.buying_price: price})
-    db.session.commit()
-    return "<h1>Succes</h1>"
-
-
-# http://127.0.0.1:5000/update/product/buyprice/name=banana/price=50
-@app.route("/update/product/buyprice/name=<name>/price=<price>")
-def update_product_buyprice_name(name, price):
-    Product.query.filter(Product.name == name).update({Product.buying_price: price})
-    db.session.commit()
-    return "<h1>Succes</h1>"
-
-
-# http://127.0.0.1:5000/update/product/sellprice/plu=10/price=69
-@app.route("/update/product/sellprice/plu=<plu>/price=<price>")
-def update_product_sellprice_plu(plu, price):
-    Product.query.filter(Product.plu == plu).update({Product.selling_price: price})
-    db.session.commit()
-    return "<h1>Succes</h1>"
-
-
-# http://127.0.0.1:5000/update/product/sellprice/name=banana/price=50
-@app.route("/update/product/sellprice/name=<name>/price=<price>")
-def update_product_sellprice_name(name, price):
-    Product.query.filter(Product.name == name).update({Product.selling_price: price})
-    db.session.commit()
-    return "<h1>Succes</h1>"
+@app.route("/product/sellprice", methods=["PUT"])
+def product_sellprice():
+    if request.method == "PUT":
+        plu = request.args.get("plu", None)
+        name = request.args.get("name", None)
+        price = request.args.get("price", None)
+        if plu is not None:
+            Product.query.filter(Product.plu == plu).update(
+                {Product.selling_price: price}
+            )
+        elif name is not None:
+            Product.query.filter(Product.name == name).update(
+                {Product.selling_price: price}
+            )
+        db.session.commit()
+        return "<h1>Updated sellprice</h1>"
