@@ -20,9 +20,9 @@ Now you can run your Flask app by typing `flask run`. If everything runs smoothl
 
 Folder structure:
 
-app.py: The main flask app is located here
-config.py: Contains the configuration values for app.py
-credentials.ini: Contains the credentials to connect with the database
-models.py: Contains the database tables
-views.py: Gathers all the routes from the blueprints
-blueprints: Folder where each file is a flask blueprint
+app.py: The main flask app is located here \
+config.py: Contains the configuration values for app.py \
+credentials.ini: Contains the credentials to connect with the database \
+models.py: Contains the database tables \
+views.py: Gathers all the routes from the blueprints \
+blueprints: Folder where each file is a flask blueprint \
