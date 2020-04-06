@@ -2,7 +2,7 @@ import configparser
 
 
 # Function to create SQLALCHEMY_DATABASE_URI
-def createURI():
+def create_uri():
     config = configparser.ConfigParser()
     config.read("credentials.ini")
     db_username = config["database"]["db_username"]
@@ -27,4 +27,4 @@ def createURI():
 # Configuration parameters
 DEBUG = True
 SQLALCHEMY_TRACK_MODIFICATIONS = False
-SQLALCHEMY_DATABASE_URI = createURI()
+SQLALCHEMY_DATABASE_URI = create_uri()

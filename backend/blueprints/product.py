@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, abort
-from models import Product, Transaction, Product_info
+from models import Product, Transaction, ProductInfo
 from app import db
 
 # Define the blueprint
@@ -12,9 +12,9 @@ def product():
         plu = request.args.get("plu", None)
         name = request.args.get("name", None)
         if plu is not None:
-            product = Product_info.query.filter(Product_info.plu == plu).first()
+            product = ProductInfo.query.filter(ProductInfo.plu == plu).first()
         elif name is not None:
-            product = Product_info.query.filter(Product_info.name == name).first()
+            product = ProductInfo.query.filter(ProductInfo.name == name).first()
         else:
             abort(400)
         return jsonify(product.serialized)
@@ -29,17 +29,17 @@ def product_buyprice():
         if price is None:
             abort(400)
         elif plu is not None:
-            Product_info.query.filter(Product_info.plu == plu).update(
-                {Product_info.buying_price: price}
+            ProductInfo.query.filter(ProductInfo.plu == plu).update(
+                {ProductInfo.buying_price: price}
             )
             db.session.commit()
-            product = Product_info.query.filter(Product_info.plu == plu).first()
+            product = ProductInfo.query.filter(ProductInfo.plu == plu).first()
         elif name is not None:
-            Product_info.query.filter(Product_info.name == name).update(
-                {Product_info.buying_price: price}
+            ProductInfo.query.filter(ProductInfo.name == name).update(
+                {ProductInfo.buying_price: price}
             )
             db.session.commit()
-            product = Product_info.query.filter(Product_info.name == name).first()
+            product = ProductInfo.query.filter(ProductInfo.name == name).first()
         else:
             abort(400)
         return jsonify(product.serialized)
@@ -54,17 +54,17 @@ def product_sellprice():
         if price is None:
             abort(400)
         elif plu is not None:
-            Product_info.query.filter(Product_info.plu == plu).update(
-                {Product_info.selling_price: price}
+            ProductInfo.query.filter(ProductInfo.plu == plu).update(
+                {ProductInfo.selling_price: price}
             )
             db.session.commit()
-            product = Product_info.query.filter(Product_info.plu == plu).first()
+            product = ProductInfo.query.filter(ProductInfo.plu == plu).first()
         elif name is not None:
-            Product_info.query.filter(Product_info.name == name).update(
-                {Product_info.selling_price: price}
+            ProductInfo.query.filter(ProductInfo.name == name).update(
+                {ProductInfo.selling_price: price}
             )
             db.session.commit()
-            product = Product_info.query.filter(Product_info.name == name).first()
+            product = ProductInfo.query.filter(ProductInfo.name == name).first()
         else:
             abort(400)
         return jsonify(product.serialized)

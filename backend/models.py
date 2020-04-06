@@ -46,7 +46,7 @@ class Transaction(db.Model):
         }
 
 
-class Product_info(db.Model):
+class ProductInfo(db.Model):
     plu = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
     buying_price = db.Column(db.Float, nullable=True)
