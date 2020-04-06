@@ -9,3 +9,6 @@ venv
 
 # NPM user specific files
 package-lock.json
+
+# SonarQube related files
+.scannerwork/

@@ -1,5 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import ScannerFrame from "./components/barcode/scannerFrame";
+import Barchart from "./components/charts/barchart";
 
-ReactDOM.render(<ScannerFrame />, document.getElementById("root"));
+ReactDOM.render(<Barchart />, document.getElementById("root"));
