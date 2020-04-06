@@ -10,6 +10,8 @@ Install `virtualenv` using pip3 => `sudo pip3 install virtualenv`.
 In order to run this on Linux, for convenience, first of all create a virtual environment using:
 `virtualenv -p python3 venv`
 
+Once you've done that, you can enable the virtual environment using `source venv/bin/activate`. To exit the virtual environment, just type `deactivate` in your terminal.
+
 Next, install all the packages required for running Flask:
 `pip3 install -r requirements.txt`
 
