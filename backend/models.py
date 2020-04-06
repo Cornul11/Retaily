@@ -44,3 +44,21 @@ class Transaction(db.Model):
             "card_serial": self.card_serial,
             "change": self.change,
         }
+
+
+class Product_info(db.Model):
+    plu = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+    buying_price = db.Column(db.Float, nullable=True)
+    selling_price = db.Column(db.Float, nullable=True)
+    discount = db.Column(db.Float, nullable=True)
+
+    @property
+    def serialized(self):
+        return {
+            "plu": self.plu,
+            "name": self.name,
+            "buying_price": self.buying_price,
+            "selling_price": self.selling_price,
+            "discount": self.discount,
+        }
