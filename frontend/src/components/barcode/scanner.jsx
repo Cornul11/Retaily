@@ -12,10 +12,10 @@ class Scanner extends Component {
   ref = React.createRef();
 
   async componentDidMount() {
-    // Request camera footage from user.
+    /** Request camera footage from user */
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     this.ref.current.srcObject = stream;
-    // Initialize the scanner.
+    /** Initialize the scanner */
     Quagga.init(
       {
         inputStream: {
@@ -39,16 +39,16 @@ class Scanner extends Component {
         Quagga.start();
       }
     );
-    // Determine what should happen when code is detected.
-    Quagga.onDetected(function (result) {
-      document.getElementById("testtext").value = result.codeResult.code;
-      alert(result.codeResult.code);
-    });
+    Quagga.onDetected(this.onDetected);
   }
 
   componentWillUnmount() {
     Quagga.stop();
   }
+
+  onDetected = (result) => {
+    this.props.onDetected(result.codeResult.code);
+  };
 
   render() {
     return (
