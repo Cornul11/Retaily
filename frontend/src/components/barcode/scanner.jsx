@@ -1,31 +1,37 @@
 import React, { Component } from "react";
 import Quagga from "quagga";
+import styles from "./scanner.css";
 
 /**
- * Scanner Component retrieves barcodes from element
- * with id="scannerFrame". When a barcode is detected,
- * an alert will be shown that displays the found code.
+ * Scanner Component used to show the camera footage
+ * and references the Scanner Component that will detect
+ * barcodes from the camera footage.
  */
 
 class Scanner extends Component {
-  componentDidMount() {
+  ref = React.createRef();
+
+  async componentDidMount() {
+    // Request camera footage from user.
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    this.ref.current.srcObject = stream;
     // Initialize the scanner.
     Quagga.init(
       {
         inputStream: {
           type: "LiveStream",
-          target: document.getElementById("scannerFrame"),
+          target: document.getElementById("camera"),
           constraints: {
             width: 480,
             height: 320,
-            facingMode: "environment"
-          }
+            facingMode: "environment",
+          },
         },
         decoder: {
-          readers: ["code_128_reader"]
-        }
+          readers: ["ean_reader"],
+        },
       },
-      function(err) {
+      function (err) {
         if (err) {
           console.log(err);
           return;
@@ -34,7 +40,8 @@ class Scanner extends Component {
       }
     );
     // Determine what should happen when code is detected.
-    Quagga.onDetected(function(result) {
+    Quagga.onDetected(function (result) {
+      document.getElementById("testtext").value = result.codeResult.code;
       alert(result.codeResult.code);
     });
   }
@@ -44,7 +51,11 @@ class Scanner extends Component {
   }
 
   render() {
-    return <div id="scanner" />;
+    return (
+      <div style={styles}>
+        <video id="camera" width="480" height="320" ref={this.ref} autoPlay />
+      </div>
+    );
   }
 }
 
