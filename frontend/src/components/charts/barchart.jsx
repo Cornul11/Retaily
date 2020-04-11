@@ -10,29 +10,14 @@ class Barchart extends Component {
       values: [],
       colors: [],
     };
-    let length = response.products.length;
-    if (length > 0) {
-      let currentName = response.products[0].name;
-      let count = 1;
-      let i = 1;
-      while (i < length) {
-        if (i % 2) {
-          data.colors.push("rgba(0,255,0,0.5)");
-        } else {
-          data.colors.push("rgba(0,0,255,0.5)");
-        }
-        if (currentName === response.products[i].name) {
-          count++;
-        } else {
-          data.names.push(currentName + "(" + count + ")");
-          data.values.push(count);
-          currentName = response.products[i].name;
-          count = 1;
-        }
-        i++;
+    for (let i = 0; i < response.products.length; i++) {
+      if (i % 2) {
+        data.colors.push("rgba(0,255,0,0.5)");
+      } else {
+        data.colors.push("rgba(0,0,255,0.5)");
       }
-      data.names.push(currentName);
-      data.values.push(count);
+      data.names.push(response.products[i].name);
+      data.values.push(response.products[i].count);
     }
     return data;
   }
