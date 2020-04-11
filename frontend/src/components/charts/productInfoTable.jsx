@@ -6,7 +6,14 @@ class ProductInfoTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: {},
+      data: {
+        plu: null,
+        name: null,
+        buying_price: null,
+        selling_price: null,
+        discount: null,
+        count: null,
+      },
     };
   }
 
@@ -20,24 +27,52 @@ class ProductInfoTable extends Component {
     }
   }
 
-  loadTable() {
+  async loadTable() {
     this.props.onLoaded();
+    let newData = {
+      plu: null,
+      name: null,
+      buying_price: null,
+      selling_price: null,
+      discount: null,
+      count: null,
+    };
     let url = "/product/?" + this.props.identifier + "=" + this.props.text;
-    fetch(url, {
+    await fetch(url, {
       method: "GET",
     })
       .then((response) => response.json())
       .then(
         (response) => {
-          this.setState({ data: response });
+          newData["plu"] = response["plu"];
+          newData["name"] = response["name"];
+          newData["buying_price"] = response["buying_price"];
+          newData["selling_price"] = response["selling_price"];
+          newData["discount"] = response["discount"];
         },
         (error) => {
-          this.setState({ data: {} });
+          console.log(error);
         }
       );
+    url = "/inventory/?" + this.props.identifier + "=" + this.props.text;
+    await fetch(url, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then(
+        (response) => {
+          newData["plu"] = response["plu"];
+          newData["name"] = response["name"];
+          newData["count"] = response["count"];
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    this.setState({ data: newData });
   }
 
-  createTable() {
+  renderTable() {
     let table = [];
     Object.keys(this.state.data).forEach((key) => {
       table.push(
@@ -47,16 +82,13 @@ class ProductInfoTable extends Component {
         </tr>
       );
     });
-    if (table.length === 0) {
-      table.push(<h1>No data</h1>);
-    }
     return table;
   }
 
   render() {
     return (
       <div className="productInfoTable">
-        <table>{this.createTable()}</table>
+        <table>{this.renderTable()}</table>
       </div>
     );
   }
