@@ -1,0 +1,32 @@
+@import 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css';
+
+.App {
+    text-align: center;
+}
+
+.App-logo {
+    height: 40vmin;
+}
+
+.App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.App-link {
+    color: #09d3ac;
+}
+
+body {
+    background: url('https://source.unsplash.com/twukN12EN7c/1920x1080') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+}
