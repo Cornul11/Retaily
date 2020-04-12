@@ -17,7 +17,9 @@ def product():
             product = ProductInfo.query.filter(ProductInfo.name == name).first()
         else:
             abort(400)
-        return jsonify(product.serialized)
+        if product is not None:
+            return jsonify(product.serialized)
+        abort(400)
 
 
 @product_bp.route("/buyprice/", methods=["PUT"])

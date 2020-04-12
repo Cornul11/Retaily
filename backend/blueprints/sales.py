@@ -1,43 +1,81 @@
 from flask import Blueprint, request, jsonify, abort
 from models import Product, Transaction
 from app import db
+import datetime
 
 # Define the blueprint
 sales_bp = Blueprint("sales", __name__)
+
+
+def getSales(items, start, end, interval, product):
+    data = []
+    count = 0
+    for item in items:
+        if product:
+            time = item.Transaction.serialized["date_time"]
+        else:
+            time = item.serialized["date_time"]
+        while time > (start + interval):
+            data.append(
+                {"t": (start + (interval / 2)).strftime("%Y-%m-%d %H:%M"), "y": count}
+            )
+            count = 0
+            start = start + interval
+        count += 1
+    data.append({"t": (start + (interval / 2)).strftime("%Y-%m-%d %H:%M"), "y": count})
+    start = start + interval
+    while start < end:
+        data.append({"t": (start + (interval / 2)).strftime("%Y-%m-%d %H:%M"), "y": 0})
+        start = start + interval
+    return data
+
 
 # Define the routes
 @sales_bp.route("/", methods=["GET"])
 def sales():
     plu = request.args.get("plu", None)
     name = request.args.get("name", None)
-    dt1 = request.args.get("dt1", None)
-    dt2 = request.args.get("dt2", None)
-    if dt1 is None or dt2 is None:
+    start = request.args.get("start", None)
+    end = request.args.get("end", None)
+    interval = request.args.get("interval", None)
+
+    try:
+        start = datetime.datetime.strptime(start, "%Y-%m-%d")
+        end = datetime.datetime.strptime(end, "%Y-%m-%d")
+        if interval == "hour":
+            interval = datetime.timedelta(hours=1)
+        elif interval == "day":
+            interval = datetime.timedelta(days=1)
+        else:
+            abort(400)
+    except:
         abort(400)
-    if plu is not None:
-        products = (
-            db.session.query(Product)
+    if plu is None and name is None:
+        items = (
+            db.session.query(Transaction)
+            .filter((Transaction.date_time >= start) & (Transaction.date_time <= end))
+            .order_by(Transaction.date_time)
+        )
+        return jsonify(getSales(items, start, end, interval, False))
+    elif plu is not None:
+        items = (
+            db.session.query(Product, Transaction)
             .join(Transaction)
             .filter(
                 (Product.plu == plu)
-                & (Transaction.date_time >= dt1)
-                & (Transaction.date_time <= dt2)
+                & (Transaction.date_time >= start)
+                & (Transaction.date_time <= end)
             )
+            .order_by(Transaction.date_time)
         )
-    elif name is not None:
-        products = (
-            db.session.query(Product)
+    else:
+        items = (
+            db.session.query(Product, Transaction)
             .join(Transaction)
             .filter(
                 (Product.name == name)
-                & (Transaction.date_time >= dt1)
-                & (Transaction.date_time <= dt2)
+                & (Transaction.date_time >= start)
+                & (Transaction.date_time <= end)
             )
         )
-    else:
-        products = (
-            db.session.query(Product)
-            .join(Transaction)
-            .filter((Transaction.date_time >= dt1) & (Transaction.date_time <= dt2))
-        )
-    return jsonify({"products": [product.serialized for product in products]})
+    return jsonify(getSales(items, start, end, interval, True))

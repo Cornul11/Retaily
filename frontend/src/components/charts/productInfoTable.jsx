@@ -17,10 +17,6 @@ class ProductInfoTable extends Component {
     };
   }
 
-  componentDidMount() {
-    this.loadTable();
-  }
-
   componentDidUpdate() {
     if (this.props.retrieve === true) {
       this.loadTable();
@@ -66,6 +62,7 @@ class ProductInfoTable extends Component {
           newData["count"] = response["count"];
         },
         (error) => {
+          newData["count"] = 0;
           console.log(error);
         }
       );

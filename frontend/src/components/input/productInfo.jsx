@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Scanner from "../barcode/scanner";
-import ProductInfoTable from "./productInfoTable";
+import ProductSalesChartWrapper from "./wrappers/productSalesChartWrapper";
+import ProductInfoTableWrapper from "./wrappers/productInfoTableWrapper";
 
 /** Component that retrieves information about an individual product */
 
@@ -12,14 +13,12 @@ class ProductInfo extends Component {
       text: "",
       scanning: false,
       chartType: "productInfoTable",
-      retrieve: false,
     };
     this.handleIdentifierChange = this.handleIdentifierChange.bind(this);
     this.handleTextChange = this.handleTextChange.bind(this);
     this.handleScanButton = this.handleScanButton.bind(this);
     this.onDetected = this.onDetected.bind(this);
-    this.handleRetrieveButton = this.handleRetrieveButton.bind(this);
-    this.onLoaded = this.onLoaded.bind(this);
+    this.handleChartTypeChange = this.handleChartTypeChange.bind(this);
   }
 
   handleIdentifierChange(event) {
@@ -48,14 +47,6 @@ class ProductInfo extends Component {
 
   handleChartTypeChange(event) {
     this.setState({ chartType: event.target.value });
-  }
-
-  handleRetrieveButton() {
-    this.setState({ retrieve: true });
-  }
-
-  onLoaded() {
-    this.setState({ retrieve: false });
   }
 
   renderSelectIdentifier() {
@@ -105,22 +96,29 @@ class ProductInfo extends Component {
         onChange={this.handleChartTypeChange}
       >
         <option value="productInfoTable">current product information</option>
+        <option value="productSales">product sales</option>
       </select>
     );
   }
 
-  renderRetrieveButton() {
-    return <button onClick={this.handleRetrieveButton}>retrieve</button>;
-  }
-
-  renderProductInfoTable() {
+  renderProductInfoTableWrapper() {
     if (this.state.chartType === "productInfoTable") {
       return (
-        <ProductInfoTable
-          retrieve={this.state.retrieve}
+        <ProductInfoTableWrapper
           identifier={this.state.identifier}
           text={this.state.text}
-          onLoaded={this.onLoaded}
+        />
+      );
+    }
+    return null;
+  }
+
+  renderProductSalesChartWrapper() {
+    if (this.state.chartType === "productSales") {
+      return (
+        <ProductSalesChartWrapper
+          identifier={this.state.identifier}
+          text={this.state.text}
         />
       );
     }
@@ -135,8 +133,8 @@ class ProductInfo extends Component {
         {this.renderScanButton()}
         {this.renderScanner()}
         {this.renderSelectChartType()}
-        {this.renderRetrieveButton()}
-        {this.renderProductInfoTable()}
+        {this.renderProductInfoTableWrapper()}
+        {this.renderProductSalesChartWrapper()}
       </div>
     );
   }
