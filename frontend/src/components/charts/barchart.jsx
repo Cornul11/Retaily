@@ -3,6 +3,44 @@ import { Chart } from "chart.js";
 import "./charts.css";
 
 class Barchart extends Component {
+  constructor(props){
+    super(props);
+    this.chart = null;
+    this.chartJSON = [];
+    this.desc = false;
+    this.sort = 'name';
+  }
+
+  setSort(attr){
+    this.sort = attr;
+    this.changeChartData();
+  }
+
+  setDesc(set){
+    this.desc = set;
+    this.changeChartData();
+  }
+
+  componentDidMount() {
+    this.initialize('name', true);
+  }
+
+  //sorts JSON data by key
+  sortJSONData(key, data){
+    let sorted = [];
+    let compare = function(a, b){
+      return (data[a][key] > data[b][key]) ? 1 : ((data[a][key] < data[b][key]) ? -1 : 0);
+    };
+    if (this.desc){
+      compare = function(a, b){
+        return (data[b][key] > data[a][key]) ? 1 : ((data[b][key] < data[a][key]) ? -1 : 0);
+      }
+    }
+    Object.keys(data).sort(compare).forEach(function(id){
+      sorted.push(data[id]);
+    });
+    return sorted;
+}
   // Convert data for chart
   convertData(response) {
     let data = {
@@ -10,43 +48,30 @@ class Barchart extends Component {
       values: [],
       colors: [],
     };
-    let length = response.products.length;
-    if (length > 0) {
-      let currentName = response.products[0].name;
-      let count = 1;
-      let i = 1;
-      while (i < length) {
-        if (i % 2) {
-          data.colors.push("rgba(0,255,0,0.5)");
-        } else {
-          data.colors.push("rgba(0,0,255,0.5)");
-        }
-        if (currentName === response.products[i].name) {
-          count++;
-        } else {
-          data.names.push(currentName + "(" + count + ")");
-          data.values.push(count);
-          currentName = response.products[i].name;
-          count = 1;
-        }
-        i++;
+    let sorted = this.sortJSONData(this.sort,response.products);
+    for (let i = 0; i < sorted.length; i++) {
+      if (i % 2) {
+        data.colors.push("rgba(0,255,0,0.5)");
+      } else {
+        data.colors.push("rgba(0,0,255,0.5)");
       }
-      data.names.push(currentName);
-      data.values.push(count);
+      data.names.push(sorted[i].name);
+      data.values.push(sorted[i].count);
     }
     return data;
   }
-
-  componentDidMount() {
-    // Fetch API call
-    fetch("/inventory/", {
+  //initializes the Barchart
+  initialize(){
+     // Fetch API call
+     fetch("/inventory/", {
       method: "GET",
     })
       .then((response) => response.json())
       .then((response) => {
+        this.chartJSON = response;
         let data = this.convertData(response);
         // Create the chart
-        new Chart(document.getElementById("myChart").getContext("2d"), {
+        this.chart = new Chart(document.getElementById("myChart").getContext("2d"), {
           type: "bar",
           data: {
             labels: data.names,
@@ -75,11 +100,36 @@ class Barchart extends Component {
         });
       });
   }
-
+  /*function that removes the data of the chart and sets new data
+  based on the chartJSON, sort and desc properties*/
+  changeChartData(){
+    //remove current data
+    this.chart.data.labels.pop();
+    this.chart.data.datasets.forEach((dataset) => {
+        dataset.data.pop();
+    });
+    //add the new data
+    let data = this.convertData(this.chartJSON, this.sort, this.desc);
+    this.chart.data.labels.push(data.names);
+    this.chart.data = {
+      labels: data.names,
+      datasets: [
+        {
+          data: data.values,
+          backgroundColor: data.colors,
+        },
+      ],
+    }
+    console.log(data);
+    this.chart.update();
+  }
   render() {
     return (
       <div className="chartWrapper">
         <canvas id="myChart" width="10000" height="500"></canvas>
+        <button onClick={() => {this.setSort('count')}}>Sort by count</button>
+        <button onClick={() => {this.setSort('name')}}>Sort by name</button>
+        <button onClick={() => {this.setDesc(!this.desc)}}>Toggle Descending</button>
       </div>
     );
   }
