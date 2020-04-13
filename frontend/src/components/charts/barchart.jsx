@@ -64,9 +64,9 @@ class Barchart extends Component {
   }
 
   //initializes the Barchart
-  initialize() {
+  async initialize() {
     // Fetch API call
-    fetch("/inventory/", {
+    await fetch("/inventory/", {
       method: "GET",
     })
         .then((response) => response.json())
