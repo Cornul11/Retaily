@@ -3,27 +3,38 @@ import {Chart} from "chart.js";
 import "./charts.css";
 import './App.css';
 
+//TODO: Proper zoom on filter
 class Barchart extends Component {
   constructor(props) {
     super(props);
-    this.chart = null;
-    this.chartJSON = [];
-    this.desc = false;
-    this.sort = 'name';
+    this.state = {
+      filter: "",
+      chart: null,
+      chartJSON: [],
+      desc: false,
+      sort: 'name'
+    }
+    this.handleChangeFilter = this.handleChangeFilter.bind(this);
+    this.handleDescendingToggle = this.handleDescendingToggle.bind(this);
+    this.updateChart = this.updateChart.bind(this);
   }
 
   setSort(attr) {
-    this.sort = attr;
-    this.changeChartData();
+    this.setState({sort: attr}, this.updateChart);
   }
 
-  setDesc(set) {
-    this.desc = set;
-    this.changeChartData();
+  handleDescendingToggle() {
+    this.setState(state => ({
+      desc: !state.desc
+    }), this.updateChart);
+  }
+
+  handleChangeFilter(event){    
+    this.setState({filter: event.target.value.trim().toLowerCase()}, this.updateChart);  
   }
 
   componentDidMount() {
-    this.initialize('name', true);
+    this.initialize();
   }
 
   //sorts JSON data by key
@@ -32,7 +43,7 @@ class Barchart extends Component {
     let compare = function (a, b) {
       return (data[a][key] > data[b][key]) ? 1 : ((data[a][key] < data[b][key]) ? -1 : 0);
     };
-    if (this.desc) {
+    if (this.state.desc) {
       compare = function (a, b) {
         return (data[b][key] > data[a][key]) ? 1 : ((data[b][key] < data[a][key]) ? -1 : 0);
       }
@@ -50,15 +61,20 @@ class Barchart extends Component {
       values: [],
       colors: [],
     };
-    let sorted = this.sortJSONData(this.sort, response.products);
+    let sorted = this.sortJSONData(this.state.sort, response.products);
+    let count = 0;
     for (let i = 0; i < sorted.length; i++) {
-      if (i % 2) {
+      if(String(sorted[i].name.trim().toLowerCase().match(this.state.filter)) !== String(this.state.filter)){
+        continue;
+      }
+      if (count % 2) {
         data.colors.push("rgba(0,255,0,0.5)");
       } else {
         data.colors.push("rgba(0,0,255,0.5)");
       }
       data.names.push(sorted[i].name);
       data.values.push(sorted[i].count);
+      count++;
     }
     return data;
   }
@@ -71,10 +87,10 @@ class Barchart extends Component {
     })
         .then((response) => response.json())
         .then((response) => {
-          this.chartJSON = response;
+          this.setState({chartJSON: response});
           let data = this.convertData(response);
           // Create the chart
-          this.chart = new Chart(document.getElementById("myChart").getContext("2d"), {
+          this.setState({chart: new Chart(document.getElementById("myChart").getContext("2d"), {
             type: "bar",
             data: {
               labels: data.names,
@@ -87,6 +103,8 @@ class Barchart extends Component {
             },
             options: {
               responsive: false,
+              maintainAspectRatio: false,
+              responsiveAnimationDuration: 0,
               legend: {
                 display: false,
               },
@@ -100,22 +118,24 @@ class Barchart extends Component {
                 ],
               },
             },
-          });
+          })
         });
+      });
   }
 
   /*function that removes the data of the chart and sets new data
-  based on the chartJSON, sort and desc properties*/
-  changeChartData() {
+  based on the chartJSON, sort and desc state*/
+  updateChart() {
+    var chart = this.state.chart;
     //remove current data
-    this.chart.data.labels.pop();
-    this.chart.data.datasets.forEach((dataset) => {
+    chart.data.labels.pop();
+    chart.data.datasets.forEach((dataset) => {
       dataset.data.pop();
     });
     //add the new data
-    let data = this.convertData(this.chartJSON, this.sort, this.desc);
-    this.chart.data.labels.push(data.names);
-    this.chart.data = {
+    let data = this.convertData(this.state.chartJSON);
+    chart.data.labels.push(data.names);
+    chart.data = {
       labels: data.names,
       datasets: [
         {
@@ -124,8 +144,8 @@ class Barchart extends Component {
         },
       ],
     }
-    console.log(data);
-    this.chart.update();
+    chart.update();
+    this.setState({chart: chart})
   }
 
   render() {
@@ -156,8 +176,8 @@ class Barchart extends Component {
           <div className="container">
             <div className="card border-0 shadow my-5">
               <div className="card-body p-5">
-                <div className="chartWrapper">
-                  <canvas id="myChart" width="10000" height="500"/>
+                <div id="wrapper" className="chartWrapper">
+                  <canvas id="myChart" width={10000} height="500"/>
                   <button onClick={() => {
                     this.setSort('count')
                   }}>Sort by count
@@ -166,10 +186,10 @@ class Barchart extends Component {
                     this.setSort('name')
                   }}>Sort by name
                   </button>
-                  <button onClick={() => {
-                    this.setDesc(!this.desc)
-                  }}>Toggle Descending
+                  <button onClick={this.handleDescendingToggle}>
+                  {this.state.desc ? 'Set ascending' : "Set descending"}
                   </button>
+                  <input type="text" onChange={this.handleChangeFilter} />
                 </div>
               </div>
             </div>
