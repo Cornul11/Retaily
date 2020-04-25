@@ -22,26 +22,26 @@ def parse_file(filepath):
                 splitter_string = "---\n---"
                 aborted_sale = False
 
-            temp_splitted = journal_record.split(splitter_string)
+            temp_split = journal_record.split(splitter_string)
 
             # Parsing the intro part containing the basic data about the record
             record_no, record_date, record_cashier, record_type = parse_journal_data(
-                temp_splitted[0]
+                temp_split[0]
             )
 
             # Parsing the purchased products
             if "NoSale" in journal_record:
                 products = []
             elif "NeutralList" in journal_record:
-                neutral_list_split = temp_splitted[0].split("---\n")
+                neutral_list_split = temp_split[0].split("---\n")
                 products = parse_components(neutral_list_split[2])
             elif "ReportRecord" in journal_record:
                 # these can supposedly be ignored?
                 pass
             elif aborted_sale:
-                products = parse_components(temp_splitted[2])
+                products = parse_components(temp_split[2])
             else:
-                products = parse_components(temp_splitted[1])
+                products = parse_components(temp_split[1])
 
             local_record = {
                 "journal_record_no": record_no,
@@ -65,9 +65,9 @@ def parse_journal_data(string):
 
     for line in string.split("\n"):
         if "Journal Record" in line:
-            splitted_line = line.rsplit("/", 1)
-            journal_record_no = splitted_line[0].strip().replace("Journal Record: ", "")
-            journal_record_date = splitted_line[1].strip()
+            split_line = line.rsplit("/", 1)
+            journal_record_no = split_line[0].strip().replace("Journal Record: ", "")
+            journal_record_date = split_line[1].strip()
         if "Cashier" in line:
             journal_record_cashier = line.split(":")[1].strip()
         if "Record Type" in line:
