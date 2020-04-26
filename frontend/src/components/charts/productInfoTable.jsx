@@ -12,7 +12,10 @@ class ProductInfoTable extends Component {
         buying_price: null,
         selling_price: null,
         discount: null,
-        count: null,
+        sales_last_week: null,
+        sales_last_month: null,
+        sales_last_quarter: null,
+        sales_last_year: null,
       },
     };
   }
@@ -31,7 +34,10 @@ class ProductInfoTable extends Component {
       buying_price: null,
       selling_price: null,
       discount: null,
-      count: null,
+      sales_last_week: null,
+      sales_last_month: null,
+      sales_last_quarter: null,
+      sales_last_year: null,
     };
     let url = "/product/?" + this.props.identifier + "=" + this.props.text;
     await fetch(url, {
@@ -50,19 +56,19 @@ class ProductInfoTable extends Component {
           console.log(error);
         }
       );
-    url = "/inventory/?" + this.props.identifier + "=" + this.props.text;
+    url = "/sales/quick/?" + this.props.identifier + "=" + this.props.text;
     await fetch(url, {
       method: "GET",
     })
       .then((response) => response.json())
       .then(
         (response) => {
-          newData["plu"] = response["plu"];
-          newData["name"] = response["name"];
-          newData["count"] = response["count"];
+          newData["sales_last_week"] = response["sales_last_week"];
+          newData["sales_last_month"] = response["sales_last_month"];
+          newData["sales_last_quarter"] = response["sales_last_quarter"];
+          newData["sales_last_year"] = response["sales_last_year"];
         },
         (error) => {
-          newData["count"] = 0;
           console.log(error);
         }
       );

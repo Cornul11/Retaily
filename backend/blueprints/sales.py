@@ -116,9 +116,11 @@ def quick():
         if plu is None and name is None:
             abort(400)
         end = datetime.datetime.now()
-        data = []
-        data.append({"week": getCount(plu, name, 7, end)})
-        data.append({"month": getCount(plu, name, 30, end)})
-        data.append({"quarter": getCount(plu, name, 90, end)})
-        data.append({"year": getCount(plu, name, 365, end)})
-        return jsonify(data)
+        return jsonify(
+            {
+                "sales_last_week": getCount(plu, name, 7, end),
+                "sales_last_month": getCount(plu, name, 30, end),
+                "sales_last_quarter": getCount(plu, name, 90, end),
+                "sales_last_year": getCount(plu, name, 365, end),
+            }
+        )
