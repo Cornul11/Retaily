@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import DatePicker from "../DatePicker";
+import DatePicker from "../datePicker";
 import ProductSalesChart from "../../charts/productSalesChart";
 
 class ProductSalesChartWrapper extends Component {
