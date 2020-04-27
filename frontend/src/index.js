@@ -1,12 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Barchart from "./components/charts/barchart";
-import ProductInfo from "./components/input/productInfo";
-import NavBar from "./components/design/NavBar";
+import InventoryBarchartPage from "./pages/inventoryBarchartPage";
+import ProductInfoDetailedPage from "./pages/productInfoDetailedPage";
+import HomePage from "./pages/HomePage";
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
-ReactDOM.render(
-      <div>
-        <NavBar />
-        <Barchart url="/inventory/" />
-      </div>, document.getElementById("root")
-);
+const App = () => (
+      <BrowserRouter>
+        <Route exact path='/' component={HomePage}/>
+        <Route path='/inventorybarchart' component={InventoryBarchartPage}/>
+        <Route path='/detailed/productinfo' component={ProductInfoDetailedPage}/>
+      </BrowserRouter>
+); 
+ReactDOM.render(<App/>, document.getElementById("root"));

@@ -17,10 +17,10 @@ class NavBar extends Component {
                             <a className="nav-link" href="/">Home</a>
                         </li>
                         <li className="nav-item active">
-                            <a className="nav-link" href="/products">Products sold</a>
+                            <a className="nav-link" href="/inventorybarchart">Products sold</a>
                         </li>
                         <li className="nav-item active">
-                            <a className="nav-link" href="https://google.com">Google</a>
+                            <a className="nav-link" href="/detailed/productinfo">product info</a>
                         </li>
                         </ul>
                     </div>
