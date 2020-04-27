@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import InventoryBarchartPage from "./pages/inventoryBarchartPage";
 import ProductInfoDetailedPage from "./pages/productInfoDetailedPage";
 import HomePage from "./pages/HomePage";
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 
 const App = () => (
       <BrowserRouter>

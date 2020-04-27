@@ -155,27 +155,21 @@ class Barchart extends Component {
 
   render() {
     return (
-          <div className="container">
-            <div className="card border-0 shadow my-5">
-              <div className="card-body p-5">
-                <div id="wrapper" className="chartWrapper">
-                  <canvas id="myChart" width={10000} height="500"/>
-                  <button onClick={() => {
-                    this.setSort('count')
-                  }}>Sort by count
-                  </button>
-                  <button onClick={() => {
-                    this.setSort('name')
-                  }}>Sort by name
-                  </button>
-                  <button onClick={this.handleDescendingToggle}>
-                  {this.state.desc ? 'Set ascending' : "Set descending"}
-                  </button>
-                  <input type="text" onChange={this.handleChangeFilter} />
-                </div>
-              </div>
-            </div>
-          </div>
+      <div id="wrapper" className="chartWrapper">
+        <canvas id="myChart" width={10000} height="500"/>
+          <button onClick={() => {
+              this.setSort('count')
+            }}>Sort by count
+          </button>
+          <button onClick={() => {
+              this.setSort('name')
+            }}>Sort by name
+          </button>
+          <button onClick={this.handleDescendingToggle}>
+            {this.state.desc ? 'Set ascending' : "Set descending"}
+          </button>
+          <input type="text" onChange={this.handleChangeFilter} />
+      </div>
     );
   }
 }

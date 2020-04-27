@@ -77,13 +77,17 @@ class ProductInfoTable extends Component {
 
   renderTable() {
     let table = [];
+    let index = 0;
     Object.keys(this.state.data).forEach((key) => {
       table.push(
-        <tr>
-          <td>{key}</td>
-          <td>{this.state.data[key]}</td>
-        </tr>
+        <thead key={index}>
+          <tr key={index}>
+            <th>{key}</th>
+            <th>{this.state.data[key]}</th>
+          </tr>
+        </thead>
       );
+      index++;
     });
     return table;
   }
