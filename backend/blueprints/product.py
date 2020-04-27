@@ -16,11 +16,12 @@ def product():
         elif name is not None:
             product = ProductInfo.query.filter(ProductInfo.name == name).first()
         else:
-            abort(400)
+            products = ProductInfo.query
+            if products is not None:
+                return {"products": [product.serialized for product in products]}
         if product is not None:
             return jsonify(product.serialized)
         abort(400)
-
 
 @product_bp.route("/buyprice/", methods=["PUT"])
 def product_buyprice():
