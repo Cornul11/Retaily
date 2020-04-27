@@ -1,63 +1,8 @@
-import pprint
 import sys
-import time
-import mysql.connector
+from typing import Dict, Tuple, Optional
 
 
-def parse_file(filepath):
-    records = []
-    with open(filepath, "r") as file_object:
-        file_contents = file_object.read().strip()
-
-        # fix for *FOUT NR* getting filtered out as a separate product because of the stars
-        file_contents = file_contents.replace("*FOUT NR*)", "[FOUT NR])")
-
-        journal_records = file_contents.split("===")[1:-1]
-
-        for journal_record in journal_records:
-            if "Aborted Sale" in journal_record:
-                splitter_string = "---\n"
-                aborted_sale = True
-            else:
-                splitter_string = "---\n---"
-                aborted_sale = False
-
-            temp_split = journal_record.split(splitter_string)
-
-            # Parsing the intro part containing the basic data about the record
-            record_no, record_date, record_cashier, record_type = parse_journal_data(
-                temp_split[0]
-            )
-
-            # Parsing the purchased products
-            if "NoSale" in journal_record:
-                products = []
-            elif "NeutralList" in journal_record:
-                neutral_list_split = temp_split[0].split("---\n")
-                products = parse_components(neutral_list_split[2])
-            elif "ReportRecord" in journal_record:
-                # these can supposedly be ignored?
-                pass
-            elif aborted_sale:
-                products = parse_components(temp_split[2])
-            else:
-                products = parse_components(temp_split[1])
-
-            local_record = {
-                "journal_record_no": record_no,
-                "journal_record_date": record_date,
-                "journal_record_cashier": record_cashier,
-                "journal_record_type": record_type,
-                "journal_record_aborted": aborted_sale,
-                "journal_record_products": products,
-            }
-
-            records.append(dict(local_record))
-
-    return records
-
-
-def parse_journal_data(string):
+def parse_journal_data(string: str) -> Tuple[Optional[str], Optional[str], Optional[str], Optional[str]]:
     journal_record_no = None
     journal_record_date = None
     journal_record_cashier = None
@@ -81,7 +26,7 @@ def parse_journal_data(string):
     )
 
 
-def parse_components(string):
+def parse_components(string: str) -> Dict:
     products = []
 
     for product in string.strip().split("*")[1:]:
@@ -126,7 +71,7 @@ def parse_components(string):
     return products
 
 
-def parse_product(product):
+def parse_product(product: str) -> Dict:
     product_plu = None
     product_name = None
     product_amount = None
@@ -178,7 +123,7 @@ PAYMENT_ROUNDING_ITEMS = {
 }
 
 
-def parse_payment_rounding(product):
+def parse_payment_rounding(product: str) -> Dict:
     # prc stands for PaymentRoundingCompensation
     prc = dict.fromkeys(PAYMENT_ROUNDING_ITEMS.keys())
 
@@ -196,7 +141,7 @@ SUBTOTAL_SALE_ITEMS = {
 }
 
 
-def parse_subtotal(product):
+def parse_subtotal(product: str) -> Dict:
     # ssi stands for SubtotalSaleItem
     ssi = dict.fromkeys(SUBTOTAL_SALE_ITEMS.keys())
 
@@ -227,7 +172,7 @@ CARD_PAYMENT_ITEMS = {
 }
 
 
-def parse_card_payment(product):
+def parse_card_payment(product: str) -> Dict:
     # cp stands for CardPayment
     cp = dict.fromkeys(CARD_PAYMENT_ITEMS.keys())
 
@@ -274,7 +219,7 @@ MIX_MATCH_ITEMS = {
 }
 
 
-def parse_mix_match(product):
+def parse_mix_match(product: str) -> Dict:
     # mm stands for MixAndMatchDiscountItem
     mm = dict.fromkeys(MIX_MATCH_ITEMS.keys())
 
@@ -297,14 +242,14 @@ CASH_WITHDRAWAL_ITEMS = {
 }
 
 
-def parse_cash_withdrawal(product):
+def parse_cash_withdrawal(product: str) -> Dict:
     # cw stands for CashWithdrawal
     cw = dict.fromkeys(CASH_WITHDRAWAL_ITEMS.keys())
 
     for line in product.splitlines():
         for key, value in CASH_WITHDRAWAL_ITEMS.items():
             if value in line:
-                if value is "CANCELED":
+                if value == "CANCELED":
                     cw[key] = True
                 else:
                     cw[key] = line.split(":")[1].strip()
@@ -323,7 +268,7 @@ CASH_PAYMENT_ITEMS = {
 }
 
 
-def parse_cash_payment(product):
+def parse_cash_payment(product: str) -> Dict:
     # cp stands for CashPayment
     cp = dict.fromkeys(CASH_PAYMENT_ITEMS.keys())
 
@@ -332,15 +277,3 @@ def parse_cash_payment(product):
             if value in line:
                 cp[key] = line.split(":")[1].strip()
     return cp
-
-
-start_time = time.time()
-local_data = parse_file("journal_parser/journal_2017-09-01_19-30.txt")
-
-# debug info
-print(
-    "parsed %d receipts in %s seconds" % (len(local_data), (time.time() - start_time))
-)
-
-pp = pprint.PrettyPrinter(indent=4, width=100)
-pp.pprint(local_data)
