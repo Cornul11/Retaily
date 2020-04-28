@@ -2,14 +2,14 @@ from app import db
 
 
 class Product(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
     plu = db.Column(db.BigInteger)
     name = db.Column(db.String(50))
     buying_price = db.Column(db.Float, nullable=True)
     selling_price = db.Column(db.Float, nullable=True)
     discount = db.Column(db.Float, nullable=True)
     transaction_id = db.Column(
-        db.Integer, db.ForeignKey("transaction.id"), nullable=True
+        db.BigInteger, db.ForeignKey("transaction.id"), nullable=True
     )
 
     @property
@@ -26,11 +26,11 @@ class Product(db.Model):
 
 
 class Transaction(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
     date_time = db.Column(db.DateTime, nullable=True)
-    receipt_number = db.Column(db.Integer, nullable=True)
+    receipt_number = db.Column(db.BigInteger, nullable=True)
     total_amount = db.Column(db.Float, nullable=True)
-    card_serial = db.Column(db.Integer, nullable=True)
+    card_serial = db.Column(db.BigInteger, nullable=True)
     change = db.Column(db.Float, nullable=True)
     products = db.relationship("Product", backref="contains")
 
@@ -47,7 +47,7 @@ class Transaction(db.Model):
 
 
 class ProductInfo(db.Model):
-    plu = db.Column(db.Integer, primary_key=True)
+    plu = db.Column(db.BigInteger, primary_key=True)
     name = db.Column(db.String(50))
     buying_price = db.Column(db.Float, nullable=True)
     selling_price = db.Column(db.Float, nullable=True)
