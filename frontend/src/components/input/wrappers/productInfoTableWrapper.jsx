@@ -26,6 +26,7 @@ class ProductInfoTableWrapper extends Component {
         identifier={this.props.identifier}
         text={this.props.text}
         onLoaded={this.onLoaded}
+        extended={this.props.extended}
       />
     );
   }

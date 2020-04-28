@@ -19,6 +19,9 @@ class ProductInfo extends Component {
     this.handleScanButton = this.handleScanButton.bind(this);
     this.onDetected = this.onDetected.bind(this);
     this.handleChartTypeChange = this.handleChartTypeChange.bind(this);
+    if(!this.props.extended){
+      this.state.scanning= true;
+    }
   }
 
   handleIdentifierChange(event) {
@@ -26,7 +29,9 @@ class ProductInfo extends Component {
   }
 
   handleTextChange(event) {
-    this.setState({ text: event.target.value, scanning: false });
+    //commented out the two scanning: false parts because I needed to refresh to the page to scan again
+    //this.setState({ text: event.target.value, scanning: false });
+    this.setState({ text: event.target.value });
   }
 
   handleScanButton() {
@@ -34,7 +39,8 @@ class ProductInfo extends Component {
   }
 
   onDetected(result) {
-    this.setState({ scanning: false, text: result });
+    //this.setState({ scanning: false, text: result });
+    this.setState({ text: result });
   }
 
   scanButtonText() {
@@ -107,6 +113,7 @@ class ProductInfo extends Component {
         <ProductInfoTableWrapper
           identifier={this.state.identifier}
           text={this.state.text}
+          extended={this.props.extended}
         />
       );
     }
@@ -126,17 +133,33 @@ class ProductInfo extends Component {
   }
 
   render() {
-    return (
-      <div>
-        {this.renderSelectIdentifier()}
-        {this.renderInputText()}
-        {this.renderScanButton()}
-        {this.renderScanner()}
-        {this.renderSelectChartType()}
-        {this.renderProductInfoTableWrapper()}
-        {this.renderProductSalesChartWrapper()}
-      </div>
-    );
+    if(this.props.extended){
+      return(
+        <div>
+          {this.renderSelectIdentifier()}
+          {this.renderInputText()}
+          {this.renderScanButton()}
+          {this.renderScanner()}
+          {this.renderSelectChartType()}
+          {this.renderProductInfoTableWrapper()}
+          {this.renderProductSalesChartWrapper()}
+        </div>
+      );
+    }
+    else{
+      /* Less options, but easier to use */
+      return(
+        <div>
+          {this.renderScanner()}
+          <center>
+            {this.renderInputText()}
+            {this.renderProductInfoTableWrapper()}
+          </center>
+        </div>
+      );
+
+    }
+  
   }
 }
 
