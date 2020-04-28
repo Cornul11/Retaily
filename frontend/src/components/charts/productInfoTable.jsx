@@ -6,17 +6,7 @@ class ProductInfoTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: {
-        plu: null,
-        name: null,
-        buying_price: null,
-        selling_price: null,
-        discount: null,
-        sales_last_week: null,
-        sales_last_month: null,
-        sales_last_quarter: null,
-        sales_last_year: null,
-      },
+      data: this.getEmptyData()
     };
   }
 
@@ -25,20 +15,39 @@ class ProductInfoTable extends Component {
       this.loadTable();
     }
   }
+  getEmptyData() {
+    if(this.props.extended){
+      return(
+        {
+          plu: null,
+          name: null,
+          buying_price: null,
+          selling_price: null,
+          discount: null,
+          sales_last_week: null,
+          sales_last_month: null,
+          sales_last_quarter: null,
+          sales_last_year: null,
+        }
+      );
+    }
+    else{
+      return (
+        {
+          plu: null,
+          name: null,
+          sales_last_week: null,
+          sales_last_month: null,
+          sales_last_quarter: null,
+          sales_last_year: null,
+        }
+      );
+    }
+  }
 
   async loadTable() {
     this.props.onLoaded();
-    let newData = {
-      plu: null,
-      name: null,
-      buying_price: null,
-      selling_price: null,
-      discount: null,
-      sales_last_week: null,
-      sales_last_month: null,
-      sales_last_quarter: null,
-      sales_last_year: null,
-    };
+    let newData = this.getEmptyData();
     let url = "/product/?" + this.props.identifier + "=" + this.props.text;
     await fetch(url, {
       method: "GET",
@@ -48,9 +57,11 @@ class ProductInfoTable extends Component {
         (response) => {
           newData["plu"] = response["plu"];
           newData["name"] = response["name"];
-          newData["buying_price"] = response["buying_price"];
-          newData["selling_price"] = response["selling_price"];
-          newData["discount"] = response["discount"];
+          if(this.props.extended){
+            newData["buying_price"] = response["buying_price"];
+            newData["selling_price"] = response["selling_price"];
+            newData["discount"] = response["discount"];
+          }
         },
         (error) => {
           console.log(error);

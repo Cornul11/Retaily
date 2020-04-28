@@ -12,7 +12,7 @@ class ProductInfoDetailedPage extends Component{
                     <div className="card-body p-5">
                     {/*----- put page content under this line -----*/}
 
-                    <ProductInfo />
+                    <ProductInfo extended={this.props.extended}/>
 
                     {/*----- page content end -----*/}
                     </div>

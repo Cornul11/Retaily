@@ -20,7 +20,10 @@ class NavBar extends Component {
                             <a className="nav-link" href="/inventorybarchart">Products sold</a>
                         </li>
                         <li className="nav-item active">
-                            <a className="nav-link" href="/detailed/productinfo">product info</a>
+                            <a className="nav-link" href="/extended/productinfo">Extended Product info</a>
+                        </li>
+                        <li className="nav-item active">
+                            <a className="nav-link" href="/simple/productinfo">Simple Product Info</a>
                         </li>
                         </ul>
                     </div>
