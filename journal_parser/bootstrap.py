@@ -87,17 +87,10 @@ class ArchiveEventHandler(RegexMatchingEventHandler):
         with ZipFile(event.src_path, 'r') as zip_file:
             zip_file.extractall('temp')
 
-        zip_file_folder = event.src_path.split('/')[-1]
-
-        for filename in os.listdir('temp/' + os.path.splitext(zip_file_folder)[0]):
-            if filename.endswith('.zip'):
-                with ZipFile('temp/' + os.path.splitext(zip_file_folder)[0] + '/' + filename, 'r') as zip_file:
-                    zip_file.extractall('temp/' + os.path.splitext(zip_file_folder)[0])
-
-        for filename in os.listdir('temp/0001'):
+        for filename in os.listdir('temp'):
             if filename.endswith('.txt'):
-                print('parsing temp/0001/' + filename)
-                local_data = parse_file('temp/0001/' + filename)
+                print('parsing ' + filename)
+                local_data = parse_file('temp/' + filename)
 
                 # debug info
                 print(
