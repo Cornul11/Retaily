@@ -46,31 +46,31 @@ class DatePicker extends Component {
 
   render() {
     return (
-      <div>
-        <div>
-          <p>Year</p>
-          <input
-            type="text"
-            value={this.state.year}
-            onChange={this.handleYearChange}
-          />
+      <div className="input-group mt-2">
+        <div className="input-group-prepend" id="button-addon3">
+    <span className="input-group-text" id="basic-addon1">{this.props.label}</span>
         </div>
-        <div>
-          <p>Month</p>
-          <input
-            type="text"
-            value={this.state.month}
-            onChange={this.handleMonthChange}
-          />
-        </div>
-        <div>
-          <p>Day</p>
-          <input
-            type="text"
-            value={this.state.day}
-            onChange={this.handleDayChange}
-          />
-        </div>
+        <input
+          type="text"
+          value={this.state.day}
+          onChange={this.handleDayChange}
+          className="form-control"
+          placeholder="day"
+        />
+        <input
+          type="text"
+          value={this.state.month}
+          onChange={this.handleMonthChange}
+          className="form-control"
+          placeholder="month"
+        />
+        <input
+          type="text"
+          value={this.state.year}
+          onChange={this.handleYearChange}
+          className="form-control"
+          placeholder="year"
+        />
       </div>
     );
   }
