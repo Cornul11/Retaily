@@ -7,26 +7,47 @@ import datetime
 koppelverkoop_bp = Blueprint("koppelverkoop", __name__)
 
 
-def getKoppelproducts(Transaction):
-    data = []
-    data.append(Transaction.getProducts())
-    return data
+#def getKoppelproducts(Transaction):
+#    data = []
+#    data.append(Transaction.getProducts())
+#   return data
 
-# Define the routes
-@koppelverkoop_bp.route("/", methods=["GET"])
-def koppelproduct():
+def getId(plu, name, days, end):
+    start = end - datetime.timedelta(days=days)
+    if plu is not None:
+        return (
+            db.session.query(Product, Transaction)
+            .join(Transaction)
+            .filter(
+                (Product.plu == plu)
+                & (Transaction.date_time >= start)
+                & (Transaction.date_time <= end)
+            )
+        )
+    else:
+        return (
+            db.session.query(Product, Transaction)
+            .join(Transaction)
+            .filter(
+                (Product.name == name)
+                & (Transaction.date_time >= start)
+                & (Transaction.date_time <= end)
+            )
+        )
+
+@koppelverkoop_bp.route("/test/", methods=["GET"])
+def quick():
     if request.method == "GET":
         plu = request.args.get("plu", None)
         name = request.args.get("name", None)
-        product = request.args.get("koppeledproduct", None)
-        if plu is not None:
-            koppelproduct = ProductInfo.query.filter(ProductInfo.plu == plu).first()
-        elif name is not None:
-            koppelproduct = ProductInfo.query.filter(ProductInfo.name == name).first()
-        elif product is not None:
-            koppelproduct = ProductInfo.query.filter(Product.koppeledproduct == product).first()
-        else:
+        if plu is None and name is None:
             abort(400)
-        if koppelproduct is not None:
-            return jsonify(koppelproduct.serialized)
-        abort(400)
+        end = datetime.datetime.now()
+        return jsonify(
+            {
+                "ids_last_week": getId(plu, name, 7, end),
+                "ids_last_month": getId(plu, name, 30, end),
+                "ids_last_quarter": getId(plu, name, 90, end),
+                "ids_last_year": getId(plu, name, 365, end),
+            }
+        )
