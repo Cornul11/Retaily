@@ -1,10 +1,11 @@
 import sys
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple, Optional, List
 
-from journal_parser.database_sender import send_product_info
+from journal_parser.database_sender import DataSender
 
 
 def parse_file(filepath: str) -> object:
+    data_sender = DataSender()
     records = []
 
     # these journal records can be ignored as they contain no valuable information for our scope
@@ -52,11 +53,11 @@ def parse_file(filepath: str) -> object:
             elif 'NeutralList' in journal_record:
                 # stuff that has been thrown out at the end of the day
                 neutral_list_split = temp_split[0].split('---\n')
-                products = parse_components(neutral_list_split[2], filepath)
+                products = parse_components(neutral_list_split[2], filepath, data_sender)
             elif aborted_sale:
-                products = parse_components(temp_split[2], filepath)
+                products = parse_components(temp_split[2], filepath, data_sender)
             else:
-                products = parse_components(temp_split[1], filepath)
+                products = parse_components(temp_split[1], filepath, data_sender)
 
             local_record = {
                 'journal_record_no': record_no,
@@ -68,7 +69,7 @@ def parse_file(filepath: str) -> object:
             }
 
             records.append(dict(local_record))
-
+    del data_sender
     return records
 
 
@@ -96,7 +97,7 @@ def parse_journal_data(string: str) -> Tuple[Optional[str], Optional[str], Optio
     )
 
 
-def parse_components(string: str, filename: str) -> Dict:
+def parse_components(string: str, filename: str, data_sender: DataSender) -> List[dict]:
     products = []
     ignored_components = ['ItemNewPriceDiscountSaleItem', 'SubTotalPercentDiscountSaleItem', 'CouponCodeItem',
                           'ItemFixedAmountDiscountSaleItem', 'ProductReturn', 'ItemPercentDiscountSaleItem']
@@ -135,7 +136,7 @@ def parse_components(string: str, filename: str) -> Dict:
 
         elif 'PLU' in product:
             local_product = parse_product(product)
-            send_product_info(local_product)
+            data_sender.send_product_info(local_product)
             products.append(dict(local_product))
 
         elif any(elem in product for elem in ignored_components):

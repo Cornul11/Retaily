@@ -3,53 +3,62 @@ import mysql
 import configparser
 from mysql.connector import Error
 
-db_credentials = {}
 
-
-def create_uri():
-    global db_credentials
+def load_credentials():
     config = configparser.ConfigParser()
     config.read("credentials.ini")
     db_credentials = {'username': config["database"]["db_username"],
                       'password': config["database"]["db_password"],
                       'hostname': config["database"]["db_hostname"],
                       'database': config["database"]["db_database"]}
+    return db_credentials
 
 
-def send_product_info(product):
-    try:
-        connection = mysql.connector.connect(host=db_credentials['hostname'],
-                                             password=db_credentials['password'],
-                                             user=db_credentials['username'],
-                                             database=db_credentials['database'])
+class DataSender:
+    def __init__(self):
+        self.db_credentials = load_credentials()
+        self.connection = self.initialize_connection()
 
-        mysql_select_query = """SELECT * FROM product_info WHERE plu = '%d'""" % int(
-            product["product_plu"]
-        )
-        cursor = connection.cursor(buffered=True)
-        cursor.execute(mysql_select_query)
-        if cursor.rowcount == 0:
-            mysql_insert_query = (
-                    """INSERT INTO product_info (plu, name, selling_price) VALUES ('%d', '%s', '%f')"""
-                    % (
-                        int(product["product_plu"]),
-                        product["product_name"],
-                        float(product["product_price"].replace(",", ".")),
-                    )
-            )
-            cursor.execute(mysql_insert_query)
-            connection.commit()
-            print(cursor.rowcount, "Record inserted successfully")
-            cursor.close()
-        else:
-            print("already in the database")
-            cursor.close()
-    except Error as error:
-        print("Failed to insert record into table {}".format(error), file=sys.stderr)
-    finally:
-        if connection.is_connected():
-            connection.close()
+    def __del__(self):
+        self.close_connection()
+
+    def initialize_connection(self):
+        connection = mysql.connector.connect(host=self.db_credentials['hostname'],
+                                             password=self.db_credentials['password'],
+                                             user=self.db_credentials['username'],
+                                             database=self.db_credentials['database'])
+        return connection
+
+    def close_connection(self):
+        if self.connection.is_connected():
+            self.connection.close()
             print("Mysql connection closed")
+
+    def send_product_info(self, product):
+        try:
+            mysql_select_query = """SELECT * FROM product_info WHERE plu = '%d'""" % int(
+                product["product_plu"]
+            )
+            cursor = self.connection.cursor(buffered=True)
+            cursor.execute(mysql_select_query)
+            if cursor.rowcount == 0:
+                mysql_insert_query = (
+                        """INSERT INTO product_info (plu, name, selling_price) VALUES ('%d', '%s', '%f')"""
+                        % (
+                            int(product["product_plu"]),
+                            product["product_name"],
+                            float(product["product_price"].replace(",", ".")),
+                        )
+                )
+                cursor.execute(mysql_insert_query)
+                self.connection.commit()
+                print(cursor.rowcount, "Record inserted successfully")
+                cursor.close()
+            else:
+                print("already in the database")
+                cursor.close()
+        except Error as error:
+            print("Failed to insert record into table {}".format(error), file=sys.stderr)
 
 
 def send_transaction_info(cp):
