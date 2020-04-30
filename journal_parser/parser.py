@@ -2,6 +2,74 @@ import sys
 from typing import Dict, Tuple, Optional
 
 
+def parse_file(filepath: str) -> object:
+    records = []
+
+    # these journal records can be ignored as they contain no valuable information for our scope
+    record_ignore_words = ['Cancellation', 'Customer', 'InOutPayment', 'ReportRecord',
+                           'JournalRecordNumberReset', 'NoSale', 'DataClear']
+
+    # fix for various products that have stars in their naming and break the tokenizing of products
+    record_replace_strings = {'*FOUT NR*)': '[FOUT NR])',
+                              '*PET*': 'PET',
+                              '*P*': 'P',
+                              '*PROMO*': 'PROMO',
+                              '*M*': 'M',
+                              '*S*': 'S',
+                              '*KP*': 'KP',
+                              '1* 500GR': '1 500GR'}
+
+    with open(filepath, 'r') as file_object:
+        file_contents = file_object.read().strip()
+
+        # replaces corrupted product names
+        for key, value in record_replace_strings.items():
+            file_contents = file_contents.replace(key, value)
+
+        journal_records = file_contents.split('===')[1:]
+
+        for journal_record in journal_records:
+
+            if 'Aborted Sale' in journal_record:
+                splitter_string = '---\n'
+                aborted_sale = True
+            else:
+                splitter_string = '---\n---'
+                aborted_sale = False
+
+            temp_split = journal_record.split(splitter_string)
+
+            # Parsing the intro part containing the basic data about the record
+            record_no, record_date, record_cashier, record_type = parse_journal_data(
+                temp_split[0]
+            )
+
+            # Parsing the purchased products
+            if any(elem in journal_record for elem in record_ignore_words):
+                continue
+            elif 'NeutralList' in journal_record:
+                # stuff that has been thrown out at the end of the day
+                neutral_list_split = temp_split[0].split('---\n')
+                products = parse_components(neutral_list_split[2], filepath)
+            elif aborted_sale:
+                products = parse_components(temp_split[2], filepath)
+            else:
+                products = parse_components(temp_split[1], filepath)
+
+            local_record = {
+                'journal_record_no': record_no,
+                'journal_record_date': record_date,
+                'journal_record_cashier': record_cashier,
+                'journal_record_type': record_type,
+                'journal_record_aborted': aborted_sale,
+                'journal_record_products': products,
+            }
+
+            records.append(dict(local_record))
+
+    return records
+
+
 def parse_journal_data(string: str) -> Tuple[Optional[str], Optional[str], Optional[str], Optional[str]]:
     journal_record_no = None
     journal_record_date = None
@@ -28,7 +96,8 @@ def parse_journal_data(string: str) -> Tuple[Optional[str], Optional[str], Optio
 
 def parse_components(string: str, filename: str) -> Dict:
     products = []
-    ignored_components = ['ItemNewPriceDiscountSaleItem', 'SubTotalPercentDiscountSaleItem', 'CouponCodeItem', 'ItemFixedAmountDiscountSaleItem', 'ProductReturn', 'ItemPercentDiscountSaleItem']
+    ignored_components = ['ItemNewPriceDiscountSaleItem', 'SubTotalPercentDiscountSaleItem', 'CouponCodeItem',
+                          'ItemFixedAmountDiscountSaleItem', 'ProductReturn', 'ItemPercentDiscountSaleItem']
 
     for product in string.strip().split('*')[1:]:
         if 'PaymentRoundingCompensation' in product:
@@ -187,32 +256,6 @@ def parse_card_payment(product: str) -> Dict:
         for key, value in CARD_PAYMENT_ITEMS.items():
             if value in line:
                 cp[key] = line.split(': ')[-1].strip()
-    # from mysql.connector import Error
-    # from mysql.connector import errorcode
-    # try:
-    #     connection = mysql.connector.connect(host='remotemysql.com',
-    #                                          database='tm69H1sxd0',
-    #                                          user='tm69H1sxd0',
-    #                                          password='xnSlasPerh')
-    #     print('card_usage_date = ', cp['cp_date'])
-    #     print('card_transaction_id = ', cp['cp_transaction'])
-    #     print('card_total_amount = ', cp['cp_drawer_amount'])
-    #     print('card_serial =', cp['cp_card_serial_number'])
-    #     from datetime import datetime
-    #     datetim = datetime.strptime(cp['cp_date'], '%d/%m/%Y %H:%M')
-    #     mysql_insert_query = """INSERT INTO transaction (date_time, receipt_number, total_amount, card_serial) VALUES ('%s', '%d', '%f', '%d')""" % (
-    #         datetim, int(cp['cp_transaction']), float(cp['cp_drawer_amount'].replace(',', '.')), int(cp['cp_card_serial_number']))
-    #     cursor = connection.cursor()
-    #     cursor.execute(mysql_insert_query)
-    #     connection.commit()
-    #     print(cursor.rowcount, 'Record inserted succesfully')
-    #     cursor.close()
-    # except mysql.connector.Error as error:
-    #     print('Failed to insert record into table {}'.format(error))
-    # finally:
-    #     if connection.is_connected():
-    #         connection.close()
-    #         print('Mysql connection closed')
     return cp
 
 
