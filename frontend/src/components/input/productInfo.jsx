@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Scanner from "../barcode/scanner";
 import ProductSalesChartWrapper from "./wrappers/productSalesChartWrapper";
 import ProductInfoTableWrapper from "./wrappers/productInfoTableWrapper";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 /** Component that retrieves information about an individual product */
 
@@ -61,6 +62,7 @@ class ProductInfo extends Component {
         id="identifier"
         value={this.state.identifier}
         onChange={this.handleIdentifierChange}
+        className={"form-control btn btn-primary"}
       >
         <option value="plu">plu</option>
         <option value="name">name</option>
@@ -73,6 +75,8 @@ class ProductInfo extends Component {
       <input
         type="text"
         value={this.state.text}
+        className="form-control "
+        placeholder={(this.props.extended ? "" : "EAN-code")}
         onChange={this.handleTextChange}
       />
     );
@@ -81,7 +85,7 @@ class ProductInfo extends Component {
   renderScanButton() {
     if (this.state.identifier === "plu") {
       return (
-        <button onClick={this.handleScanButton}>{this.scanButtonText()}</button>
+        <button className="btn btn-secondary" onClick={this.handleScanButton}>{this.scanButtonText()}</button>
       );
     }
     return null;
@@ -100,6 +104,7 @@ class ProductInfo extends Component {
         id="chartType"
         value={this.state.chartType}
         onChange={this.handleChartTypeChange}
+        className={"form-control"}
       >
         <option value="productInfoTable">current product information</option>
         <option value="productSales">product sales</option>
@@ -136,9 +141,13 @@ class ProductInfo extends Component {
     if(this.props.extended){
       return(
         <div>
-          {this.renderSelectIdentifier()}
-          {this.renderInputText()}
-          {this.renderScanButton()}
+          <div className="input-group mb-2">
+            <div className="input-group-prepend">
+              {this.renderSelectIdentifier()}
+            </div>
+            {this.renderInputText()}
+            {this.renderScanButton()}
+          </div>
           {this.renderScanner()}
           {this.renderSelectChartType()}
           {this.renderProductInfoTableWrapper()}

@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {Chart} from "chart.js";
 import "./charts.css";
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 //TODO: Proper zoom on filter
 //has property url, which is called by the API 
@@ -156,19 +157,31 @@ class Barchart extends Component {
   render() {
     return (
       <div id="wrapper" className="chartWrapper">
-        <canvas id="myChart" width={10000} height="500"/>
-          <button onClick={() => {
-              this.setSort('count')
-            }}>Sort by count
-          </button>
-          <button onClick={() => {
-              this.setSort('name')
-            }}>Sort by name
-          </button>
-          <button onClick={this.handleDescendingToggle}>
-            {this.state.desc ? 'Set ascending' : "Set descending"}
-          </button>
-          <input type="text" onChange={this.handleChangeFilter} />
+        <canvas id="myChart" width={10000} height="500" />
+          <div className="btn-group" role="group">
+            <div className="btn-group" role="group">
+              <button id="btnGroupDrop1" type="button" className="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Sort by
+              </button>
+              <div className="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                <button type="button" className={"dropdown-item " + (this.state.sort === String("count") ? "active" : "")}
+                  onClick={() => {
+                  this.setSort('count')
+                }}>Count
+              </button>
+              <button type="button" className={"dropdown-item "+ (this.state.sort === String("name") ? "active" : "")}
+                onClick={() => {
+                  this.setSort('name')
+                }}>Name
+              </button>
+              </div>
+            </div>
+            
+            <button type="button" className="btn btn-secondary" onClick={this.handleDescendingToggle}>
+              {this.state.desc ? 'Set ascending' : "Set descending"}
+            </button>
+            <input type="text" className="form-control" onChange={this.handleChangeFilter} />
+          </div>
       </div>
     );
   }

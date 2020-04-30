@@ -44,6 +44,7 @@ class ProductSalesChartWrapper extends Component {
         id="interval"
         value={this.state.interval}
         onChange={this.handleIntervalChange}
+        className={"form-control"}
       >
         <option value="hour">hour</option>
         <option value="day">day</option>
@@ -67,16 +68,16 @@ class ProductSalesChartWrapper extends Component {
 
   render() {
     return (
-      <div>
-        <h1>Start Date</h1>
-        <DatePicker onChange={this.handleStartDateChange} />
-        <h1>End Date</h1>
-        <DatePicker onChange={this.handleEndDateChange} />
-        <h1>Interval</h1>
-        {this.renderIntervalSelect()}
-        <div>
-          <button onClick={this.handleRetrieveButton}>retrieve</button>
-        </div>
+      <div className="input-group">
+        <DatePicker label={"Start Date"} onChange={this.handleStartDateChange} />
+        <DatePicker label ={"End Date"} onChange={this.handleEndDateChange} />
+        <div className="input-group mt-2">
+          <div className="input-group-prepend">
+            <span className="input-group-text" id="basic-addon1">Interval</span>
+          </div>
+          {this.renderIntervalSelect()}
+          </div>
+        <button className={"btn btn-secondary mt-2 btn-block"} onClick={this.handleRetrieveButton}>retrieve</button>
         {this.renderSalesChart()}
       </div>
     );
