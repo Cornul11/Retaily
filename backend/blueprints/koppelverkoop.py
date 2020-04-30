@@ -7,7 +7,7 @@ import datetime
 koppelverkoop_bp = Blueprint("koppelverkoop", __name__)
 
 
-def get_koppelProducts(plu, name, days, end):
+def get_koppel_products(plu, name, days, end):
     trans_ids = get_id(plu, name, days, end)
     trans_ids = list(set(trans_ids))
     data = []
@@ -74,4 +74,4 @@ def lijst():
         if plu is None and name is None:
             abort(400)
         end = datetime.datetime.now()
-        return jsonify({"koppelproducts": get_koppelProducts(plu, name, 365, end),})
+        return jsonify({"koppelproducts": get_koppel_products(plu, name, 365, end),})
