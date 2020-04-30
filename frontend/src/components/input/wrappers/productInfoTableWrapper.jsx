@@ -36,7 +36,7 @@ class ProductInfoTableWrapper extends Component {
   render() {
     return (
       <div>
-        <button className={"btn btn-secondary mt-2 btn-block"} onClick={this.handleRetrieveButton}>retrieve</button>
+        <button className={"btn btn-secondary mt-2 mb-2 btn-block"} onClick={this.handleRetrieveButton}>retrieve</button>
         {this.renderProductInfoTable()}
       </div>
     );
