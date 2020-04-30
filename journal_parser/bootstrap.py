@@ -12,15 +12,33 @@ from journal_parser.parser import parse_journal_data, parse_components
 
 def parse_file(filepath: str) -> object:
     records = []
+    record_ignore_words = ['JournalRecordNumberReset', 'NoSale', 'DataClear']
+
     with open(filepath, "r") as file_object:
         file_contents = file_object.read().strip()
 
         # fix for *FOUT NR* getting filtered out as a separate product because of the stars
         file_contents = file_contents.replace("*FOUT NR*)", "[FOUT NR])")
+        # fix for *PET* getting filtered out as a separate product because of the stars
+        file_contents = file_contents.replace("*PET*", "PET")
+        # fix for *P* getting filtered out as a separate product because of the stars
+        file_contents = file_contents.replace("*P*", "P")
+        # fix for *PROMO* getting filtered out as a separate product because of the stars
+        file_contents = file_contents.replace("*PROMO*", "PROMO")
+        # fix for *M* getting filtered out as a separate product because of the stars
+        file_contents = file_contents.replace("*M*", "M")
+        # fix for *S* getting filtered out as a separate product because of the stars
+        file_contents = file_contents.replace("*S*", "S")
+        # fix for *KP* getting filtered out as a separate product because of the stars
+        file_contents = file_contents.replace("*KP*", "KP")
 
-        journal_records = file_contents.split("===")[1:-1]
+        # fix for a product that has * in its name
+        file_contents = file_contents.replace("1* 500GR", "1 500GR")
+
+        journal_records = file_contents.split("===")[1:]
 
         for journal_record in journal_records:
+
             if "Aborted Sale" in journal_record:
                 splitter_string = "---\n"
                 aborted_sale = True
@@ -30,25 +48,28 @@ def parse_file(filepath: str) -> object:
 
             temp_split = journal_record.split(splitter_string)
 
+            if True:
+                for line in temp_split:
+                    print(line)
+                    print('-----------SEPARATOR------------')
+                    print(filepath)
             # Parsing the intro part containing the basic data about the record
             record_no, record_date, record_cashier, record_type = parse_journal_data(
                 temp_split[0]
             )
 
-            products = []
+            record_ignore_words = ['Cancellation', 'Customer', 'InOutPayment', 'ReportRecord', 'JournalRecordNumberReset', 'NoSale', 'DataClear']
+
             # Parsing the purchased products
-            if "NoSale" in journal_record:
-                products = []
-            elif "NeutralList" in journal_record:
+            if any(elem in journal_record for elem in record_ignore_words):
+                continue
+            elif 'NeutralList' in journal_record:
                 neutral_list_split = temp_split[0].split("---\n")
-                products = parse_components(neutral_list_split[2])
-            elif "ReportRecord" in journal_record:
-                # these can supposedly be ignored?
-                pass
+                products = parse_components(neutral_list_split[2], filepath)
             elif aborted_sale:
-                products = parse_components(temp_split[2])
+                products = parse_components(temp_split[2], filepath)
             else:
-                products = parse_components(temp_split[1])
+                products = parse_components(temp_split[1], filepath)
 
             local_record = {
                 "journal_record_no": record_no,
@@ -74,6 +95,7 @@ class ArchiveEventHandler(RegexMatchingEventHandler):
 
     def __init__(self):
         super().__init__(self.ARCHIVE_REGEX)
+        print('Please kill me, thanks')
 
     def on_created(self, event):
         self.process(event)
@@ -83,6 +105,7 @@ class ArchiveEventHandler(RegexMatchingEventHandler):
     extracts in fact multiple new .zip files, after which it extracts these .zip files
     containing the .txt files which are in fact the journal records.
     """
+
     def process(self, event):
         with ZipFile(event.src_path, 'r') as zip_file:
             zip_file.extractall('temp')
@@ -93,16 +116,13 @@ class ArchiveEventHandler(RegexMatchingEventHandler):
                 local_data = parse_file('temp/' + filename)
 
                 # debug info
-                print(
-                    "parsed %d receipts" % (len(local_data))
-                )
+                print("parsed %d receipts" % (len(local_data)))
 
                 pp = pprint.PrettyPrinter(indent=4, width=100)
                 pp.pprint(local_data)
 
 
 class ArchiveWatcher:
-
     """
     Runs the watcher that checks for new zip files in the given path.
     """
@@ -115,6 +135,7 @@ class ArchiveWatcher:
     def run(self):
         self.start()
         try:
+            # check every second for a file update
             while True:
                 time.sleep(1)
         except KeyboardInterrupt:
@@ -127,23 +148,27 @@ class ArchiveWatcher:
     def stop(self):
         self.__event_observer.stop()
         self.__event_observer.join()
+
     def __schedule(self):
         self.__event_observer.schedule(self.__event_handler,
                                        self.__src_path,
                                        recursive=True)
 
 
-
-
 if __name__ == "__main__":
-    src_path = sys.argv[1] if len(sys.argv) > 1 else '.'
-    ArchiveWatcher(src_path).run()
+    pass
+    # src_path = sys.argv[1] if len(sys.argv) > 1 else '.'
+    # ArchiveWatcher(src_path).run()
 
+# start_time = time.time()
+for filename in os.listdir('temp/0002'):
+    if filename.endswith('.txt'):
+        local_data = parse_file('temp/0002/' + filename)
 
+#local_data = parse_file("testing.txt")
+pp = pprint.PrettyPrinter(indent=4, width=100)
+pp.pprint(local_data)
 """
-start_time = time.time()
-local_data = parse_file("journal_parser/journal_2017-09-01_19-30.txt")
-
 # debug info
 print(
     "parsed %d receipts in %s seconds" % (len(local_data), (time.time() - start_time))

@@ -26,8 +26,9 @@ def parse_journal_data(string: str) -> Tuple[Optional[str], Optional[str], Optio
     )
 
 
-def parse_components(string: str) -> Dict:
+def parse_components(string: str, filename: str) -> Dict:
     products = []
+    ignored_components = ['ItemNewPriceDiscountSaleItem', 'SubTotalPercentDiscountSaleItem', 'CouponCodeItem', 'ItemFixedAmountDiscountSaleItem', 'ProductReturn', 'ItemPercentDiscountSaleItem']
 
     for product in string.strip().split("*")[1:]:
         if "PaymentRoundingCompensation" in product:
@@ -66,8 +67,14 @@ def parse_components(string: str) -> Dict:
 
             products.append(dict(local_product))
 
+        elif any(elem in product for elem in ignored_components):
+            # ignore various components of the journal record
+            continue
+
         else:
-            print("NEW FORMAT!", file=sys.stderr)
+            print(product)
+            print("NEW FORMAT in " + filename, file=sys.stderr)
+            sys.exit(1)
     return products
 
 
@@ -83,11 +90,12 @@ def parse_product(product: str) -> Dict:
     line_num = 0
 
     for line in product.strip().split("\n"):
-        if "PLU" in line:
+        if "PLU #" in line:
             if "CANCELED" in line:
                 product_canceled = True
                 product_plu = line.split("#")[1].strip().split(" ")[0]
             else:
+                print(line)
                 product_plu = line.split("#")[1].strip()
         elif " x " in line:
             price_and_amount_line = line.strip().split("x")
