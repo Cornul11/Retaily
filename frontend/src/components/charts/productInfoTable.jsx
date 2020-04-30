@@ -93,8 +93,8 @@ class ProductInfoTable extends Component {
       table.push(
         <thead key={index}>
           <tr key={index}>
-            <th>{key}</th>
-            <th>{this.state.data[key]}</th>
+            <th scope="row">{key}</th>
+            <th scope="row">{this.state.data[key]}</th>
           </tr>
         </thead>
       );
@@ -106,7 +106,7 @@ class ProductInfoTable extends Component {
   render() {
     return (
       <div className="productInfoTable">
-        <table>{this.renderTable()}</table>
+        <table className="table table-bordered">{this.renderTable()}</table>
       </div>
     );
   }
