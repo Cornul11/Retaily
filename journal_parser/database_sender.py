@@ -1,14 +1,28 @@
 import sys
 import mysql
-
+import configparser
 from mysql.connector import Error
+
+db_credentials = {}
+
+
+def create_uri():
+    global db_credentials
+    config = configparser.ConfigParser()
+    config.read("credentials.ini")
+    db_credentials = {'username': config["database"]["db_username"],
+                      'password': config["database"]["db_password"],
+                      'hostname': config["database"]["db_hostname"],
+                      'database': config["database"]["db_database"]}
 
 
 def send_product_info(product):
     try:
-        connection = mysql.connector.connect(
+        connection = mysql.connector.connect(host=db_credentials['hostname'],
+                                             password=db_credentials['password'],
+                                             user=db_credentials['username'],
+                                             database=db_credentials['database'])
 
-        )
         mysql_select_query = """SELECT * FROM product_info WHERE plu = '%d'""" % int(
             product["product_plu"]
         )
