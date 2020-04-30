@@ -12,59 +12,53 @@ from journal_parser.parser import parse_journal_data, parse_components
 
 def parse_file(filepath: str) -> object:
     records = []
+
+    # these journal records can be ignored as they contain no valuable information for our scope
     record_ignore_words = ['JournalRecordNumberReset', 'NoSale', 'DataClear']
 
-    with open(filepath, "r") as file_object:
+    # fix for various products that have stars in their naming and break the tokenizing of products
+    record_replace_strings = {'*FOUT NR*)': '[FOUT NR])',
+                              '*PET*': 'PET',
+                              '*P*': 'P',
+                              '*PROMO*': 'PROMO',
+                              '*M*': 'M',
+                              '*S*': 'S',
+                              '*KP*': 'KP',
+                              '1* 500GR': '1 500GR'}
+
+    with open(filepath, 'r') as file_object:
         file_contents = file_object.read().strip()
 
-        # fix for *FOUT NR* getting filtered out as a separate product because of the stars
-        file_contents = file_contents.replace("*FOUT NR*)", "[FOUT NR])")
-        # fix for *PET* getting filtered out as a separate product because of the stars
-        file_contents = file_contents.replace("*PET*", "PET")
-        # fix for *P* getting filtered out as a separate product because of the stars
-        file_contents = file_contents.replace("*P*", "P")
-        # fix for *PROMO* getting filtered out as a separate product because of the stars
-        file_contents = file_contents.replace("*PROMO*", "PROMO")
-        # fix for *M* getting filtered out as a separate product because of the stars
-        file_contents = file_contents.replace("*M*", "M")
-        # fix for *S* getting filtered out as a separate product because of the stars
-        file_contents = file_contents.replace("*S*", "S")
-        # fix for *KP* getting filtered out as a separate product because of the stars
-        file_contents = file_contents.replace("*KP*", "KP")
+        # replaces corrupted product names
+        for key, value in record_replace_strings.items():
+            file_contents = file_contents.replace(key, value)
 
-        # fix for a product that has * in its name
-        file_contents = file_contents.replace("1* 500GR", "1 500GR")
-
-        journal_records = file_contents.split("===")[1:]
+        journal_records = file_contents.split('===')[1:]
 
         for journal_record in journal_records:
 
-            if "Aborted Sale" in journal_record:
-                splitter_string = "---\n"
+            if 'Aborted Sale' in journal_record:
+                splitter_string = '---\n'
                 aborted_sale = True
             else:
-                splitter_string = "---\n---"
+                splitter_string = '---\n---'
                 aborted_sale = False
 
             temp_split = journal_record.split(splitter_string)
 
-            if True:
-                for line in temp_split:
-                    print(line)
-                    print('-----------SEPARATOR------------')
-                    print(filepath)
             # Parsing the intro part containing the basic data about the record
             record_no, record_date, record_cashier, record_type = parse_journal_data(
                 temp_split[0]
             )
 
-            record_ignore_words = ['Cancellation', 'Customer', 'InOutPayment', 'ReportRecord', 'JournalRecordNumberReset', 'NoSale', 'DataClear']
+            record_ignore_words = ['Cancellation', 'Customer', 'InOutPayment', 'ReportRecord',
+                                   'JournalRecordNumberReset', 'NoSale', 'DataClear']
 
             # Parsing the purchased products
             if any(elem in journal_record for elem in record_ignore_words):
                 continue
             elif 'NeutralList' in journal_record:
-                neutral_list_split = temp_split[0].split("---\n")
+                neutral_list_split = temp_split[0].split('---\n')
                 products = parse_components(neutral_list_split[2], filepath)
             elif aborted_sale:
                 products = parse_components(temp_split[2], filepath)
@@ -72,12 +66,12 @@ def parse_file(filepath: str) -> object:
                 products = parse_components(temp_split[1], filepath)
 
             local_record = {
-                "journal_record_no": record_no,
-                "journal_record_date": record_date,
-                "journal_record_cashier": record_cashier,
-                "journal_record_type": record_type,
-                "journal_record_aborted": aborted_sale,
-                "journal_record_products": products,
+                'journal_record_no': record_no,
+                'journal_record_date': record_date,
+                'journal_record_cashier': record_cashier,
+                'journal_record_type': record_type,
+                'journal_record_aborted': aborted_sale,
+                'journal_record_products': products,
             }
 
             records.append(dict(local_record))
@@ -91,11 +85,10 @@ class ArchiveEventHandler(RegexMatchingEventHandler):
     based on the triggering event.
     """
 
-    ARCHIVE_REGEX = [r".*\.zip$"]
+    ARCHIVE_REGEX = [r'.*\.zip$']
 
     def __init__(self):
         super().__init__(self.ARCHIVE_REGEX)
-        print('Please kill me, thanks')
 
     def on_created(self, event):
         self.process(event)
@@ -116,7 +109,7 @@ class ArchiveEventHandler(RegexMatchingEventHandler):
                 local_data = parse_file('temp/' + filename)
 
                 # debug info
-                print("parsed %d receipts" % (len(local_data)))
+                print('parsed %d receipts' % (len(local_data)))
 
                 pp = pprint.PrettyPrinter(indent=4, width=100)
                 pp.pprint(local_data)
@@ -155,7 +148,7 @@ class ArchiveWatcher:
                                        recursive=True)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     pass
     # src_path = sys.argv[1] if len(sys.argv) > 1 else '.'
     # ArchiveWatcher(src_path).run()
@@ -165,7 +158,7 @@ for filename in os.listdir('temp/0002'):
     if filename.endswith('.txt'):
         local_data = parse_file('temp/0002/' + filename)
 
-#local_data = parse_file("testing.txt")
+# local_data = parse_file("testing.txt")
 pp = pprint.PrettyPrinter(indent=4, width=100)
 pp.pprint(local_data)
 """
