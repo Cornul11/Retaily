@@ -7,7 +7,7 @@ import datetime
 sales_bp = Blueprint("sales", __name__)
 
 
-def getSales(items, start, end, interval, product):
+def get_sales(items, start, end, interval, product):
     data = []
     count = 0
     for item in items:
@@ -30,13 +30,13 @@ def getSales(items, start, end, interval, product):
     return data
 
 
-def getCount(plu, name, days, end):
+def get_count(plu, name, days, end):
     start = end - datetime.timedelta(days=days)
     if plu is not None:
         return (
             db.session.query(Product, Transaction)
-            .join(Transaction)
-            .filter(
+                .join(Transaction)
+                .filter(
                 (Product.plu == plu)
                 & (Transaction.date_time >= start)
                 & (Transaction.date_time <= end)
@@ -45,8 +45,8 @@ def getCount(plu, name, days, end):
     else:
         return (
             db.session.query(Product, Transaction)
-            .join(Transaction)
-            .filter(
+                .join(Transaction)
+                .filter(
                 (Product.name == name)
                 & (Transaction.date_time >= start)
                 & (Transaction.date_time <= end)
@@ -78,34 +78,34 @@ def sales():
         if plu is None and name is None:
             items = (
                 db.session.query(Transaction)
-                .filter(
+                    .filter(
                     (Transaction.date_time >= start) & (Transaction.date_time <= end)
                 )
-                .order_by(Transaction.date_time)
+                    .order_by(Transaction.date_time)
             )
-            return jsonify(getSales(items, start, end, interval, False))
+            return jsonify(get_sales(items, start, end, interval, False))
         elif plu is not None:
             items = (
                 db.session.query(Product, Transaction)
-                .join(Transaction)
-                .filter(
+                    .join(Transaction)
+                    .filter(
                     (Product.plu == plu)
                     & (Transaction.date_time >= start)
                     & (Transaction.date_time <= end)
                 )
-                .order_by(Transaction.date_time)
+                    .order_by(Transaction.date_time)
             )
         else:
             items = (
                 db.session.query(Product, Transaction)
-                .join(Transaction)
-                .filter(
+                    .join(Transaction)
+                    .filter(
                     (Product.name == name)
                     & (Transaction.date_time >= start)
                     & (Transaction.date_time <= end)
                 )
             )
-        return jsonify(getSales(items, start, end, interval, True))
+        return jsonify(get_sales(items, start, end, interval, True))
 
 
 @sales_bp.route("/quick/", methods=["GET"])
@@ -118,9 +118,9 @@ def quick():
         end = datetime.datetime.now()
         return jsonify(
             {
-                "sales_last_week": getCount(plu, name, 7, end),
-                "sales_last_month": getCount(plu, name, 30, end),
-                "sales_last_quarter": getCount(plu, name, 90, end),
-                "sales_last_year": getCount(plu, name, 365, end),
+                "sales_last_week": get_count(plu, name, 7, end),
+                "sales_last_month": get_count(plu, name, 30, end),
+                "sales_last_quarter": get_count(plu, name, 90, end),
+                "sales_last_year": get_count(plu, name, 365, end),
             }
         )

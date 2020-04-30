@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import NavBar from "./../components/design/NavBar";
 import "./../components/design/fancyButton.css";
-import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 
 class HomePage extends Component{
     render(){

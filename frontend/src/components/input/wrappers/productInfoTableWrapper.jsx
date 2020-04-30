@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ProductInfoTable from "../../charts/productInfoTable";
-import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 class ProductInfoTableWrapper extends Component {

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Scanner from "../barcode/scanner";
 import ProductSalesChartWrapper from "./wrappers/productSalesChartWrapper";
 import ProductInfoTableWrapper from "./wrappers/productInfoTableWrapper";
-import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 
 /** Component that retrieves information about an individual product */
 

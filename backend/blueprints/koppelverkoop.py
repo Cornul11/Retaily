@@ -7,18 +7,18 @@ import datetime
 koppelverkoop_bp = Blueprint("koppelverkoop", __name__)
 
 
-#def getKoppelproducts(Transaction):
+# def getKoppelproducts(Transaction):
 #    data = []
 #    data.append(Transaction.getProducts())
 #   return data
 
-def getId(plu, name, days, end):
+def get_id(plu, name, days, end):
     start = end - datetime.timedelta(days=days)
     if plu is not None:
         return (
             db.session.query(Product, Transaction)
-            .join(Transaction)
-            .filter(
+                .join(Transaction)
+                .filter(
                 (Product.plu == plu)
                 & (Transaction.date_time >= start)
                 & (Transaction.date_time <= end)
@@ -27,13 +27,14 @@ def getId(plu, name, days, end):
     else:
         return (
             db.session.query(Product, Transaction)
-            .join(Transaction)
-            .filter(
+                .join(Transaction)
+                .filter(
                 (Product.name == name)
                 & (Transaction.date_time >= start)
                 & (Transaction.date_time <= end)
             )
         )
+
 
 @koppelverkoop_bp.route("/test/", methods=["GET"])
 def quick():
@@ -45,9 +46,9 @@ def quick():
         end = datetime.datetime.now()
         return jsonify(
             {
-                "ids_last_week": getId(plu, name, 7, end),
-                "ids_last_month": getId(plu, name, 30, end),
-                "ids_last_quarter": getId(plu, name, 90, end),
-                "ids_last_year": getId(plu, name, 365, end),
+                "ids_last_week": get_id(plu, name, 7, end),
+                "ids_last_month": get_id(plu, name, 30, end),
+                "ids_last_quarter": get_id(plu, name, 90, end),
+                "ids_last_year": get_id(plu, name, 365, end),
             }
         )

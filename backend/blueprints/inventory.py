@@ -1,12 +1,11 @@
 from flask import Blueprint, request, jsonify, abort
-from models import Product, Transaction
-from app import db
+from models import Product
 
 # Define the blueprint
 inventory_bp = Blueprint("inventory", __name__)
 
 
-def getCounts(result):
+def get_counts(result):
     data = []
     if len(result) > 0:
         name = result[0]["name"]
@@ -31,21 +30,21 @@ def inventory():
         plu = request.args.get("plu", None)
         name = request.args.get("name", None)
         if plu is None and name is None:
-            products = Product.query.filter(Product.transaction_id == None).order_by(
+            products = Product.query.filter(Product.transaction_id is None).order_by(
                 Product.name
             )
             return jsonify(
-                {"products": getCounts([product.serialized for product in products])}
+                {"products": get_counts([product.serialized for product in products])}
             )
         elif plu is not None:
             products = Product.query.filter(
-                (Product.plu == plu) & (Product.transaction_id == None)
+                (Product.plu == plu) & (Product.transaction_id is None)
             ).order_by(Product.name)
         else:
             products = Product.query.filter(
-                (Product.name == name) & (Product.transaction_id == None)
+                (Product.name == name) & (Product.transaction_id is None)
             ).order_by(Product.name)
-        result = getCounts([product.serialized for product in products])
+        result = get_counts([product.serialized for product in products])
         if len(result) > 0:
             return jsonify(result[0])
         return abort(400)

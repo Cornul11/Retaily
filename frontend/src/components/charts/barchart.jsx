@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {Chart} from "chart.js";
 import "./charts.css";
 import './App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 
 //TODO: Proper zoom on filter
 //has property url, which is called by the API 
