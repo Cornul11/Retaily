@@ -1,6 +1,8 @@
 import sys
 from typing import Dict, Tuple, Optional
 
+from journal_parser.database_sender import send_product_info
+
 
 def parse_file(filepath: str) -> object:
     records = []
@@ -133,7 +135,7 @@ def parse_components(string: str, filename: str) -> Dict:
 
         elif 'PLU' in product:
             local_product = parse_product(product)
-
+            send_product_info(local_product)
             products.append(dict(local_product))
 
         elif any(elem in product for elem in ignored_components):
