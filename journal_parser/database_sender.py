@@ -37,24 +37,18 @@ class DataSender:
             print("Mysql connection closed")
 
     def send_transaction_info(self, transaction):
-        # local_record = {
-        #     'journal_record_no': record_no,
-        #     'journal_record_date': record_date,
-        #     'journal_record_cashier': record_cashier,
-        #     'journal_record_type': record_type,
-        #     'journal_record_aborted': aborted_sale,
-        #     'journal_record_products': products,
-        # }
         try:
             transaction_id = abs(hash(transaction['journal_record_date'] + transaction['journal_record_no']))
             mysql_select_query = """SELECT * FROM transaction WHERE receipt_number = '%d'""" % transaction_id
             cursor = self.connection.cursor(buffered=True)
             cursor.execute(mysql_select_query)
+            print(str(cursor.rowcount) + ' transactions with tr_id = ' + str(transaction_id) + ' on ' + transaction['journal_record_date'])
             if cursor.rowcount == 0:
                 transaction_datetime = datetime.strptime(transaction['journal_record_date'], '%Y-%m-%d %H:%M:%S')
                 mysql_insert_query = (
-                        """INSERT INTO transaction (date_time, receipt_number) VALUES ('%s', '%d')"""
+                        """INSERT INTO transaction (id, date_time, receipt_number) VALUES ('%d', '%s', '%d')"""
                         % (
+                            transaction_id,
                             transaction_datetime,
                             transaction_id
                         )
@@ -66,6 +60,25 @@ class DataSender:
             else:
                 print("already in the database")
                 cursor.close()
+
+            for product in transaction['journal_record_products']:
+                if 'product_plu' in product:
+                    mysql_insert_query = (
+                            """INSERT INTO product (plu, name, selling_price, discount, transaction_id) VALUES ('%d', 
+                            '%s', '%f', '%f', '%d') """
+                            % (
+                                int(product['product_plu']),
+                                product['product_name'],
+                                float(product['product_price'].replace(',', '.')),
+                                float(product['product_discount'].replace(',', '.')),
+                                transaction_id
+                            )
+                    )
+                    cursor = self.connection.cursor(buffered=True)
+                    cursor.execute(mysql_insert_query)
+                    self.connection.commit()
+                    print(cursor.rowcount, "Record inserted successfully")
+                    cursor.close()
         except Error as error:
             print("Failed to insert record into table {}".format(error), file=sys.stderr)
 
@@ -94,36 +107,3 @@ class DataSender:
                 cursor.close()
         except Error as error:
             print("Failed to insert record into table {}".format(error), file=sys.stderr)
-
-
-def send_transaction_info(cp):
-    try:
-
-        connection = mysql.connector.connect()
-        print("card_usage_date = ", cp["cp_date"])
-        print("card_transaction_id = ", cp["cp_transaction"])
-        print("card_total_amount = ", cp["cp_drawer_amount"])
-        print("card_serial =", cp["cp_card_serial_number"])
-        from datetime import datetime
-
-        datetim = datetime.strptime(cp["cp_date"], "%d/%m/%Y %H:%M")
-        mysql_insert_query = (
-                """INSERT INTO transaction (date_time, receipt_number, total_amount, card_serial) VALUES ('%s', '%d', '%f', '%d')"""
-                % (
-                    datetim,
-                    int(cp["cp_transaction"]),
-                    float(cp["cp_drawer_amount"].replace(",", ".")),
-                    int(cp["cp_card_serial_number"]),
-                )
-        )
-        cursor = connection.cursor()
-        cursor.execute(mysql_insert_query)
-        connection.commit()
-        print(cursor.rowcount, "Record inserted succesfully")
-        cursor.close()
-    except mysql.connector.Error as error:
-        print("Failed to insert record into table {}".format(error))
-    finally:
-        if connection.is_connected():
-            connection.close()
-            print("Mysql connection closed")

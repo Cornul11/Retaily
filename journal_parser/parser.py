@@ -10,7 +10,7 @@ def parse_file(filepath: str) -> object:
 
     # these journal records can be ignored as they contain no valuable information for our scope
     record_ignore_words = ['Cancellation', 'Customer', 'InOutPayment', 'ReportRecord',
-                           'JournalRecordNumberReset', 'NoSale', 'DataClear']
+                           'JournalRecordNumberReset', 'NoSale', 'DataClear', 'NeutralList']
 
     # fix for various products that have stars in their naming and break the tokenizing of products
     record_replace_strings = {'*FOUT NR*)': '[FOUT NR])',
@@ -34,12 +34,17 @@ def parse_file(filepath: str) -> object:
         for journal_record in journal_records:
 
             if 'Aborted Sale' in journal_record:
+                continue
+            splitter_string = '---\n---'
+            # This code is required if we want to store data about the aborted sales, at this moment, we don't
+            """
+            if 'Aborted Sale' in journal_record:
                 splitter_string = '---\n'
                 aborted_sale = True
             else:
                 splitter_string = '---\n---'
                 aborted_sale = False
-
+            """
             temp_split = journal_record.split(splitter_string)
 
             # Parsing the intro part containing the basic data about the record
@@ -50,12 +55,6 @@ def parse_file(filepath: str) -> object:
             # Parsing the purchased products
             if any(elem in journal_record for elem in record_ignore_words):
                 continue
-            elif 'NeutralList' in journal_record:
-                # stuff that has been thrown out at the end of the day
-                neutral_list_split = temp_split[0].split('---\n')
-                products = parse_components(neutral_list_split[2], filepath, data_sender)
-            elif aborted_sale:
-                products = parse_components(temp_split[2], filepath, data_sender)
             else:
                 products = parse_components(temp_split[1], filepath, data_sender)
 
@@ -64,12 +63,10 @@ def parse_file(filepath: str) -> object:
                 'journal_record_date': record_date,
                 'journal_record_cashier': record_cashier,
                 'journal_record_type': record_type,
-                'journal_record_aborted': aborted_sale,
                 'journal_record_products': products,
             }
 
-            if not aborted_sale:
-                data_sender.send_transaction_info(local_record)
+            data_sender.send_transaction_info(local_record)
 
             records.append(dict(local_record))
     del data_sender
@@ -169,7 +166,6 @@ def parse_product(product: str) -> Dict:
                 product_canceled = True
                 product_plu = line.split('#')[1].strip().split(' ')[0]
             else:
-                print(line)
                 product_plu = line.split('#')[1].strip()
         elif ' x ' in line:
             price_and_amount_line = line.strip().split('x')

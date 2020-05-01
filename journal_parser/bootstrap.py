@@ -84,11 +84,12 @@ if __name__ == '__main__':
     # src_path = sys.argv[1] if len(sys.argv) > 1 else '.'
     # ArchiveWatcher(src_path).run()
 
-# start_time = time.time()
+start_time = time.time()
 for filename in os.listdir('temp/0002'):
     if filename.endswith('.txt'):
         local_data = parse_file('temp/0002/' + filename)
 
+print('parsed in %s' % time.time() - start_time)
 # local_data = parse_file("testing.txt")
 pp = pprint.PrettyPrinter(indent=4, width=100)
-pp.pprint(local_data)
+#pp.pprint(local_data)
