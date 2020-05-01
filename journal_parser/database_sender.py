@@ -1,7 +1,9 @@
 import sys
 import mysql
 import configparser
+import hashlib
 from mysql.connector import Error
+from datetime import datetime
 
 
 def load_credentials():
@@ -34,6 +36,39 @@ class DataSender:
             self.connection.close()
             print("Mysql connection closed")
 
+    def send_transaction_info(self, transaction):
+        # local_record = {
+        #     'journal_record_no': record_no,
+        #     'journal_record_date': record_date,
+        #     'journal_record_cashier': record_cashier,
+        #     'journal_record_type': record_type,
+        #     'journal_record_aborted': aborted_sale,
+        #     'journal_record_products': products,
+        # }
+        try:
+            transaction_id = abs(hash(transaction['journal_record_date'] + transaction['journal_record_no']))
+            mysql_select_query = """SELECT * FROM transaction WHERE receipt_number = '%d'""" % transaction_id
+            cursor = self.connection.cursor(buffered=True)
+            cursor.execute(mysql_select_query)
+            if cursor.rowcount == 0:
+                transaction_datetime = datetime.strptime(transaction['journal_record_date'], '%Y-%m-%d %H:%M:%S')
+                mysql_insert_query = (
+                        """INSERT INTO transaction (date_time, receipt_number) VALUES ('%s', '%d')"""
+                        % (
+                            transaction_datetime,
+                            transaction_id
+                        )
+                )
+                cursor.execute(mysql_insert_query)
+                self.connection.commit()
+                print(cursor.rowcount, "Record inserted successfully")
+                cursor.close()
+            else:
+                print("already in the database")
+                cursor.close()
+        except Error as error:
+            print("Failed to insert record into table {}".format(error), file=sys.stderr)
+
     def send_product_info(self, product):
         try:
             mysql_select_query = """SELECT * FROM product_info WHERE plu = '%d'""" % int(
@@ -63,6 +98,7 @@ class DataSender:
 
 def send_transaction_info(cp):
     try:
+
         connection = mysql.connector.connect()
         print("card_usage_date = ", cp["cp_date"])
         print("card_transaction_id = ", cp["cp_transaction"])
