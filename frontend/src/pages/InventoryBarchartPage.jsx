@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Barchart from "./../components/charts/barchart"
+import Barchart from "./../components/charts/Barchart"
 import NavBar from "./../components/design/NavBar";
 
 class InventoryBarchartPage extends Component{

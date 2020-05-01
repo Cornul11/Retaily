@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import InventoryBarchartPage from "./pages/inventoryBarchartPage";
-import ProductInfoPage from "./pages/productInfoDetailedPage";
+import InventoryBarchartPage from "./pages/InventoryBarchartPage";
+import ProductInfoPage from "./pages/ProductInfoPage";
 import HomePage from "./pages/HomePage";
 import { BrowserRouter, Route } from "react-router-dom";
 

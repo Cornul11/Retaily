@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import NavBar from "./../components/design/NavBar";
-import "./../components/design/fancyButton.css";
 
 class HomePage extends Component{
     render(){

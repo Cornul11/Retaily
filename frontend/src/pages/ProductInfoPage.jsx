@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import ProductInfo from "../components/input/productInfo";
+import ProductInfo from "../components/input/ProductInfo";
 import NavBar from "../components/design/NavBar";
 
-class ProductInfoDetailedPage extends Component {
+class ProductInfoPage extends Component {
   render() {
     return (
       <div>
@@ -22,4 +22,4 @@ class ProductInfoDetailedPage extends Component {
     );
   }
 }
-export default ProductInfoDetailedPage;
+export default ProductInfoPage;
