@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import ProductInfoTable from "../../charts/productInfoTable";
-// import 'bootstrap/dist/css/bootstrap.min.css';
+import ProductInfoTable from "../../charts/ProductInfoTable";
 
 
 class ProductInfoTableWrapper extends Component {
@@ -15,6 +14,9 @@ class ProductInfoTableWrapper extends Component {
 
   handleRetrieveButton() {
     this.setState({ retrieve: true });
+    if(!this.props.extended){
+      document.getElementById("plu-input").value="";
+    }
   }
 
   onLoaded() {

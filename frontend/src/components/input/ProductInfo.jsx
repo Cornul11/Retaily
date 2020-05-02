@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import Scanner from "../barcode/scanner";
-import ProductSalesChartWrapper from "./wrappers/productSalesChartWrapper";
-import ProductInfoTableWrapper from "./wrappers/productInfoTableWrapper";
-// import 'bootstrap/dist/css/bootstrap.min.css';
+import Scanner from "../barcode/Scanner";
+import ProductSalesChartWrapper from "./wrappers/ProductSalesChartWrapper";
+import ProductInfoTableWrapper from "./wrappers/ProductInfoTableWrapper";
 
 /** Component that retrieves information about an individual product */
 
@@ -74,6 +73,7 @@ class ProductInfo extends Component {
     return (
       <input
         type="text"
+        id="plu-input"
         value={this.state.text}
         className="form-control "
         placeholder={(this.props.extended ? "" : "EAN-code")}
@@ -116,6 +116,7 @@ class ProductInfo extends Component {
     if (this.state.chartType === "productInfoTable") {
       return (
         <ProductInfoTableWrapper
+          id="table-wrapper"
           identifier={this.state.identifier}
           text={this.state.text}
           extended={this.props.extended}
