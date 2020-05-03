@@ -1,13 +1,21 @@
-import sys
-import pprint
 import os
+import sys
 import time
-
-from watchdog.observers import Observer
-from watchdog.events import RegexMatchingEventHandler
 from zipfile import ZipFile
 
+from watchdog.events import RegexMatchingEventHandler
+from watchdog.observers import Observer
+
 from journal_parser.parser import parse_file
+
+
+def process(event):
+    with ZipFile(event.src_path, 'r') as zip_file:
+        zip_file.extractall('temp')
+
+    for filename in os.listdir('temp'):
+        if filename.endswith('.txt'):
+            parse_file('temp/' + filename)
 
 
 class ArchiveEventHandler(RegexMatchingEventHandler):
@@ -22,28 +30,13 @@ class ArchiveEventHandler(RegexMatchingEventHandler):
         super().__init__(self.ARCHIVE_REGEX)
 
     def on_created(self, event):
-        self.process(event)
+        process(event)
 
     """
     Whenever a new .zip file appears, it extracts it in the temp folder, which
     extracts in fact multiple new .zip files, after which it extracts these .zip files
     containing the .txt files which are in fact the journal records.
     """
-
-    def process(self, event):
-        with ZipFile(event.src_path, 'r') as zip_file:
-            zip_file.extractall('temp')
-
-        for filename in os.listdir('temp'):
-            if filename.endswith('.txt'):
-                print('parsing ' + filename)
-                local_data = parse_file('temp/' + filename)
-
-                # debug info
-                print('parsed %d receipts' % (len(local_data)))
-
-                pp = pprint.PrettyPrinter(indent=4, width=100)
-                pp.pprint(local_data)
 
 
 class ArchiveWatcher:
@@ -80,16 +73,5 @@ class ArchiveWatcher:
 
 
 if __name__ == '__main__':
-    pass
-    # src_path = sys.argv[1] if len(sys.argv) > 1 else '.'
-    # ArchiveWatcher(src_path).run()
-
-start_time = time.time()
-for filename in os.listdir('temp/0002'):
-    if filename.endswith('.txt'):
-        local_data = parse_file('temp/0002/' + filename)
-
-print('parsed in %s' % time.time() - start_time)
-# local_data = parse_file("testing.txt")
-pp = pprint.PrettyPrinter(indent=4, width=100)
-#pp.pprint(local_data)
+    src_path = sys.argv[1] if len(sys.argv) > 1 else '.'
+    ArchiveWatcher(src_path).run()

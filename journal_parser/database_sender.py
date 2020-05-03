@@ -1,9 +1,9 @@
-import sys
-import mysql
 import configparser
-import hashlib
-from mysql.connector import Error
+import sys
 from datetime import datetime
+
+import mysql
+from mysql.connector import Error
 
 
 def load_credentials():
@@ -34,7 +34,6 @@ class DataSender:
     def close_connection(self):
         if self.connection.is_connected():
             self.connection.close()
-            print("Mysql connection closed")
 
     def send_transaction_info(self, transaction):
         try:
@@ -42,7 +41,6 @@ class DataSender:
             mysql_select_query = """SELECT * FROM transaction WHERE receipt_number = '%d'""" % transaction_id
             cursor = self.connection.cursor(buffered=True)
             cursor.execute(mysql_select_query)
-            print(str(cursor.rowcount) + ' transactions with tr_id = ' + str(transaction_id) + ' on ' + transaction['journal_record_date'])
             if cursor.rowcount == 0:
                 transaction_datetime = datetime.strptime(transaction['journal_record_date'], '%Y-%m-%d %H:%M:%S')
                 mysql_insert_query = (
@@ -55,10 +53,8 @@ class DataSender:
                 )
                 cursor.execute(mysql_insert_query)
                 self.connection.commit()
-                print(cursor.rowcount, "Record inserted successfully")
                 cursor.close()
             else:
-                print("already in the database")
                 cursor.close()
 
             for product in transaction['journal_record_products']:
@@ -77,7 +73,6 @@ class DataSender:
                     cursor = self.connection.cursor(buffered=True)
                     cursor.execute(mysql_insert_query)
                     self.connection.commit()
-                    print(cursor.rowcount, "Record inserted successfully")
                     cursor.close()
         except Error as error:
             print("Failed to insert record into table {}".format(error), file=sys.stderr)
@@ -100,10 +95,8 @@ class DataSender:
                 )
                 cursor.execute(mysql_insert_query)
                 self.connection.commit()
-                print(cursor.rowcount, "Record inserted successfully")
                 cursor.close()
             else:
-                print("already in the database")
                 cursor.close()
         except Error as error:
             print("Failed to insert record into table {}".format(error), file=sys.stderr)
