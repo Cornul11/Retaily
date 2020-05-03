@@ -2,8 +2,35 @@ import React, { Component } from "react";
 import Scanner from "../barcode/Scanner";
 import ProductSalesChartWrapper from "./wrappers/ProductSalesChartWrapper";
 import ProductInfoTableWrapper from "./wrappers/ProductInfoTableWrapper";
+import Autosuggest from 'react-autosuggest';
+import '../charts/App.css';
 
 /** Component that retrieves information about an individual product */
+
+const products = [
+  {
+    name: 'kek'
+  },
+  {
+    name: 'kek2'
+  }
+];
+
+const getSuggestions = value => {
+  const inputValue = value.trim().toLowerCase();
+  const inputLength = inputValue.length;
+  return inputLength === 0 ? [] : products.filter(prod =>
+    prod.name.toLowerCase().slice(0, inputLength) === inputValue
+  );
+}
+
+const getSuggestionValue = suggestion => suggestion.name;
+
+const renderSuggestion = suggestion => (
+    <div>
+      {suggestion.name}
+    </div>
+)
 
 class ProductInfo extends Component {
   constructor(props) {
@@ -13,6 +40,7 @@ class ProductInfo extends Component {
       text: "",
       scanning: false,
       chartType: "productInfoTable",
+      suggestions: []
     };
     this.handleIdentifierChange = this.handleIdentifierChange.bind(this);
     this.handleTextChange = this.handleTextChange.bind(this);
@@ -70,15 +98,30 @@ class ProductInfo extends Component {
   }
 
   renderInputText() {
+    const value = this.state.text;
+    console.log(this.state.suggestions);
+    const inputProps = {
+      placeholder: 'Test input',
+      value,
+      onChange: this.handleTextChange
+    }
     return (
-      <input
-        type="text"
-        id="plu-input"
-        value={this.state.text}
-        className="form-control "
-        placeholder={(this.props.extended ? "" : "EAN-code")}
-        onChange={this.handleTextChange}
-      />
+        <Autosuggest
+            suggestions={this.state.suggestions}
+            onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+            onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+            getSuggestionValue={getSuggestionValue}
+            renderSuggestion={renderSuggestion}
+            inputProps={inputProps}
+            className="form-control"
+          />
+      // <input
+      //   type="text"
+      //   value={this.state.text}
+      //   className="form-control"
+      //   placeholder={(this.props.extended ? "" : "EAN-code")}
+      //   onChange={this.handleTextChange}
+      // />
     );
   }
 
@@ -110,6 +153,24 @@ class ProductInfo extends Component {
         <option value="productSales">product sales</option>
       </select>
     );
+  }
+
+  onChange = (event, { newValue }) => {
+    this.setState({
+      value: newValue
+    });
+  }
+
+  onSuggestionsFetchRequested = ({ value }) => {
+    this.setState({
+      suggestions: getSuggestions(value)
+    });
+  }
+
+  onSuggestionsClearRequested = () => {
+    this.setState({
+      suggestions: []
+    });
   }
 
   renderProductInfoTableWrapper() {

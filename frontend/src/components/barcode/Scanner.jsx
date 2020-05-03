@@ -13,7 +13,7 @@ class Scanner extends Component {
 
   async componentDidMount() {
     /** Request camera footage from user */
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment"} });
     this.ref.current.srcObject = stream;
     /** Initialize the scanner */
     Quagga.init(
