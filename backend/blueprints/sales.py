@@ -69,6 +69,7 @@ def sales():
         try:
             start = datetime.datetime.strptime(start, "%Y-%m-%d")
             end = datetime.datetime.strptime(end, "%Y-%m-%d")
+            end += datetime.timedelta(days=1)
             if interval == "hour":
                 interval = datetime.timedelta(hours=1)
             elif interval == "day":

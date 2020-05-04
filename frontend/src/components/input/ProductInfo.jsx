@@ -47,9 +47,6 @@ class ProductInfo extends Component {
     this.handleScanButton = this.handleScanButton.bind(this);
     this.onDetected = this.onDetected.bind(this);
     this.handleChartTypeChange = this.handleChartTypeChange.bind(this);
-    if(!this.props.extended){
-      this.state.scanning= true;
-    }
   }
 
   handleIdentifierChange(event) {
@@ -57,9 +54,7 @@ class ProductInfo extends Component {
   }
 
   handleTextChange(event) {
-    //commented out the two scanning: false parts because I needed to refresh to the page to scan again
-    //this.setState({ text: event.target.value, scanning: false });
-    this.setState({ text: event.target.value });
+    this.setState({ text: event.target.value, scanning: false });
   }
 
   handleScanButton() {
@@ -67,8 +62,7 @@ class ProductInfo extends Component {
   }
 
   onDetected(result) {
-    //this.setState({ scanning: false, text: result });
-    this.setState({ text: result });
+    this.setState({ scanning: false, text: result });
   }
 
   scanButtonText() {
@@ -126,16 +120,29 @@ class ProductInfo extends Component {
 
   renderScanButton() {
     if (this.state.identifier === "plu") {
-      return (
-        <button className="btn btn-secondary" onClick={this.handleScanButton}>{this.scanButtonText()}</button>
-      );
+      if(this.props.extended){
+        return (
+          <button className="btn btn-secondary" onClick={this.handleScanButton}>{this.scanButtonText()}</button>
+        );
+      }
+      else{
+        if(!this.state.scanning){
+          return(
+            <button className="btn btn-primary btn-lg btn-block mb-2" onClick={this.handleScanButton}>{this.scanButtonText()}</button>
+          );
+        }
+      }
     }
     return null;
   }
 
   renderScanner() {
     if (this.state.scanning === true) {
-      return <Scanner onDetected={this.onDetected} />;
+      return(
+        <div onClick={this.handleScanButton}>
+          <Scanner onDetected={this.onDetected} />
+         </div>
+      );
     }
     return null;
   }
@@ -220,6 +227,7 @@ class ProductInfo extends Component {
       /* Less options, but easier to use */
       return(
         <div>
+          {this.renderScanButton()}
           {this.renderScanner()}
           <center>
             {this.renderInputText()}
