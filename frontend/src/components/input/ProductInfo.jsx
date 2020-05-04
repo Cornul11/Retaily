@@ -106,22 +106,21 @@ class ProductInfo extends Component {
       onChange: this.handleTextChange
     }
     return (
-        <Autosuggest
-            suggestions={this.state.suggestions}
-            onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-            onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-            getSuggestionValue={getSuggestionValue}
-            renderSuggestion={renderSuggestion}
-            inputProps={inputProps}
-            className="form-control"
-          />
-      // <input
-      //   type="text"
-      //   value={this.state.text}
-      //   className="form-control"
-      //   placeholder={(this.props.extended ? "" : "EAN-code")}
-      //   onChange={this.handleTextChange}
-      // />
+        // <Autosuggest
+        //     suggestions={this.state.suggestions}
+        //     onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+        //     onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+        //     getSuggestionValue={getSuggestionValue}
+        //     renderSuggestion={renderSuggestion}
+        //     inputProps={inputProps}
+        //   />
+      <input
+        type="text"
+        value={this.state.text}
+        className="form-control"
+        placeholder={(this.props.extended ? "" : "EAN-code")}
+        onChange={this.handleTextChange}
+      />
     );
   }
 
