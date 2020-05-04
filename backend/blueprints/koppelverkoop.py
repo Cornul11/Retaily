@@ -74,4 +74,4 @@ def lijst():
         if plu is None and name is None:
             abort(400)
         end = datetime.datetime.now()
-        return jsonify({"koppelproducts": get_koppel_products(plu, name, 365, end),})
+        return jsonify({"koppelproducts": get_koppel_products(plu, name, 365, end)})

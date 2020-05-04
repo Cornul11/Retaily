@@ -1,5 +1,4 @@
 from app import app
-from models import Product, Transaction
 from blueprints.inventory import inventory_bp
 from blueprints.product import product_bp
 from blueprints.sales import sales_bp
