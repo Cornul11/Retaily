@@ -83,7 +83,7 @@ class Barchart extends Component {
   //initializes the Barchart
   async initialize() {
     // Fetch API call
-    await fetch(this.props.url, {
+    await fetch(this.props.url + '', {
       method: "GET",
     })
         .then((response) => response.json())

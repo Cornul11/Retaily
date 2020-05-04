@@ -39,14 +39,22 @@ body {
 
 .react-autosuggest__input {
     display: block;
-    width: 100%;
-    padding: $input-padding-y $input-padding-x;
-    font-size: $font-size-base;
-    line-height: $input-line-height;
-    color: $input-color;
-    background-color: $input-bg;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
     background-clip: padding-box;
-    border: $input-border-width solid $input-border-color;
+    border: 1px solid #ced4da;
+    transition: border-color .15s
+        ease-in-out,box-shadow .15s
+        ease-in-out;
+    position: relative;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    margin-bottom: 0;
+
 }
 
 .react-autosuggest__input--focused {
@@ -65,7 +73,7 @@ body {
 .react-autosuggest__suggestions-container--open {
     display: block;
     position: absolute;
-    top: 51px;
+    top: 37px;
     width: 280px;
     border: 1px solid #aaa;
     background-color: #fff;
