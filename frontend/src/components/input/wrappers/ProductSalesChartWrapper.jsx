@@ -1,13 +1,15 @@
 import React, { Component } from "react";
-import DatePicker from "../DatePicker";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import ProductSalesChart from "../../charts/ProductSalesChart";
+import { format } from "date-fns";
 
 class ProductSalesChartWrapper extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      startDate: "",
-      endDate: "",
+      startDate: new Date(),
+      endDate: new Date(),
       interval: "hour",
       retrieve: false,
     };
@@ -58,8 +60,8 @@ class ProductSalesChartWrapper extends Component {
         retrieve={this.state.retrieve}
         identifier={this.props.identifier}
         text={this.props.text}
-        start={this.state.startDate}
-        end={this.state.endDate}
+        start={format(this.state.startDate, "yyyy-MM-dd")}
+        end={format(this.state.endDate, "yyyy-MM-dd")}
         interval={this.state.interval}
         onLoaded={this.onLoaded}
       />
@@ -69,15 +71,40 @@ class ProductSalesChartWrapper extends Component {
   render() {
     return (
       <div className="input-group">
-        <DatePicker label={"Start Date"} onChange={this.handleStartDateChange} />
-        <DatePicker label ={"End Date"} onChange={this.handleEndDateChange} />
+        <div>
+          <h3>Start Date</h3>
+          <DatePicker
+            selected={this.state.startDate}
+            onChange={this.handleStartDateChange}
+            dateFormat={"dd-MM-yyyy"}
+            inline
+            maxDate={this.state.endDate}
+          />
+        </div>
+        <div>
+          <h3>End Date</h3>
+          <DatePicker
+            selected={this.state.endDate}
+            onChange={this.handleEndDateChange}
+            dateFormat={"dd-MM-yyyy"}
+            inline
+            minDate={this.state.startDate}
+          />
+        </div>
         <div className="input-group mt-2">
           <div className="input-group-prepend">
-            <span className="input-group-text" id="basic-addon1">Interval</span>
+            <span className="input-group-text" id="basic-addon1">
+              Interval
+            </span>
           </div>
           {this.renderIntervalSelect()}
-          </div>
-        <button className={"btn btn-secondary mt-2 btn-block"} onClick={this.handleRetrieveButton}>retrieve</button>
+        </div>
+        <button
+          className={"btn btn-secondary mt-2 btn-block"}
+          onClick={this.handleRetrieveButton}
+        >
+          retrieve
+        </button>
         {this.renderSalesChart()}
       </div>
     );
