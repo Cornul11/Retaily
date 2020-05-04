@@ -14,9 +14,6 @@ class ProductInfoTableWrapper extends Component {
 
   handleRetrieveButton() {
     this.setState({ retrieve: true });
-    if(!this.props.extended){
-      document.getElementById("plu-input").value="";
-    }
   }
 
   onLoaded() {
