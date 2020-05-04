@@ -1,16 +1,22 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
 class DatePicker extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      year: "",
-      month: "",
-      day: "",
+      year: '',
+      month: '',
+      day: '',
     };
     this.handleYearChange = this.handleYearChange.bind(this);
     this.handleMonthChange = this.handleMonthChange.bind(this);
     this.handleDayChange = this.handleDayChange.bind(this);
+  }
+
+  onChange() {
+    this.props.onChange(
+      `${this.state.year}-${this.state.month}-${this.state.day}`,
+    );
   }
 
   digitsOnly(string) {
@@ -18,12 +24,6 @@ class DatePicker extends Component {
       return true;
     }
     return string.match(/^[0-9]+$/);
-  }
-
-  onChange() {
-    this.props.onChange(
-      this.state.year + "-" + this.state.month + "-" + this.state.day
-    );
   }
 
   handleYearChange(event) {
@@ -48,7 +48,7 @@ class DatePicker extends Component {
     return (
       <div className="input-group mt-2">
         <div className="input-group-prepend" id="button-addon3">
-    <span className="input-group-text" id="basic-addon1">{this.props.label}</span>
+          <span className="input-group-text" id="basic-addon1">{this.props.label}</span>
         </div>
         <input
           type="text"

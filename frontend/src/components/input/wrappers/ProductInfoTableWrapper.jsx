@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import ProductInfoTable from "../../charts/ProductInfoTable";
+import React, { Component } from 'react';
+import ProductInfoTable from '../../charts/ProductInfoTable';
 
 
 class ProductInfoTableWrapper extends Component {
@@ -12,12 +12,12 @@ class ProductInfoTableWrapper extends Component {
     this.onLoaded = this.onLoaded.bind(this);
   }
 
-  handleRetrieveButton() {
-    this.setState({ retrieve: true });
-  }
-
   onLoaded() {
     this.setState({ retrieve: false });
+  }
+
+  handleRetrieveButton() {
+    this.setState({ retrieve: true });
   }
 
   renderProductInfoTable() {
@@ -35,7 +35,7 @@ class ProductInfoTableWrapper extends Component {
   render() {
     return (
       <div>
-        <button className={"btn btn-secondary mt-2 mb-2 btn-block"} onClick={this.handleRetrieveButton}>retrieve</button>
+        <button type="button" className="btn btn-secondary mt-2 mb-2 btn-block" onClick={this.handleRetrieveButton}>retrieve</button>
         {this.renderProductInfoTable()}
       </div>
     );

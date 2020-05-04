@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import Quagga from "quagga";
-import styles from "./scanner.css";
+import React, { Component } from 'react';
+import Quagga from 'quagga';
+import styles from './scanner.css';
 
 /**
  * Scanner Component used to show the camera footage
@@ -13,31 +13,31 @@ class Scanner extends Component {
 
   async componentDidMount() {
     /** Request camera footage from user */
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment"} });
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
     this.ref.current.srcObject = stream;
     /** Initialize the scanner */
     Quagga.init(
       {
         inputStream: {
-          type: "LiveStream",
-          target: document.getElementById("camera"),
+          type: 'LiveStream',
+          target: document.getElementById('camera'),
           constraints: {
             width: 480,
             height: 320,
-            facingMode: "environment",
+            facingMode: 'environment',
           },
         },
         decoder: {
-          readers: ["ean_reader"],
+          readers: ['ean_reader'],
         },
       },
-      function (err) {
+      (err) => {
         if (err) {
           console.log(err);
           return;
         }
         Quagga.start();
-      }
+      },
     );
     Quagga.onDetected(this.onDetected);
   }

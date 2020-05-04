@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
 /** Component that displays a table with the current product information */
 
@@ -6,7 +6,7 @@ class KoppelVerkoopTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: this.getEmptyData()
+      data: this.getEmptyData(),
     };
   }
 
@@ -15,6 +15,7 @@ class KoppelVerkoopTable extends Component {
       this.loadTable();
     }
   }
+
   getEmptyData() {
     return (
       {
@@ -26,20 +27,20 @@ class KoppelVerkoopTable extends Component {
 
   async loadTable() {
     this.props.onLoaded();
-    let newData = this.getEmptyData();
-    let url = "/product/?" + this.props.identifier + "=" + this.props.text;
+    const newData = this.getEmptyData();
+    const url = `/product/?${this.props.identifier}=${this.props.text}`;
     await fetch(url, {
-      method: "GET",
+      method: 'GET',
     })
       .then((response) => response.json())
       .then(
         (response) => {
-          newData["plu"] = response["plu"];
-          newData["name"] = response["name"];
+          newData.plu = response.plu;
+          newData.name = response.name;
         },
         (error) => {
           console.log(error);
-        }
+        },
       );
     /*
     url = "/koppelverkoop/lijst/?" + this.props.identifier + "=" + this.props.text;
@@ -64,7 +65,7 @@ class KoppelVerkoopTable extends Component {
   }
 
   renderTable() {
-    let table = [];
+    const table = [];
     let index = 0;
     Object.keys(this.state.data).forEach((key) => {
       table.push(
@@ -73,9 +74,9 @@ class KoppelVerkoopTable extends Component {
             <th scope="row">{key}</th>
             <th scope="row">{this.state.data[key]}</th>
           </tr>
-        </thead>
+        </thead>,
       );
-      index++;
+      index += 1;
     });
     return table;
   }

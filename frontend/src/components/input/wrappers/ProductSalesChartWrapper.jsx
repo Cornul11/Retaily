@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import ProductSalesChart from "../../charts/ProductSalesChart";
-import { format } from "date-fns";
+import React, { Component } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { format } from 'date-fns';
+import ProductSalesChart from '../../charts/ProductSalesChart';
 
 class ProductSalesChartWrapper extends Component {
   constructor(props) {
@@ -10,7 +10,7 @@ class ProductSalesChartWrapper extends Component {
     this.state = {
       startDate: new Date(),
       endDate: new Date(),
-      interval: "hour",
+      interval: 'hour',
       retrieve: false,
     };
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
@@ -18,6 +18,10 @@ class ProductSalesChartWrapper extends Component {
     this.handleIntervalChange = this.handleIntervalChange.bind(this);
     this.handleRetrieveButton = this.handleRetrieveButton.bind(this);
     this.onLoaded = this.onLoaded.bind(this);
+  }
+
+  onLoaded() {
+    this.setState({ retrieve: false });
   }
 
   handleStartDateChange(date) {
@@ -36,17 +40,13 @@ class ProductSalesChartWrapper extends Component {
     this.setState({ retrieve: true });
   }
 
-  onLoaded() {
-    this.setState({ retrieve: false });
-  }
-
   renderIntervalSelect() {
     return (
       <select
         id="interval"
         value={this.state.interval}
         onChange={this.handleIntervalChange}
-        className={"form-control"}
+        className="form-control"
       >
         <option value="hour">hour</option>
         <option value="day">day</option>
@@ -60,8 +60,8 @@ class ProductSalesChartWrapper extends Component {
         retrieve={this.state.retrieve}
         identifier={this.props.identifier}
         text={this.props.text}
-        start={format(this.state.startDate, "yyyy-MM-dd")}
-        end={format(this.state.endDate, "yyyy-MM-dd")}
+        start={format(this.state.startDate, 'yyyy-MM-dd')}
+        end={format(this.state.endDate, 'yyyy-MM-dd')}
         interval={this.state.interval}
         onLoaded={this.onLoaded}
       />
@@ -76,7 +76,7 @@ class ProductSalesChartWrapper extends Component {
           <DatePicker
             selected={this.state.startDate}
             onChange={this.handleStartDateChange}
-            dateFormat={"dd-MM-yyyy"}
+            dateFormat="dd-MM-yyyy"
             inline
             maxDate={this.state.endDate}
           />
@@ -86,7 +86,7 @@ class ProductSalesChartWrapper extends Component {
           <DatePicker
             selected={this.state.endDate}
             onChange={this.handleEndDateChange}
-            dateFormat={"dd-MM-yyyy"}
+            dateFormat="dd-MM-yyyy"
             inline
             minDate={this.state.startDate}
           />
@@ -100,7 +100,8 @@ class ProductSalesChartWrapper extends Component {
           {this.renderIntervalSelect()}
         </div>
         <button
-          className={"btn btn-secondary mt-2 btn-block"}
+          type="button"
+          className="btn btn-secondary mt-2 btn-block"
           onClick={this.handleRetrieveButton}
         >
           retrieve
