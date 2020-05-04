@@ -70,26 +70,36 @@ class ProductSalesChartWrapper extends Component {
 
   render() {
     return (
-      <div className="input-group">
-        <div>
-          <h3>Start Date</h3>
-          <DatePicker
-            selected={this.state.startDate}
-            onChange={this.handleStartDateChange}
-            dateFormat="dd-MM-yyyy"
-            inline
-            maxDate={this.state.endDate}
-          />
-        </div>
-        <div>
-          <h3>End Date</h3>
-          <DatePicker
-            selected={this.state.endDate}
-            onChange={this.handleEndDateChange}
-            dateFormat="dd-MM-yyyy"
-            inline
-            minDate={this.state.startDate}
-          />
+      <div>
+        <div className="input-group justify-content-center">
+          <div className="card text-center mt-2 mr-2">
+            <div className="card-header">
+              start date
+            </div>
+            <div className="card-body">
+              <DatePicker
+                selected={this.state.startDate}
+                onChange={this.handleStartDateChange}
+                dateFormat="dd-MM-yyyy"
+                inline
+                maxDate={this.state.endDate}
+              />
+            </div>
+          </div>
+          <div className="card text-center mt-2">
+            <div className="card-header">
+              end date
+            </div>
+            <div className="card-body">
+              <DatePicker
+                selected={this.state.endDate}
+                onChange={this.handleEndDateChange}
+                dateFormat="dd-MM-yyyy"
+                inline
+                minDate={this.state.startDate}
+              />
+            </div>
+          </div>
         </div>
         <div className="input-group mt-2">
           <div className="input-group-prepend">
