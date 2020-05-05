@@ -1,11 +1,16 @@
+import logging
 import sys
 from typing import Dict, Tuple, Optional, List
 
 from journal_parser.database_sender import DataSender
 
+logger = logging.getLogger(__name__)
+
 
 def parse_file(filepath: str) -> object:
     data_sender = DataSender()
+    logger.info('Parsing and sending transactions to the database from \'%s\'', filepath)
+
     records = []
 
     # these journal records can be ignored as they contain no valuable information for our scope

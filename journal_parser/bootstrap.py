@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 import time
@@ -8,14 +9,21 @@ from watchdog.observers import Observer
 
 from journal_parser.parser import parse_file
 
+logging.basicConfig(filename='main.log', level=logging.INFO, format='%(asctime)s %(levelname)s:%(message)s')
+logger = logging.getLogger(__name__)
+
 
 def process(event):
     with ZipFile(event.src_path, 'r') as zip_file:
+        logger.info('Extracting \'%s\'', event.src_path)
         zip_file.extractall('temp')
 
     for filename in os.listdir('temp'):
         if filename.endswith('.txt'):
+            logger.info('Parsing \'temp/%s\'', filename)
             parse_file('temp/' + filename)
+            logger.info('Successfully parsed \'temp/%s\'', filename)
+            os.remove(filename)
 
 
 class ArchiveEventHandler(RegexMatchingEventHandler):
@@ -30,6 +38,7 @@ class ArchiveEventHandler(RegexMatchingEventHandler):
         super().__init__(self.ARCHIVE_REGEX)
 
     def on_created(self, event):
+        logger.info('New file, processing \'%s\'', event.src_path)
         process(event)
 
     """
@@ -74,4 +83,5 @@ class ArchiveWatcher:
 
 if __name__ == '__main__':
     src_path = sys.argv[1] if len(sys.argv) > 1 else '.'
+    logger.info('Started watching for changes in \'%s\'', src_path)
     ArchiveWatcher(src_path).run()

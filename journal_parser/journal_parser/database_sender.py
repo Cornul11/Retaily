@@ -1,9 +1,13 @@
 import configparser
+import logging
+import os
 import sys
 from datetime import datetime
 
 import mysql
 from mysql.connector import Error
+
+logger = logging.getLogger(__name__)
 
 
 def load_credentials():
@@ -25,11 +29,16 @@ class DataSender:
         self.close_connection()
 
     def initialize_connection(self):
-        connection = mysql.connector.connect(host=self.db_credentials['hostname'],
+        try:
+            connection = mysql.connector.connect(host=self.db_credentials['hostname'],
                                              password=self.db_credentials['password'],
                                              user=self.db_credentials['username'],
                                              database=self.db_credentials['database'])
-        return connection
+        except mysql.connector.Error as err:
+            logger.error('Error while attempting to connect to database: %s', err)
+            os._exit(1)
+        finally:
+            return connection
 
     def close_connection(self):
         if self.connection.is_connected():
