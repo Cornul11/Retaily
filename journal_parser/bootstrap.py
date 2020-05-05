@@ -23,7 +23,7 @@ def process(event):
             logger.info('Parsing \'temp/%s\'', filename)
             parse_file('temp/' + filename)
             logger.info('Successfully parsed \'temp/%s\'', filename)
-            os.remove(filename)
+            os.remove('temp/' + filename)
 
 
 class ArchiveEventHandler(RegexMatchingEventHandler):
