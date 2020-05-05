@@ -9,18 +9,26 @@ import '../charts/App.css';
 
 const products = [];
 
+const escapeRegexCharacters = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 const getSuggestions = (value) => {
-  const inputValue = value.trim().toLowerCase();
-  const inputLength = inputValue.length;
-  return inputLength === 0 ? [] : products.filter((prod) => prod.name.toLowerCase().slice(0, inputLength) === inputValue);
+  const escapedValue = escapeRegexCharacters(value.trim());
+
+  if (escapedValue === '') {
+    return [];
+  }
+
+  const regex = new RegExp(`^${escapedValue}`, 'i');
+
+  return products.filter((product) => regex.test(product.name));
 };
 
 const getSuggestionValue = (suggestion) => suggestion.name;
 
 const renderSuggestion = (suggestion) => (
-  <div>
+  <span>
     {suggestion.name}
-  </div>
+  </span>
 );
 
 /**
@@ -33,7 +41,7 @@ function shouldRenderSuggestions(value) {
   return value.trim().length > 2;
 }
 
-class ProductInfo extends Component {
+const ProductInfo = class extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -83,7 +91,7 @@ class ProductInfo extends Component {
   }
 
   handleScanButton() {
-    this.setState({ scanning: !this.state.scanning });
+    this.setState((prevState) => ({ scanning: !prevState.scanning }));
   }
 
   onDetected(result) {
@@ -116,9 +124,16 @@ class ProductInfo extends Component {
     );
   }
 
+  onSuggestionSelectedByUser = (event, {
+    suggestion, suggestionValue, suggestionIndex, sectionIndex, method,
+  }) => {
+    this.setState({ text: suggestionValue });
+  };
+
   renderInputText() {
     if (this.state.identifier === 'name') {
       const value = this.state.text;
+      const { suggestions } = this.state;
       const inputProps = {
         placeholder: 'Test input',
         value,
@@ -126,15 +141,15 @@ class ProductInfo extends Component {
       };
       return (
         <Autosuggest
-          suggestions={this.state.suggestions}
+          suggestions={suggestions}
           onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
           onSuggestionsClearRequested={this.onSuggestionsClearRequested}
           getSuggestionValue={getSuggestionValue}
           renderSuggestion={renderSuggestion}
           shouldRenderSuggestions={shouldRenderSuggestions}
+          onSuggestionSelected={this.onSuggestionSelectedByUser}
           inputProps={inputProps}
         />
-
       );
     }
     return (
@@ -269,6 +284,6 @@ class ProductInfo extends Component {
       </div>
     );
   }
-}
+};
 
 export default ProductInfo;
