@@ -10,10 +10,10 @@ class HomePage extends Component {
           <div className="card border-0 shadow my-5">
             <div className="card-body p-5">
               {/* ----- put page content under this line -----*/}
-              <a className="btn btn-primary btn-block mb-2" href="/simple/productinfo">Simple Product Info</a>
-              <a className="btn btn-primary btn-block mb-2" href="/extended/productinfo">Extended Product Info</a>
-              <a className="btn btn-primary btn-block mb-2" href="/inventorybarchart">Overview of sales</a>
-              <a className="btn btn-primary btn-block mb-2" href="/koppelverkoop">KoppelVerkoop</a>
+              <a className="btn btn-primary btn-block mb-2 home-button" href="/simple/productinfo">Simple Product Info</a>
+              <a className="btn btn-primary btn-block mb-2 home-button" href="/extended/productinfo">Extended Product Info</a>
+              <a className="btn btn-primary btn-block mb-2 home-button" href="/inventorybarchart">Overview of sales</a>
+              <a className="btn btn-primary btn-block mb-2 home-button" href="/koppelverkoop">KoppelVerkoop</a>
               {/* ----- page content end -----*/}
             </div>
           </div>

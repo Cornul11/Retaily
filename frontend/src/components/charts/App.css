@@ -99,3 +99,17 @@ body {
 .react-autosuggest__suggestion--highlighted {
     background-color: #ddd;
 }
+
+.navbar-collapse a:hover {
+    background: #007BFF;
+    color: #fff !important;
+    transition: ease-in-out 0.3s;
+}
+
+.navbar-brand {
+    padding: 5px 20px;
+}
+
+.home-button {
+    margin: 10px;
+}
