@@ -110,6 +110,6 @@ body {
     padding: 5px 20px;
 }
 
-.home-button {
-    margin: 10px;
+.card-body a {
+    padding: 25px 20px;
 }
