@@ -1,0 +1,7 @@
+# parser working files
+*.log
+temp/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
