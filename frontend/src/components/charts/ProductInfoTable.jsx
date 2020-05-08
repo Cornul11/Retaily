@@ -91,12 +91,10 @@ class ProductInfoTable extends Component {
     let index = 0;
     Object.keys(this.state.data).forEach((key) => {
       table.push(
-        <thead key={index}>
           <tr key={index}>
             <th scope="row">{key}</th>
-            <th scope="row">{this.state.data[key]}</th>
+            <td>{this.state.data[key]}</td>
           </tr>
-        </thead>,
       );
       index += 1;
     });
@@ -106,7 +104,11 @@ class ProductInfoTable extends Component {
   render() {
     return (
       <div className="productInfoTable">
-        <table className="table table-bordered">{this.renderTable()}</table>
+        <table className="table table-striped table-bordered table-sm">
+          <tbody>
+            {this.renderTable()}
+          </tbody>
+        </table>
       </div>
     );
   }
