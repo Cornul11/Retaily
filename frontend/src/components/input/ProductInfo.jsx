@@ -83,7 +83,7 @@ const ProductInfo = class extends Component {
   }
 
   handleIdentifierChange(event) {
-    this.setState({ identifier: event.target.value });
+    this.setState({ identifier: event.target.value, text: '' });
   }
 
   handleTextChange(event) {
@@ -108,7 +108,6 @@ const ProductInfo = class extends Component {
   handleChartTypeChange(event) {
     this.setState({ chartType: event.target.value });
   }
-
 
   renderSelectIdentifier() {
     return (
