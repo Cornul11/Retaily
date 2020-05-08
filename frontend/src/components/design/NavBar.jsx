@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 
-
 class NavBar extends Component {
   render() {
     return (
       <nav className="navbar navbar-expand-lg navbar-light bg-light static-top mb-5 shadow">
         <div className="container">
           <a className="navbar-brand" href="/">
-            <img src={require('./img/logo-transparent.png')}/>
+            <img src="/logo-transparent.png" alt="logo" />
           </a>
           <button
             className="navbar-toggler"
