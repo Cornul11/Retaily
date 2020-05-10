@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Chart } from 'chart.js';
+import React, { Component } from "react";
+import { Chart } from "chart.js";
 
 class ProductSalesChart extends Component {
   componentDidUpdate() {
@@ -10,30 +10,21 @@ class ProductSalesChart extends Component {
 
   async loadChart() {
     this.props.onLoaded();
-    const url = `/sales/?${
-      this.props.identifier
-    }=${
-      this.props.text
-    }&start=${
-      this.props.start
-    }&end=${
-      this.props.end
-    }&interval=${
-      this.props.interval}`;
+    const url = `/sales/?${this.props.identifier}=${this.props.text}&start=${this.props.start}&end=${this.props.end}&interval=${this.props.interval}`;
     await fetch(url, {
-      method: 'GET',
+      method: "GET",
     })
       .then((response) => response.json())
       .then((response) => {
         this.setState({ data: response });
       });
-    new Chart(document.getElementById('myChart').getContext('2d'), {
-      type: 'bar',
+    new Chart(document.getElementById("myChart").getContext("2d"), {
+      type: "bar",
       data: {
         datasets: [
           {
             data: this.state.data,
-            backgroundColor: 'rgba(55,155,255,0.5)',
+            backgroundColor: "rgba(55,155,255,0.5)",
           },
         ],
       },
@@ -45,12 +36,17 @@ class ProductSalesChart extends Component {
         scales: {
           xAxes: [
             {
-              type: 'time',
+              type: "time",
               time: {
-                unit: this.props.interval,
+                unit:
+                  this.props.interval === "half_an_hour"
+                    ? "hour"
+                    : this.props.interval,
                 displayFormats: {
-                  hour: 'HH:mm',
-                  day: 'D MMM',
+                  hour: "HH:mm",
+                  day: "D MMM",
+                  week: "D MMM",
+                  month: "MMM",
                 },
               },
               offset: true,
@@ -67,7 +63,7 @@ class ProductSalesChart extends Component {
         tooltips: {
           callbacks: {
             title() {
-              return '';
+              return "";
             },
           },
         },

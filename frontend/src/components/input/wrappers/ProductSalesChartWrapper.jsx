@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { format } from 'date-fns';
-import ProductSalesChart from '../../charts/ProductSalesChart';
+import React, { Component } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { format, getDay, addDays } from "date-fns";
+import nl from "date-fns/locale/nl";
+import ProductSalesChart from "../../charts/ProductSalesChart";
 
 class ProductSalesChartWrapper extends Component {
   constructor(props) {
@@ -10,7 +11,7 @@ class ProductSalesChartWrapper extends Component {
     this.state = {
       startDate: new Date(),
       endDate: new Date(),
-      interval: 'hour',
+      interval: "hour",
       retrieve: false,
     };
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
@@ -18,6 +19,7 @@ class ProductSalesChartWrapper extends Component {
     this.handleIntervalChange = this.handleIntervalChange.bind(this);
     this.handleRetrieveButton = this.handleRetrieveButton.bind(this);
     this.onLoaded = this.onLoaded.bind(this);
+    this.filterDate = this.filterDate.bind(this);
   }
 
   onLoaded() {
@@ -33,11 +35,42 @@ class ProductSalesChartWrapper extends Component {
   }
 
   handleIntervalChange(event) {
-    this.setState({ interval: event.target.value });
+    this.setState({
+      interval: event.target.value,
+    });
+    let startDate = new Date(this.state.startDate);
+    let endDate = new Date(this.state.endDate);
+    if (event.target.value === "week") {
+      while (getDay(startDate) !== 1) {
+        startDate = addDays(startDate, -1);
+      }
+      while (getDay(endDate) !== 1) {
+        endDate = addDays(endDate, 1);
+      }
+    }
+    if (event.target.value === "month") {
+      while (startDate.getDate() !== 1) {
+        startDate = addDays(startDate, -1);
+      }
+      while (endDate.getDate() !== 1) {
+        endDate = addDays(endDate, 1);
+      }
+    }
+    this.setState({ startDate: startDate, endDate: endDate });
   }
 
   handleRetrieveButton() {
     this.setState({ retrieve: true });
+  }
+
+  filterDate(date) {
+    if (this.state.interval === "week") {
+      return getDay(date) === 1;
+    }
+    if (this.state.interval === "month") {
+      return date.getDate() === 1;
+    }
+    return true;
   }
 
   renderIntervalSelect() {
@@ -48,8 +81,11 @@ class ProductSalesChartWrapper extends Component {
         onChange={this.handleIntervalChange}
         className="form-control"
       >
+        <option value="half_an_hour">half an hour</option>
         <option value="hour">hour</option>
         <option value="day">day</option>
+        <option value="week">week</option>
+        <option value="month">month</option>
       </select>
     );
   }
@@ -60,8 +96,8 @@ class ProductSalesChartWrapper extends Component {
         retrieve={this.state.retrieve}
         identifier={this.props.identifier}
         text={this.props.text}
-        start={format(this.state.startDate, 'yyyy-MM-dd')}
-        end={format(this.state.endDate, 'yyyy-MM-dd')}
+        start={format(this.state.startDate, "yyyy-MM-dd")}
+        end={format(this.state.endDate, "yyyy-MM-dd")}
         interval={this.state.interval}
         onLoaded={this.onLoaded}
       />
@@ -73,9 +109,7 @@ class ProductSalesChartWrapper extends Component {
       <div>
         <div className="input-group justify-content-center">
           <div className="card text-center mt-2 mr-2">
-            <div className="card-header">
-              start date
-            </div>
+            <div className="card-header">start date</div>
             <div className="card-body">
               <DatePicker
                 selected={this.state.startDate}
@@ -83,13 +117,15 @@ class ProductSalesChartWrapper extends Component {
                 dateFormat="dd-MM-yyyy"
                 inline
                 maxDate={this.state.endDate}
+                locale={nl}
+                showWeekNumbers={this.state.interval === "week" ? true : false}
+                showMonthDropdown
+                filterDate={this.filterDate}
               />
             </div>
           </div>
           <div className="card text-center mt-2">
-            <div className="card-header">
-              end date
-            </div>
+            <div className="card-header">end date</div>
             <div className="card-body">
               <DatePicker
                 selected={this.state.endDate}
@@ -97,6 +133,10 @@ class ProductSalesChartWrapper extends Component {
                 dateFormat="dd-MM-yyyy"
                 inline
                 minDate={this.state.startDate}
+                locale={nl}
+                showWeekNumbers={this.state.interval === "week" ? true : false}
+                showMonthDropdown
+                filterDate={this.filterDate}
               />
             </div>
           </div>

@@ -1,7 +1,9 @@
 from flask import Blueprint, request, jsonify, abort
 from models import Product, Transaction
 from app import db
+from dateutil.relativedelta import *
 import datetime
+
 
 time_format = "%Y-%m-%d %H:%M"
 
@@ -69,11 +71,21 @@ def sales():
         try:
             start = datetime.datetime.strptime(start, "%Y-%m-%d")
             end = datetime.datetime.strptime(end, "%Y-%m-%d")
-            end += datetime.timedelta(days=1)
-            if interval == "hour":
+            if interval == "half_an_hour":
+                interval = datetime.timedelta(minutes=30)
+                end += datetime.timedelta(days=1)
+            elif interval == "hour":
                 interval = datetime.timedelta(hours=1)
+                end += datetime.timedelta(days=1)
             elif interval == "day":
                 interval = datetime.timedelta(days=1)
+                end += datetime.timedelta(days=1)
+            elif interval == "week":
+                interval = datetime.timedelta(weeks=1)
+                end += datetime.timedelta(weeks=1)
+            elif interval == "month":
+                interval = relativedelta(months=1)
+                end += relativedelta(months=1)
             else:
                 abort(400)
         except:
