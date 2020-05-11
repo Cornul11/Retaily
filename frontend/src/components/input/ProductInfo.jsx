@@ -66,6 +66,9 @@ const ProductInfo = class extends Component {
   }
 
   async fillProductsArray() {
+    if(!this.props.extended){
+      return;
+    }
     await fetch('/inventory/list', {
       method: 'GET',
     })
