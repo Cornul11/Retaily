@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
 class NavBar extends Component {
   render() {
@@ -13,7 +13,6 @@ class NavBar extends Component {
             type="button"
             data-toggle="collapse"
             data-target="#navbarResponsive"
-
             aria-controls="navbarResponsive"
             aria-expanded="false"
             aria-label="Toggle navigation"
@@ -23,19 +22,34 @@ class NavBar extends Component {
           <div className="collapse navbar-collapse" id="navbarResponsive">
             <ul className="navbar-nav ml-auto">
               <li className="nav-item active">
-                <a className="nav-link" href="/">Home</a>
+                <a className="nav-link" href="/">
+                  Home
+                </a>
               </li>
               <li className="nav-item active">
-                <a className="nav-link" href="/inventorybarchart">Products sold</a>
+                <a className="nav-link" href="/inventorybarchart">
+                  Products sold
+                </a>
               </li>
               <li className="nav-item active">
-                <a className="nav-link" href="/extended/productinfo">Extended Product info</a>
+                <a className="nav-link" href="/extended/productinfo">
+                  Extended Product info
+                </a>
               </li>
               <li className="nav-item active">
-                <a className="nav-link" href="/simple/productinfo">Simple Product Info</a>
+                <a className="nav-link" href="/simple/productinfo">
+                  Simple Product Info
+                </a>
               </li>
               <li className="nav-item active">
-                <a className="nav-link" href="/koppelverkoop">KoppelVerkoop</a>
+                <a className="nav-link" href="/koppelverkoop">
+                  KoppelVerkoop
+                </a>
+              </li>
+              <li className="nav-item active">
+                <a className="nav-link" href="/salesinfo">
+                  Sales Info
+                </a>
               </li>
             </ul>
           </div>
