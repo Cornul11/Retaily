@@ -7,8 +7,8 @@ import datetime
 koppelverkoop_bp = Blueprint("koppelverkoop", __name__)
 
 
-def get_koppel_products(plu, name, days, end):
-    trans_ids = get_id(plu, name, days, end)
+def get_koppel_products(plu, name, start, end):
+    trans_ids = get_id(plu, name, start, end)
     trans_ids = list(set(trans_ids))
     data = []
     for trans_id in trans_ids:
@@ -31,11 +31,10 @@ def get_koppel_products(plu, name, days, end):
                 count = 1
         final.append({"name": name, "count": count})
     final.sort(key=lambda x: x["count"], reverse=True)
-    return final[:10]
+    return ([{"name": "Geselecteerd Product: " + name, "count": ""}, {"name": "", "count": ""}] + final[:10])
 
 
-def get_id(plu, name, days, end):
-    start = end - datetime.timedelta(days=days)
+def get_id(plu, name, start, end):
     if plu is not None:
         data = []
         items = (
@@ -71,7 +70,13 @@ def lijst():
     if request.method == "GET":
         plu = request.args.get("plu", None)
         name = request.args.get("name", None)
+        start = request.args.get("start", None)
+        end = request.args.get("end", None)
+        try:
+            start = datetime.datetime.strptime(start, "%Y-%m-%d")
+            end = datetime.datetime.strptime(end, "%Y-%m-%d")
+        except:
+            abort(400)
         if plu is None and name is None:
             abort(400)
-        end = datetime.datetime.now()
-        return jsonify({"koppelproducts": get_koppel_products(plu, name, 365, end)})
+        return jsonify(get_koppel_products(plu, name, start, end))

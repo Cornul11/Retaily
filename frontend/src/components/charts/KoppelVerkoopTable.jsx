@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
 /** Component that displays a table with the current product information */
 
@@ -6,7 +6,7 @@ class KoppelVerkoopTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: this.getEmptyData(),
+      data: null,
     };
   }
 
@@ -17,74 +17,53 @@ class KoppelVerkoopTable extends Component {
   }
 
   getEmptyData() {
-    return (
-      {
-        plu: null,
-        name: null,
-      }
-    );
+    return {
+      plu: null,
+      name: null,
+    };
   }
 
   async loadTable() {
     this.props.onLoaded();
-    const newData = this.getEmptyData();
-    const url = `/product/?${this.props.identifier}=${this.props.text}`;
-    await fetch(url, {
-      method: 'GET',
-    })
-      .then((response) => response.json())
-      .then(
-        (response) => {
-          newData.plu = response.plu;
-          newData.name = response.name;
-        },
-        (error) => {
-          console.log(error);
-        },
-      );
-    /*
-    url = "/koppelverkoop/lijst/?" + this.props.identifier + "=" + this.props.text;
+    let url = `/koppelverkoop/lijst/?${this.props.identifier}=${this.props.text}&start=${this.props.start}&end=${this.props.end}`;
     await fetch(url, {
       method: "GET",
     })
       .then((response) => response.json())
       .then(
         (response) => {
-          newData["1"] = response["sales_last_week"];
-          newData["2"] = response["sales_last_month"];
-          newData["3"] = response["sales_last_quarter"];
-          newData["4"] = response["sales_last_year"];
-          newData["5"] = response["sales_last_year"];
+          this.setState({ data: response });
+          console.log(response);
         },
         (error) => {
           console.log(error);
         }
       );
-    */
-    this.setState({ data: newData });
   }
 
   renderTable() {
+    if (this.state.data == null) {
+      return null;
+    }
     const table = [];
-    let index = 0;
-    Object.keys(this.state.data).forEach((key) => {
+    this.state.data.forEach((key) => {
       table.push(
-        <thead key={index}>
-          <tr key={index}>
-            <th scope="row">{key}</th>
-            <th scope="row">{this.state.data[key]}</th>
-          </tr>
-        </thead>,
+        <tr key={key.name}>
+          <th>{key.name}</th>
+          <td>{key.count}</td>
+        </tr>
       );
-      index += 1;
     });
+    console.log("test");
     return table;
   }
 
   render() {
     return (
       <div className="koppelVerkoopTable">
-        <table className="table table-bordered">{this.renderTable()}</table>
+        <table className="table table-bordered">
+          <tbody>{this.renderTable()}</tbody>
+        </table>
       </div>
     );
   }
