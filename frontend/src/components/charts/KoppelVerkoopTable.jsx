@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 /** Component that displays a table with the current product information */
 
+
 class KoppelVerkoopTable extends Component {
   constructor(props) {
     super(props);
