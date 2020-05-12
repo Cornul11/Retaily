@@ -39,7 +39,6 @@ class KoppelVerkoopTable extends Component {
       return null;
     }
     const table = [];
-    let index = 0;
     let data = this.state.data.slice();
     let key = data[0];
     table.push(
@@ -57,7 +56,6 @@ class KoppelVerkoopTable extends Component {
           <td>{key.count}</td>
         </tr>
       );
-      index++;
     });
     return table;
   }
