@@ -8,7 +8,7 @@ koppelverkoop_bp = Blueprint("koppelverkoop", __name__)
 
 
 def get_koppel_products(plu, name, start, end):
-    trans_ids = get_id(plu, name, start, end)
+    name,trans_ids = get_id(plu, name, start, end)
     trans_ids = list(set(trans_ids))
     data = []
     for trans_id in trans_ids:
@@ -20,16 +20,16 @@ def get_koppel_products(plu, name, start, end):
     data.sort()
     final = []
     if len(data) > 0:
-        name = data[0]
+        k_name = data[0]
         count = 1
         for i in range(1, len(data)):
-            if name == data[i]:
+            if k_name == data[i]:
                 count += 1
             else:
-                final.append({"name": name, "count": count})
-                name = data[i]
+                final.append({"name": k_name, "count": count})
+                k_name = data[i]
                 count = 1
-        final.append({"name": name, "count": count})
+        final.append({"name": k_name, "count": count})
     final.sort(key=lambda x: x["count"], reverse=True)
     return ([{"name": "Geselecteerd Product: " + name, "count": ""}, {"name": "", "count": ""}] + final[:10])
 
@@ -46,9 +46,16 @@ def get_id(plu, name, start, end):
                 & (Transaction.date_time <= end)
             )
         )
+        length = 0
         for item in items:
             data.append(item.Product.serialized["transaction_id"])
-        return data
+            length = length + 1
+        if length == 0:
+            product = Product.query.filter(Product.plu == plu).first()
+            name = (product.serialized)["name"]
+        else:
+            name = items[0].Product.serialized["name"]
+        return name, data
     else:
         data = []
         items = (
@@ -62,7 +69,7 @@ def get_id(plu, name, start, end):
         )
         for item in items:
             data.append(item.Product.serialized["transaction_id"])
-        return data
+        return name, data
 
 
 @koppelverkoop_bp.route("/lijst/", methods=["GET"])
