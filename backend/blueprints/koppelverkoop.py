@@ -31,7 +31,7 @@ def get_koppel_products(plu, name, start, end):
                 count = 1
         final.append({"name": k_name, "count": count})
     final.sort(key=lambda x: x["count"], reverse=True)
-    return ([{"name": "Geselecteerd Product: " + name, "count": ""}, {"name": "", "count": ""}] + final[:10])
+    return ([{"name": "Geselecteerd Product: " + name, "count": ""}] + final[:10])
 
 
 def get_id(plu, name, start, end):
