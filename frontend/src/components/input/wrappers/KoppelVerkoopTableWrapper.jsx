@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { format, getDay, addDays } from "date-fns";
+import { format } from "date-fns";
 import nl from "date-fns/locale/nl";
 import KoppelVerkoopTable from "../../charts/KoppelVerkoopTable";
 
@@ -53,7 +53,7 @@ class KoppelVerkoopTableWrapper extends Component {
     return (
       <div>
         <div className="input-group justify-content-center">
-          <div className="card text-center mt-2 mr-2">
+          <div className="card text-center mt-2 mr-md-3">
             <div className="card-header">start date</div>
             <div className="card-body">
               <DatePicker

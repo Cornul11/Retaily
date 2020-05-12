@@ -108,7 +108,7 @@ class ProductSalesChartWrapper extends Component {
     return (
       <div>
         <div className="input-group justify-content-center">
-          <div className="card text-center mt-2 mr-2">
+          <div className="card text-center mt-2 mr-md-3">
             <div className="card-header">start date</div>
             <div className="card-body">
               <DatePicker
