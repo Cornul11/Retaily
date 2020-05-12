@@ -8,7 +8,7 @@ class BluePrintPage extends Component {
         <NavBar />
         <div className="container">
           <div className="card border-0 shadow my-5">
-            <div className="card-body p-5">
+            <div className="card-body p-xs-0 p-md-5">
               {this.props.content}
             </div>
           </div>
