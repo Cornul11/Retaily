@@ -43,7 +43,7 @@ class KoppelVerkoopTable extends Component {
     let key = data[0];
     table.push(
       <tr key={key.name} className="table-secondary">
-        <th scope="row" colspan="2" className="text-center">
+        <th scope="row" colSpan="2" className="text-center">
           {key.name}
         </th>
       </tr>
