@@ -26,6 +26,10 @@ class ProductSalesChartWrapper extends Component {
     this.setState({ retrieve: false });
   }
 
+  componentDidMount() {
+    this.props.setRetrieve(this.handleRetrieveButton);
+  }
+
   handleStartDateChange(date) {
     this.setState({ startDate: date });
   }

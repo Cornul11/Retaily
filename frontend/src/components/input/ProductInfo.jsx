@@ -1,35 +1,32 @@
-import React, { Component } from 'react';
-import Autosuggest from 'react-autosuggest';
-import Scanner from '../barcode/Scanner';
-import ProductSalesChartWrapper from './wrappers/ProductSalesChartWrapper';
-import ProductInfoTableWrapper from './wrappers/ProductInfoTableWrapper';
-import '../charts/App.css';
+import React, { Component } from "react";
+import Autosuggest from "react-autosuggest";
+import Scanner from "../barcode/Scanner";
+import ProductSalesChartWrapper from "./wrappers/ProductSalesChartWrapper";
+import ProductInfoTableWrapper from "./wrappers/ProductInfoTableWrapper";
+import "../charts/App.css";
 
 /** Component that retrieves information about an individual product */
 
 const products = [];
 
-const escapeRegexCharacters = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const escapeRegexCharacters = (str) =>
+  str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 const getSuggestions = (value) => {
   const escapedValue = escapeRegexCharacters(value.trim());
 
-  if (escapedValue === '') {
+  if (escapedValue === "") {
     return [];
   }
 
-  const regex = new RegExp(`^${escapedValue}`, 'i');
+  const regex = new RegExp(`^${escapedValue}`, "i");
 
   return products.filter((product) => regex.test(product.name));
 };
 
 const getSuggestionValue = (suggestion) => suggestion.name;
 
-const renderSuggestion = (suggestion) => (
-  <span>
-    {suggestion.name}
-  </span>
-);
+const renderSuggestion = (suggestion) => <span>{suggestion.name}</span>;
 
 /**
  * Decides whether to show suggestions or not.
@@ -45,10 +42,10 @@ const ProductInfo = class extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      identifier: 'plu',
-      text: '',
+      identifier: "plu",
+      text: "",
       scanning: false,
-      chartType: 'productInfoTable',
+      chartType: "productInfoTable",
       suggestions: [],
     };
     this.handleIdentifierChange = this.handleIdentifierChange.bind(this);
@@ -63,14 +60,14 @@ const ProductInfo = class extends Component {
     this.setState({
       value: newValue,
     });
-  }
+  };
 
   async fillProductsArray() {
-    if(!this.props.extended){
+    if (!this.props.extended) {
       return;
     }
-    await fetch('/inventory/list', {
-      method: 'GET',
+    await fetch("/inventory/list", {
+      method: "GET",
     })
       .then((response) => response.json())
       .then(
@@ -81,12 +78,12 @@ const ProductInfo = class extends Component {
         },
         (error) => {
           console.log(error);
-        },
+        }
       );
   }
 
   handleIdentifierChange(event) {
-    this.setState({ identifier: event.target.value, text: '' });
+    this.setState({ identifier: event.target.value, text: "" });
   }
 
   handleTextChange(event) {
@@ -99,18 +96,25 @@ const ProductInfo = class extends Component {
 
   onDetected(result) {
     this.setState({ scanning: false, text: result });
+    this.retrieveInChild();
   }
 
   scanButtonText() {
     if (this.state.scanning) {
-      return 'stop scanner';
+      return "stop scanner";
     }
-    return 'start scanner';
+    return "start scanner";
   }
 
   handleChartTypeChange(event) {
     this.setState({ chartType: event.target.value });
   }
+
+  handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      this.retrieveInChild();
+    }
+  };
 
   renderSelectIdentifier() {
     return (
@@ -126,18 +130,19 @@ const ProductInfo = class extends Component {
     );
   }
 
-  onSuggestionSelectedByUser = (event, {
-    suggestion, suggestionValue, suggestionIndex, sectionIndex, method,
-  }) => {
+  onSuggestionSelectedByUser = (
+    event,
+    { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }
+  ) => {
     this.setState({ text: suggestionValue });
   };
 
   renderInputText() {
-    if (this.state.identifier === 'name') {
+    if (this.state.identifier === "name") {
       const value = this.state.text;
       const { suggestions } = this.state;
       const inputProps = {
-        placeholder: 'Test input',
+        placeholder: "Test input",
         value,
         onChange: this.handleTextChange,
       };
@@ -159,14 +164,14 @@ const ProductInfo = class extends Component {
         type="text"
         value={this.state.text}
         className="form-control"
-        placeholder={(this.props.extended ? '' : 'EAN-code')}
+        placeholder={this.props.extended ? "" : "EAN-code"}
         onChange={this.handleTextChange}
       />
     );
   }
 
   renderScanButton() {
-    if (this.state.identifier === 'plu') {
+    if (this.state.identifier === "plu") {
       if (this.props.extended) {
         return (
           <button
@@ -222,22 +227,23 @@ const ProductInfo = class extends Component {
     this.setState({
       suggestions: getSuggestions(value),
     });
-  }
+  };
 
   onSuggestionsClearRequested = () => {
     this.setState({
       suggestions: [],
     });
-  }
+  };
 
   renderProductInfoTableWrapper() {
-    if (this.state.chartType === 'productInfoTable') {
+    if (this.state.chartType === "productInfoTable") {
       return (
         <ProductInfoTableWrapper
           id="table-wrapper"
           identifier={this.state.identifier}
           text={this.state.text}
           extended={this.props.extended}
+          setRetrieve={(retrieve) => (this.retrieveInChild = retrieve)}
         />
       );
     }
@@ -245,11 +251,12 @@ const ProductInfo = class extends Component {
   }
 
   renderProductSalesChartWrapper() {
-    if (this.state.chartType === 'productSales') {
+    if (this.state.chartType === "productSales") {
       return (
         <ProductSalesChartWrapper
           identifier={this.state.identifier}
           text={this.state.text}
+          setRetrieve={(retrieve) => (this.retrieveInChild = retrieve)}
         />
       );
     }
@@ -259,7 +266,7 @@ const ProductInfo = class extends Component {
   render() {
     if (this.props.extended) {
       return (
-        <div>
+        <div onKeyDown={this.handleKeyDown}>
           <div className="input-group mb-2">
             <div className="input-group-prepend">
               {this.renderSelectIdentifier()}
@@ -276,7 +283,7 @@ const ProductInfo = class extends Component {
     }
     /* Less options, but easier to use */
     return (
-      <div>
+      <div onKeyDown={this.handleKeyDown}>
         {this.renderScanButton()}
         {this.renderScanner()}
         <center>

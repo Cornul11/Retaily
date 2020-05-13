@@ -63,6 +63,12 @@ class SalesChartWrapper extends Component {
     this.setState({ retrieve: true });
   }
 
+  handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      this.handleRetrieveButton();
+    }
+  };
+
   filterDate(date) {
     if (this.state.interval === "week") {
       return getDay(date) === 1;
@@ -106,7 +112,7 @@ class SalesChartWrapper extends Component {
 
   render() {
     return (
-      <div>
+      <div onKeyDown={this.handleKeyDown}>
         <div className="input-group justify-content-center">
           <div className="card text-center mt-2 mr-md-3">
             <div className="card-header">start date</div>

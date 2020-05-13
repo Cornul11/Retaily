@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
-
-import KoppelVerkoopTableWrapper from './wrappers/KoppelVerkoopTableWrapper';
+import React, { Component } from "react";
+import KoppelVerkoopTableWrapper from "./wrappers/KoppelVerkoopTableWrapper";
 
 /** Component that retrieves koppelverkoop information about an individual product */
 
@@ -8,9 +7,9 @@ class KoppelVerkoopInfo extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      identifier: 'plu',
-      text: '',
-      chartType: 'koppelVerkoopTable',
+      identifier: "plu",
+      text: "",
+      chartType: "koppelVerkoopTable",
     };
 
     this.handleIdentifierChange = this.handleIdentifierChange.bind(this);
@@ -39,6 +38,12 @@ class KoppelVerkoopInfo extends Component {
     this.setState({ chartType: event.target.value });
   }
 
+  handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      this.retrieveInChild();
+    }
+  };
+
   renderSelectIdentifier() {
     return (
       <select
@@ -60,7 +65,7 @@ class KoppelVerkoopInfo extends Component {
         id="plu-input"
         value={this.state.text}
         className="form-control"
-        placeholder={(this.props.extended ? '' : 'EAN-code')}
+        placeholder={this.props.extended ? "" : "EAN-code"}
         onChange={this.handleTextChange}
       />
     );
@@ -80,13 +85,14 @@ class KoppelVerkoopInfo extends Component {
   }
 
   renderKoppelVerkoopTableWrapper() {
-    if (this.state.chartType === 'koppelVerkoopTable') {
+    if (this.state.chartType === "koppelVerkoopTable") {
       return (
         <KoppelVerkoopTableWrapper
           id="table-wrapper"
           identifier={this.state.identifier}
           text={this.state.text}
           extended={this.props.extended}
+          setRetrieve={(retrieve) => (this.retrieveInChild = retrieve)}
         />
       );
     }
@@ -95,7 +101,7 @@ class KoppelVerkoopInfo extends Component {
 
   render() {
     return (
-      <div>
+      <div onKeyDown={this.handleKeyDown}>
         <center>
           {this.renderInputText()}
           {this.renderKoppelVerkoopTableWrapper()}
