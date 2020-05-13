@@ -1,9 +1,7 @@
 import React, { Component } from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { format, getDay, addDays } from "date-fns";
-import nl from "date-fns/locale/nl";
+import { format } from "date-fns";
 import SalesChart from "../../charts/SalesChart";
+import IntervalDatePicker from "../IntervalDatePicker";
 
 class SalesChartWrapper extends Component {
   constructor(props) {
@@ -19,7 +17,6 @@ class SalesChartWrapper extends Component {
     this.handleIntervalChange = this.handleIntervalChange.bind(this);
     this.handleRetrieveButton = this.handleRetrieveButton.bind(this);
     this.onLoaded = this.onLoaded.bind(this);
-    this.filterDate = this.filterDate.bind(this);
   }
 
   onLoaded() {
@@ -34,29 +31,12 @@ class SalesChartWrapper extends Component {
     this.setState({ endDate: date });
   }
 
-  handleIntervalChange(event) {
+  handleIntervalChange(interval, startDate, endDate) {
     this.setState({
-      interval: event.target.value,
+      startDate: startDate,
+      endDate: endDate,
+      interval: interval,
     });
-    let startDate = new Date(this.state.startDate);
-    let endDate = new Date(this.state.endDate);
-    if (event.target.value === "week") {
-      while (getDay(startDate) !== 1) {
-        startDate = addDays(startDate, -1);
-      }
-      while (getDay(endDate) !== 1) {
-        endDate = addDays(endDate, 1);
-      }
-    }
-    if (event.target.value === "month") {
-      while (startDate.getDate() !== 1) {
-        startDate = addDays(startDate, -1);
-      }
-      while (endDate.getDate() !== 1) {
-        endDate = addDays(endDate, 1);
-      }
-    }
-    this.setState({ startDate: startDate, endDate: endDate });
   }
 
   handleRetrieveButton() {
@@ -68,33 +48,6 @@ class SalesChartWrapper extends Component {
       this.handleRetrieveButton();
     }
   };
-
-  filterDate(date) {
-    if (this.state.interval === "week") {
-      return getDay(date) === 1;
-    }
-    if (this.state.interval === "month") {
-      return date.getDate() === 1;
-    }
-    return true;
-  }
-
-  renderIntervalSelect() {
-    return (
-      <select
-        id="interval"
-        value={this.state.interval}
-        onChange={this.handleIntervalChange}
-        className="form-control"
-      >
-        <option value="half_an_hour">half an hour</option>
-        <option value="hour">hour</option>
-        <option value="day">day</option>
-        <option value="week">week</option>
-        <option value="month">month</option>
-      </select>
-    );
-  }
 
   renderSalesChart() {
     return (
@@ -113,48 +66,15 @@ class SalesChartWrapper extends Component {
   render() {
     return (
       <div onKeyDown={this.handleKeyDown}>
-        <div className="input-group justify-content-center">
-          <div className="card text-center mt-2 mr-md-3">
-            <div className="card-header">start date</div>
-            <div className="card-body">
-              <DatePicker
-                selected={this.state.startDate}
-                onChange={this.handleStartDateChange}
-                dateFormat="dd-MM-yyyy"
-                inline
-                maxDate={this.state.endDate}
-                locale={nl}
-                showWeekNumbers={this.state.interval === "week" ? true : false}
-                showMonthDropdown
-                filterDate={this.filterDate}
-              />
-            </div>
-          </div>
-          <div className="card text-center mt-2">
-            <div className="card-header">end date</div>
-            <div className="card-body">
-              <DatePicker
-                selected={this.state.endDate}
-                onChange={this.handleEndDateChange}
-                dateFormat="dd-MM-yyyy"
-                inline
-                minDate={this.state.startDate}
-                locale={nl}
-                showWeekNumbers={this.state.interval === "week" ? true : false}
-                showMonthDropdown
-                filterDate={this.filterDate}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="input-group mt-2">
-          <div className="input-group-prepend">
-            <span className="input-group-text" id="basic-addon1">
-              Interval
-            </span>
-          </div>
-          {this.renderIntervalSelect()}
-        </div>
+        <IntervalDatePicker
+          onChangeStartDate={this.handleStartDateChange}
+          onChangeEndDate={this.handleEndDateChange}
+          OnIntervalChange={this.handleIntervalChange}
+          startDate={this.state.startDate}
+          endDate={this.state.endDate}
+          interval={this.state.interval}
+          useInterval
+        />
         <button
           type="button"
           className="btn btn-secondary mt-2 btn-block"

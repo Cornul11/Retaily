@@ -1,8 +1,6 @@
 import React, { Component } from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
-import nl from "date-fns/locale/nl";
+import IntervalDatePicker from "../IntervalDatePicker";
 import KoppelVerkoopTable from "../../charts/KoppelVerkoopTable";
 
 class KoppelVerkoopTableWrapper extends Component {
@@ -56,40 +54,12 @@ class KoppelVerkoopTableWrapper extends Component {
   render() {
     return (
       <div>
-        <div className="input-group justify-content-center">
-          <div className="card text-center mt-2 mr-md-3">
-            <div className="card-header">start date</div>
-            <div className="card-body">
-              <DatePicker
-                selected={this.state.startDate}
-                onChange={this.handleStartDateChange}
-                dateFormat="dd-MM-yyyy"
-                inline
-                maxDate={this.state.endDate}
-                locale={nl}
-                showWeekNumbers={this.state.interval === "week" ? true : false}
-                showMonthDropdown
-                filterDate={this.filterDate}
-              />
-            </div>
-          </div>
-          <div className="card text-center mt-2">
-            <div className="card-header">end date</div>
-            <div className="card-body">
-              <DatePicker
-                selected={this.state.endDate}
-                onChange={this.handleEndDateChange}
-                dateFormat="dd-MM-yyyy"
-                inline
-                minDate={this.state.startDate}
-                locale={nl}
-                showWeekNumbers={this.state.interval === "week" ? true : false}
-                showMonthDropdown
-                filterDate={this.filterDate}
-              />
-            </div>
-          </div>
-        </div>
+        <IntervalDatePicker
+          onChangeStartDate={this.handleStartDateChange}
+          onChangeEndDate={this.handleEndDateChange}
+          startDate={this.state.startDate}
+          endDate={this.state.endDate}
+        />
         <button
           type="button"
           className="btn btn-secondary mt-2 mb-2 btn-block"
