@@ -1,42 +1,11 @@
 import React, { Component } from "react";
-import Autosuggest from "react-autosuggest";
+import ProductAutosuggest from "./ProductAutosuggest";
 import Scanner from "../barcode/Scanner";
 import ProductSalesChartWrapper from "./wrappers/ProductSalesChartWrapper";
 import ProductInfoTableWrapper from "./wrappers/ProductInfoTableWrapper";
 import "../charts/App.css";
 
 /** Component that retrieves information about an individual product */
-
-const products = [];
-
-const escapeRegexCharacters = (str) =>
-  str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-const getSuggestions = (value) => {
-  const escapedValue = escapeRegexCharacters(value.trim());
-
-  if (escapedValue === "") {
-    return [];
-  }
-
-  const regex = new RegExp(`^${escapedValue}`, "i");
-
-  return products.filter((product) => regex.test(product.name));
-};
-
-const getSuggestionValue = (suggestion) => suggestion.name;
-
-const renderSuggestion = (suggestion) => <span>{suggestion.name}</span>;
-
-/**
- * Decides whether to show suggestions or not.
- * Returns true only if the input size is larger than 2.
- * @param value the input of the user
- * @returns {boolean} whether to show the suggestions
- */
-function shouldRenderSuggestions(value) {
-  return value.trim().length > 2;
-}
 
 const ProductInfo = class extends Component {
   constructor(props) {
@@ -46,40 +15,15 @@ const ProductInfo = class extends Component {
       text: "",
       scanning: false,
       chartType: "productInfoTable",
-      suggestions: [],
     };
     this.handleIdentifierChange = this.handleIdentifierChange.bind(this);
     this.handleTextChange = this.handleTextChange.bind(this);
+    this.handleTextChangeByAutosuggest = this.handleTextChangeByAutosuggest.bind(
+      this
+    );
     this.handleScanButton = this.handleScanButton.bind(this);
     this.onDetected = this.onDetected.bind(this);
     this.handleChartTypeChange = this.handleChartTypeChange.bind(this);
-    this.fillProductsArray();
-  }
-
-  onChange = (event, { newValue }) => {
-    this.setState({
-      value: newValue,
-    });
-  };
-
-  async fillProductsArray() {
-    if (!this.props.extended) {
-      return;
-    }
-    await fetch("/inventory/list", {
-      method: "GET",
-    })
-      .then((response) => response.json())
-      .then(
-        (response) => {
-          for (const product in response) {
-            products.push(response[product]);
-          }
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
   }
 
   handleIdentifierChange(event) {
@@ -88,6 +32,10 @@ const ProductInfo = class extends Component {
 
   handleTextChange(event) {
     this.setState({ text: event.target.value, scanning: false });
+  }
+
+  handleTextChangeByAutosuggest(text) {
+    this.setState({ text: text });
   }
 
   handleScanButton() {
@@ -130,32 +78,13 @@ const ProductInfo = class extends Component {
     );
   }
 
-  onSuggestionSelectedByUser = (
-    event,
-    { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }
-  ) => {
-    this.setState({ text: suggestionValue });
-  };
-
   renderInputText() {
     if (this.state.identifier === "name") {
-      const value = this.state.text;
-      const { suggestions } = this.state;
-      const inputProps = {
-        placeholder: "Test input",
-        value,
-        onChange: this.handleTextChange,
-      };
       return (
-        <Autosuggest
-          suggestions={suggestions}
-          onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-          onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-          getSuggestionValue={getSuggestionValue}
-          renderSuggestion={renderSuggestion}
-          shouldRenderSuggestions={shouldRenderSuggestions}
-          onSuggestionSelected={this.onSuggestionSelectedByUser}
-          inputProps={inputProps}
+        <ProductAutosuggest
+          text={this.state.text}
+          onTextChangeAuto={this.handleTextChangeByAutosuggest}
+          onTextChange={this.handleTextChange}
         />
       );
     }
@@ -222,18 +151,6 @@ const ProductInfo = class extends Component {
       </select>
     );
   }
-
-  onSuggestionsFetchRequested = ({ value }) => {
-    this.setState({
-      suggestions: getSuggestions(value),
-    });
-  };
-
-  onSuggestionsClearRequested = () => {
-    this.setState({
-      suggestions: [],
-    });
-  };
 
   renderProductInfoTableWrapper() {
     if (this.state.chartType === "productInfoTable") {
