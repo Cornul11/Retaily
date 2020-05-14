@@ -46,8 +46,9 @@ const ProductAutosuggest = class extends Component {
   }
 
   async fillProductsArray() {
-    await fetch('http://localhost:5000/inventory/list', {
+    await fetch('https://retaily.site:7000/inventory/list', {
       method: 'GET',
+      mode: 'cors',
     })
       .then((response) => response.json())
       .then(
