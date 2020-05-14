@@ -3,17 +3,16 @@ import Autosuggest from "react-autosuggest";
 
 const products = [];
 
-const escapeRegexCharacters = (str) =>
-  str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const escapeRegexCharacters = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 const getSuggestions = (value) => {
   const escapedValue = escapeRegexCharacters(value.trim());
 
-  if (escapedValue === "") {
+  if (escapedValue === '') {
     return [];
   }
 
-  const regex = new RegExp(`^${escapedValue}`, "i");
+  const regex = new RegExp(`^${escapedValue}`, 'i');
 
   return products.filter((product) => regex.test(product.name));
 };
@@ -47,8 +46,8 @@ const ProductAutosuggest = class extends Component {
   }
 
   async fillProductsArray() {
-    await fetch("localhost:5000/inventory/list", {
-      method: "GET",
+    await fetch('http://localhost:5000/inventory/list', {
+      method: 'GET',
     })
       .then((response) => response.json())
       .then(
