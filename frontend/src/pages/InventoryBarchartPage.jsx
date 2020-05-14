@@ -5,9 +5,9 @@ import BlueprintPage from './BlueprintPage';
 class InventoryBarchartPage extends Component {
   render() {
     return (
-      <BlueprintPage 
-        content = {
-          <Barchart url="/inventory/" />
+      <BlueprintPage
+        content={
+          <Barchart url="https://retaily.site:7000/inventory/" />
         }
       />
     );

@@ -18,7 +18,7 @@ class ProductSalesChart extends Component {
 
   async loadChart() {
     this.props.onLoaded();
-    const url = `/sales/?${this.props.identifier}=${this.props.text}&start=${this.props.start}&end=${this.props.end}&interval=${this.props.interval}`;
+    const url = `https://retaily.site:7000/sales/?${this.props.identifier}=${this.props.text}&start=${this.props.start}&end=${this.props.end}&interval=${this.props.interval}`;
     await fetch(url, {
       method: "GET",
     })

@@ -48,7 +48,7 @@ class ProductInfoTable extends Component {
   async loadTable() {
     this.props.onLoaded();
     const newData = this.getEmptyData();
-    let url = `/product/?${this.props.identifier}=${this.props.text}`;
+    let url = `https://retaily.site:7000/product/?${this.props.identifier}=${this.props.text}`;
     await fetch(url, {
       method: 'GET',
     })
@@ -67,7 +67,7 @@ class ProductInfoTable extends Component {
           console.log(error);
         },
       );
-    url = `/sales/quick/?${this.props.identifier}=${this.props.text}`;
+    url = `https://retaily.site:7000/sales/quick/?${this.props.identifier}=${this.props.text}`;
     await fetch(url, {
       method: 'GET',
     })

@@ -18,7 +18,7 @@ class KoppelVerkoopTable extends Component {
 
   async loadTable() {
     this.props.onLoaded();
-    let url = `/koppelverkoop/lijst/?${this.props.identifier}=${this.props.text}&start=${this.props.start}&end=${this.props.end}`;
+    let url = `https://retaily.site:7000/koppelverkoop/lijst/?${this.props.identifier}=${this.props.text}&start=${this.props.start}&end=${this.props.end}`;
     await fetch(url, {
       method: "GET",
     })
