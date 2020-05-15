@@ -5,8 +5,8 @@ import BlueprintPage from './BlueprintPage';
 class ProductInfoPage extends Component {
   render() {
     return (
-      <BlueprintPage 
-        content = {
+      <BlueprintPage
+        content={
           <ProductInfo extended={this.props.extended} />
         }
       />

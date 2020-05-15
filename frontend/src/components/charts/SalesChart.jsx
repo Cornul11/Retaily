@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import { Chart } from "chart.js";
+import React, { Component } from 'react';
+import { Chart } from 'chart.js';
 
 class ProductSalesChart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      width: "1000",
+      width: '1000',
       chart: null,
       loading: false,
     };
@@ -19,9 +19,9 @@ class ProductSalesChart extends Component {
 
   async loadChart() {
     this.setState({ loading: true });
-    const url = `/sales/?start=${this.props.start}&end=${this.props.end}&interval=${this.props.interval}`;
+    const url = `https://retaily.site:7000/sales/?start=${this.props.start}&end=${this.props.end}&interval=${this.props.interval}`;
     await fetch(url, {
-      method: "GET",
+      method: 'GET',
     })
       .then((response) => response.json())
       .then((response) => {
@@ -34,14 +34,14 @@ class ProductSalesChart extends Component {
       this.state.chart.destroy();
     }
     this.state.chart = new Chart(
-      document.getElementById("myChart").getContext("2d"),
+      document.getElementById('myChart').getContext('2d'),
       {
-        type: "bar",
+        type: 'bar',
         data: {
           datasets: [
             {
               data: this.state.data,
-              backgroundColor: "rgba(55,155,255,0.5)",
+              backgroundColor: 'rgba(55,155,255,0.5)',
             },
           ],
         },
@@ -54,17 +54,17 @@ class ProductSalesChart extends Component {
           scales: {
             xAxes: [
               {
-                type: "time",
+                type: 'time',
                 time: {
                   unit:
-                    this.props.interval === "half_an_hour"
-                      ? "hour"
+                    this.props.interval === 'half_an_hour'
+                      ? 'hour'
                       : this.props.interval,
                   displayFormats: {
-                    hour: "HH:mm",
-                    day: "D MMM",
-                    week: "D MMM",
-                    month: "MMM",
+                    hour: 'HH:mm',
+                    day: 'D MMM',
+                    week: 'D MMM',
+                    month: 'MMM',
                   },
                 },
                 offset: true,
@@ -81,12 +81,12 @@ class ProductSalesChart extends Component {
           tooltips: {
             callbacks: {
               title() {
-                return "";
+                return '';
               },
             },
           },
         },
-      }
+      },
     );
     this.props.onLoaded();
     this.setState({ loading: false });
@@ -97,7 +97,7 @@ class ProductSalesChart extends Component {
       <div className="chartWrapper">
         <div
           className="chartWrapper2"
-          style={{ width: this.state.width + "px", height: "500px" }}
+          style={{ width: `${this.state.width}px`, height: '500px' }}
         >
           <canvas id="myChart" />
         </div>

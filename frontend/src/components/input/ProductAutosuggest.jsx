@@ -1,19 +1,18 @@
-import React, { Component } from "react";
-import Autosuggest from "react-autosuggest";
+import React, { Component } from 'react';
+import Autosuggest from 'react-autosuggest';
 
 const products = [];
 
-const escapeRegexCharacters = (str) =>
-  str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const escapeRegexCharacters = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 const getSuggestions = (value) => {
   const escapedValue = escapeRegexCharacters(value.trim());
 
-  if (escapedValue === "") {
+  if (escapedValue === '') {
     return [];
   }
 
-  const regex = new RegExp(`^${escapedValue}`, "i");
+  const regex = new RegExp(`^${escapedValue}`, 'i');
 
   return products.filter((product) => regex.test(product.name));
 };
@@ -47,8 +46,8 @@ const ProductAutosuggest = class extends Component {
   }
 
   async fillProductsArray() {
-    await fetch("/inventory/list", {
-      method: "GET",
+    await fetch('https://retaily.site:7000/inventory/list', {
+      method: 'GET',
     })
       .then((response) => response.json())
       .then(
@@ -59,7 +58,7 @@ const ProductAutosuggest = class extends Component {
         },
         (error) => {
           console.log(error);
-        }
+        },
       );
   }
 
@@ -77,7 +76,9 @@ const ProductAutosuggest = class extends Component {
 
   onSuggestionSelectedByUser = (
     event,
-    { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }
+    {
+      suggestionValue,
+    },
   ) => {
     this.props.onTextChangeAuto(suggestionValue);
   };
@@ -86,7 +87,7 @@ const ProductAutosuggest = class extends Component {
     const value = this.props.text;
     const { suggestions } = this.state;
     const inputProps = {
-      placeholder: "Test input",
+      placeholder: 'Test input',
       value,
       onChange: this.handleTextChange,
     };

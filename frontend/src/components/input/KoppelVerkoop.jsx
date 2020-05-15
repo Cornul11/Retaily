@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import KoppelVerkoopTableWrapper from "./wrappers/KoppelVerkoopTableWrapper";
+import React, { Component } from 'react';
+import KoppelVerkoopTableWrapper from './wrappers/KoppelVerkoopTableWrapper';
 
 /** Component that retrieves koppelverkoop information about an individual product */
 
@@ -7,9 +7,9 @@ class KoppelVerkoopInfo extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      identifier: "plu",
-      text: "",
-      chartType: "koppelVerkoopTable",
+      identifier: 'plu',
+      text: '',
+      chartType: 'koppelVerkoopTable',
     };
 
     this.handleIdentifierChange = this.handleIdentifierChange.bind(this);
@@ -39,7 +39,7 @@ class KoppelVerkoopInfo extends Component {
   }
 
   handleKeyDown = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       this.retrieveInChild();
     }
   };
@@ -65,7 +65,7 @@ class KoppelVerkoopInfo extends Component {
         id="plu-input"
         value={this.state.text}
         className="form-control"
-        placeholder={this.props.extended ? "" : "EAN-code"}
+        placeholder={this.props.extended ? '' : 'EAN-code'}
         onChange={this.handleTextChange}
       />
     );
@@ -85,7 +85,7 @@ class KoppelVerkoopInfo extends Component {
   }
 
   renderKoppelVerkoopTableWrapper() {
-    if (this.state.chartType === "koppelVerkoopTable") {
+    if (this.state.chartType === 'koppelVerkoopTable') {
       return (
         <KoppelVerkoopTableWrapper
           id="table-wrapper"

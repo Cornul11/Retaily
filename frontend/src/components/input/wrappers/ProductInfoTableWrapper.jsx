@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import ProductInfoTable from "../../charts/ProductInfoTable";
-import RetrieveButton from "../../design/RetrieveButton";
+import React, { Component } from 'react';
+import ProductInfoTable from '../../charts/ProductInfoTable';
+import RetrieveButton from '../../design/RetrieveButton';
 
 class ProductInfoTableWrapper extends Component {
   constructor(props) {

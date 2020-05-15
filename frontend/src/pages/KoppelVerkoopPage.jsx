@@ -5,8 +5,8 @@ import BlueprintPage from './BlueprintPage';
 class KoppelVerkoopPage extends Component {
   render() {
     return (
-      <BlueprintPage 
-        content = {
+      <BlueprintPage
+        content={
           <KoppelVerkoop url="/koppelverkoop/" />
         }
       />

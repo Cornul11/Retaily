@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import { format } from "date-fns";
-import SalesChart from "../../charts/SalesChart";
-import IntervalDatePicker from "../IntervalDatePicker";
-import RetrieveButton from "../../design/RetrieveButton";
+import React, { Component } from 'react';
+import { format } from 'date-fns';
+import SalesChart from '../../charts/SalesChart';
+import IntervalDatePicker from '../IntervalDatePicker';
+import RetrieveButton from '../../design/RetrieveButton';
 
 class SalesChartWrapper extends Component {
   constructor(props) {
@@ -10,7 +10,7 @@ class SalesChartWrapper extends Component {
     this.state = {
       startDate: new Date(),
       endDate: new Date(),
-      interval: "hour",
+      interval: 'hour',
       retrieve: false,
     };
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
@@ -34,9 +34,9 @@ class SalesChartWrapper extends Component {
 
   handleIntervalChange(interval, startDate, endDate) {
     this.setState({
-      startDate: startDate,
-      endDate: endDate,
-      interval: interval,
+      startDate,
+      endDate,
+      interval,
     });
   }
 
@@ -45,7 +45,7 @@ class SalesChartWrapper extends Component {
   }
 
   handleKeyDown = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       this.handleRetrieveButton();
     }
   };
@@ -56,8 +56,8 @@ class SalesChartWrapper extends Component {
         retrieve={this.state.retrieve}
         identifier={this.props.identifier}
         text={this.props.text}
-        start={format(this.state.startDate, "yyyy-MM-dd")}
-        end={format(this.state.endDate, "yyyy-MM-dd")}
+        start={format(this.state.startDate, 'yyyy-MM-dd')}
+        end={format(this.state.endDate, 'yyyy-MM-dd')}
         interval={this.state.interval}
         onLoaded={this.onLoaded}
       />

@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import { format } from "date-fns";
-import IntervalDatePicker from "../IntervalDatePicker";
-import KoppelVerkoopTable from "../../charts/KoppelVerkoopTable";
-import RetrieveButton from "../../design/RetrieveButton";
+import React, { Component } from 'react';
+import { format } from 'date-fns';
+import IntervalDatePicker from '../IntervalDatePicker';
+import KoppelVerkoopTable from '../../charts/KoppelVerkoopTable';
+import RetrieveButton from '../../design/RetrieveButton';
 
 class KoppelVerkoopTableWrapper extends Component {
   constructor(props) {
@@ -44,8 +44,8 @@ class KoppelVerkoopTableWrapper extends Component {
         retrieve={this.state.retrieve}
         identifier={this.props.identifier}
         text={this.props.text}
-        start={format(this.state.startDate, "yyyy-MM-dd")}
-        end={format(this.state.endDate, "yyyy-MM-dd")}
+        start={format(this.state.startDate, 'yyyy-MM-dd')}
+        end={format(this.state.endDate, 'yyyy-MM-dd')}
         onLoaded={this.onLoaded}
         extended={this.props.extended}
       />

@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { getDay, addDays } from "date-fns";
-import nl from "date-fns/locale/nl";
+import React, { Component } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { getDay, addDays } from 'date-fns';
+import nl from 'date-fns/locale/nl';
 
 class IntervalDatePicker extends Component {
   constructor(props) {
@@ -24,7 +24,7 @@ class IntervalDatePicker extends Component {
   handleIntervalChange(event) {
     let startDate = new Date(this.props.startDate);
     let endDate = new Date(this.props.endDate);
-    if (event.target.value === "week") {
+    if (event.target.value === 'week') {
       while (getDay(startDate) !== 1) {
         startDate = addDays(startDate, -1);
       }
@@ -32,7 +32,7 @@ class IntervalDatePicker extends Component {
         endDate = addDays(endDate, 1);
       }
     }
-    if (event.target.value === "month") {
+    if (event.target.value === 'month') {
       while (startDate.getDate() !== 1) {
         startDate = addDays(startDate, -1);
       }
@@ -44,10 +44,10 @@ class IntervalDatePicker extends Component {
   }
 
   filterDate(date) {
-    if (this.props.interval === "week") {
+    if (this.props.interval === 'week') {
       return getDay(date) === 1;
     }
-    if (this.props.interval === "month") {
+    if (this.props.interval === 'month') {
       return date.getDate() === 1;
     }
     return true;
@@ -91,7 +91,7 @@ class IntervalDatePicker extends Component {
                 inline
                 maxDate={this.props.endDate}
                 locale={nl}
-                showWeekNumbers={this.props.interval === "week" ? true : false}
+                showWeekNumbers={this.props.interval === 'week'}
                 showMonthDropdown
                 filterDate={this.filterDate}
               />
@@ -107,14 +107,14 @@ class IntervalDatePicker extends Component {
                 inline
                 minDate={this.props.startDate}
                 locale={nl}
-                showWeekNumbers={this.props.interval === "week" ? true : false}
+                showWeekNumbers={this.props.interval === 'week'}
                 showMonthDropdown
                 filterDate={this.filterDate}
               />
             </div>
           </div>
         </div>
-        {this.props.useInterval ? this.renderIntervalSelect() : ""}
+        {this.props.useInterval ? this.renderIntervalSelect() : ''}
       </div>
     );
   }

@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import ProductAutosuggest from "./ProductAutosuggest";
-import Scanner from "../barcode/Scanner";
-import ProductSalesChartWrapper from "./wrappers/ProductSalesChartWrapper";
-import ProductInfoTableWrapper from "./wrappers/ProductInfoTableWrapper";
-import "../charts/App.css";
+import React, { Component } from 'react';
+import ProductAutosuggest from './ProductAutosuggest';
+import Scanner from '../barcode/Scanner';
+import ProductSalesChartWrapper from './wrappers/ProductSalesChartWrapper';
+import ProductInfoTableWrapper from './wrappers/ProductInfoTableWrapper';
+import '../charts/App.css';
 
 /** Component that retrieves information about an individual product */
 
@@ -11,15 +11,15 @@ const ProductInfo = class extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      identifier: "plu",
-      text: "",
+      identifier: 'plu',
+      text: '',
       scanning: false,
-      chartType: "productInfoTable",
+      chartType: 'productInfoTable',
     };
     this.handleIdentifierChange = this.handleIdentifierChange.bind(this);
     this.handleTextChange = this.handleTextChange.bind(this);
     this.handleTextChangeByAutosuggest = this.handleTextChangeByAutosuggest.bind(
-      this
+      this,
     );
     this.handleScanButton = this.handleScanButton.bind(this);
     this.onDetected = this.onDetected.bind(this);
@@ -27,7 +27,7 @@ const ProductInfo = class extends Component {
   }
 
   handleIdentifierChange(event) {
-    this.setState({ identifier: event.target.value, text: "" });
+    this.setState({ identifier: event.target.value, text: '' });
   }
 
   handleTextChange(event) {
@@ -35,7 +35,7 @@ const ProductInfo = class extends Component {
   }
 
   handleTextChangeByAutosuggest(text) {
-    this.setState({ text: text });
+    this.setState({ text });
   }
 
   handleScanButton() {
@@ -49,9 +49,9 @@ const ProductInfo = class extends Component {
 
   scanButtonText() {
     if (this.state.scanning) {
-      return "stop scanner";
+      return 'stop scanner';
     }
-    return "start scanner";
+    return 'start scanner';
   }
 
   handleChartTypeChange(event) {
@@ -59,7 +59,7 @@ const ProductInfo = class extends Component {
   }
 
   handleKeyDown = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       this.retrieveInChild();
     }
   };
@@ -79,7 +79,7 @@ const ProductInfo = class extends Component {
   }
 
   renderInputText() {
-    if (this.state.identifier === "name") {
+    if (this.state.identifier === 'name') {
       return (
         <ProductAutosuggest
           text={this.state.text}
@@ -93,14 +93,14 @@ const ProductInfo = class extends Component {
         type="text"
         value={this.state.text}
         className="form-control"
-        placeholder={this.props.extended ? "" : "EAN-code"}
+        placeholder={this.props.extended ? '' : 'EAN-code'}
         onChange={this.handleTextChange}
       />
     );
   }
 
   renderScanButton() {
-    if (this.state.identifier === "plu") {
+    if (this.state.identifier === 'plu') {
       if (this.props.extended) {
         return (
           <button
@@ -153,7 +153,7 @@ const ProductInfo = class extends Component {
   }
 
   renderProductInfoTableWrapper() {
-    if (this.state.chartType === "productInfoTable") {
+    if (this.state.chartType === 'productInfoTable') {
       return (
         <ProductInfoTableWrapper
           id="table-wrapper"
@@ -168,7 +168,7 @@ const ProductInfo = class extends Component {
   }
 
   renderProductSalesChartWrapper() {
-    if (this.state.chartType === "productSales") {
+    if (this.state.chartType === 'productSales') {
       return (
         <ProductSalesChartWrapper
           identifier={this.state.identifier}

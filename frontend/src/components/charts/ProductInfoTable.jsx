@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
 /** Component that displays a table with the current product information */
 
@@ -45,9 +45,9 @@ class ProductInfoTable extends Component {
   async loadTable() {
     this.setState({ loading: true });
     const newData = this.getEmptyData();
-    let url = `/product/?${this.props.identifier}=${this.props.text}`;
+    let url = `https://retaily.site:7000/product/?${this.props.identifier}=${this.props.text}`;
     await fetch(url, {
-      method: "GET",
+      method: 'GET',
     })
       .then((response) => response.json())
       .then(
@@ -62,11 +62,11 @@ class ProductInfoTable extends Component {
         },
         (error) => {
           console.log(error);
-        }
+        },
       );
-    url = `/sales/quick/?${this.props.identifier}=${this.props.text}`;
+    url = `https://retaily.site:7000/sales/quick/?${this.props.identifier}=${this.props.text}`;
     await fetch(url, {
-      method: "GET",
+      method: 'GET',
     })
       .then((response) => response.json())
       .then(
@@ -78,7 +78,7 @@ class ProductInfoTable extends Component {
         },
         (error) => {
           console.log(error);
-        }
+        },
       );
     this.setState({ data: newData });
     this.props.onLoaded();
@@ -93,7 +93,7 @@ class ProductInfoTable extends Component {
         <tr key={index}>
           <th scope="row">{key}</th>
           <td>{this.state.data[key]}</td>
-        </tr>
+        </tr>,
       );
       index += 1;
     });

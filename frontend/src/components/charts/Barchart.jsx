@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import { Chart } from "chart.js";
-import "./charts.css";
-import "./App.css";
+import React, { Component } from 'react';
+import { Chart } from 'chart.js';
+import './charts.css';
+import './App.css';
 
 // TODO: Proper zoom on filter
 // has property url, which is called by the API
@@ -9,11 +9,11 @@ class Barchart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      filter: "",
+      filter: '',
       chart: null,
       chartJSON: [],
       desc: false,
-      sort: "name",
+      sort: 'name',
     };
     this.handleChangeFilter = this.handleChangeFilter.bind(this);
     this.handleDescendingToggle = this.handleDescendingToggle.bind(this);
@@ -33,14 +33,14 @@ class Barchart extends Component {
       (state) => ({
         desc: !state.desc,
       }),
-      this.updateChart
+      this.updateChart,
     );
   }
 
   handleChangeFilter(event) {
     this.setState(
       { filter: event.target.value.trim().toLowerCase() },
-      this.updateChart
+      this.updateChart,
     );
   }
 
@@ -74,17 +74,17 @@ class Barchart extends Component {
     };
     const sorted = this.sortJSONData(this.state.sort, response.products);
     let count = 0;
-    for (let i = 0; i < sorted.length; i++) {
+    for (let i = 0; i < sorted.length; i += 1) {
       if (
-        String(sorted[i].name.trim().toLowerCase().match(this.state.filter)) !==
-        String(this.state.filter)
+        String(sorted[i].name.trim().toLowerCase().match(this.state.filter))
+        !== String(this.state.filter)
       ) {
         continue;
       }
       if (count % 2) {
-        data.colors.push("rgba(0,255,0,0.5)");
+        data.colors.push('rgba(0,255,0,0.5)');
       } else {
-        data.colors.push("rgba(0,0,255,0.5)");
+        data.colors.push('rgba(0,0,255,0.5)');
       }
       data.names.push(sorted[i].name);
       data.values.push(sorted[i].count);
@@ -97,7 +97,7 @@ class Barchart extends Component {
   async initialize() {
     // Fetch API call
     await fetch(`${this.props.url}`, {
-      method: "GET",
+      method: 'GET',
     })
       .then((response) => response.json())
       .then((response) => {
@@ -106,9 +106,9 @@ class Barchart extends Component {
         // Create the chart
         this.setState({
           chart: new Chart(
-            document.getElementById("myChart").getContext("2d"),
+            document.getElementById('myChart').getContext('2d'),
             {
-              type: "bar",
+              type: 'bar',
               data: {
                 labels: data.names,
                 datasets: [
@@ -135,7 +135,7 @@ class Barchart extends Component {
                   ],
                 },
               },
-            }
+            },
           ),
         });
       });
@@ -146,7 +146,7 @@ class Barchart extends Component {
   updateChart() {
     const { chart } = this.state;
     if (chart == null) {
-      console.log("chart is null");
+      console.log('chart is null');
       return;
     }
     // remove current data
@@ -176,8 +176,8 @@ class Barchart extends Component {
         <div id="wrapper" className="chartWrapper">
           <canvas id="myChart" width={10000} height="500" />
         </div>
-        <div class="input-group mt-2">
-          <div class="btn-group" role="group">
+        <div className="input-group mt-2">
+          <div className="btn-group" role="group">
             <button
               id="btnGroupDrop1"
               type="button"
@@ -192,10 +192,10 @@ class Barchart extends Component {
               <button
                 type="button"
                 className={`dropdown-item ${
-                  this.state.sort === String("count") ? "active" : ""
+                  this.state.sort === String('count') ? 'active' : ''
                 }`}
                 onClick={() => {
-                  this.setSort("count");
+                  this.setSort('count');
                 }}
               >
                 Count
@@ -203,10 +203,10 @@ class Barchart extends Component {
               <button
                 type="button"
                 className={`dropdown-item ${
-                  this.state.sort === String("name") ? "active" : ""
+                  this.state.sort === String('name') ? 'active' : ''
                 }`}
                 onClick={() => {
-                  this.setSort("name");
+                  this.setSort('name');
                 }}
               >
                 Name
@@ -219,7 +219,7 @@ class Barchart extends Component {
             className="btn btn-secondary"
             onClick={this.handleDescendingToggle}
           >
-            {this.state.desc ? "Set ascending" : "Set descending"}
+            {this.state.desc ? 'Set ascending' : 'Set descending'}
           </button>
           <input
             type="text"
