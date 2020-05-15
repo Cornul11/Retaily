@@ -8,7 +8,7 @@ koppelverkoop_bp = Blueprint("koppelverkoop", __name__)
 
 
 def get_koppel_products(plu, name, start, end):
-    name,trans_ids = get_id(plu, name, start, end)
+    name, trans_ids = get_id(plu, name, start, end)
     trans_ids = list(set(trans_ids))
     data = []
     for trans_id in trans_ids:
@@ -84,6 +84,6 @@ def lijst():
             end = datetime.datetime.strptime(end, "%Y-%m-%d")
         except:
             abort(400)
-        if plu is None and name is None:
+        if (plu is None or plu is "") and (name is None or name is ""):
             abort(400)
         return jsonify(get_koppel_products(plu, name, start, end))

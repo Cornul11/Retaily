@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { format } from "date-fns";
 import ProductSalesChart from "../../charts/ProductSalesChart";
 import IntervalDatePicker from "../IntervalDatePicker";
+import RetrieveButton from "../../design/RetrieveButton";
 
 class ProductSalesChartWrapper extends Component {
   constructor(props) {
@@ -73,13 +74,10 @@ class ProductSalesChartWrapper extends Component {
           interval={this.state.interval}
           useInterval
         />
-        <button
-          type="button"
-          className="btn btn-secondary mt-2 btn-block"
-          onClick={this.handleRetrieveButton}
-        >
-          retrieve
-        </button>
+        <RetrieveButton
+          handleRetrieveButton={this.handleRetrieveButton}
+          retrieve={this.state.retrieve}
+        />
         {this.renderSalesChart()}
       </div>
     );
