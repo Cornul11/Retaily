@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import { Chart } from 'chart.js';
-import './charts.css';
-import './App.css';
+import React, { Component } from "react";
+import { Chart } from "chart.js";
+import "./charts.css";
+import "./App.css";
 
 // TODO: Proper zoom on filter
 // has property url, which is called by the API
@@ -9,11 +9,11 @@ class Barchart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      filter: '',
+      filter: "",
       chart: null,
       chartJSON: [],
       desc: false,
-      sort: 'name',
+      sort: "name",
     };
     this.handleChangeFilter = this.handleChangeFilter.bind(this);
     this.handleDescendingToggle = this.handleDescendingToggle.bind(this);
@@ -29,31 +29,39 @@ class Barchart extends Component {
   }
 
   handleDescendingToggle() {
-    this.setState((state) => ({
-      desc: !state.desc,
-    }), this.updateChart);
+    this.setState(
+      (state) => ({
+        desc: !state.desc,
+      }),
+      this.updateChart
+    );
   }
 
   handleChangeFilter(event) {
-    this.setState({ filter: event.target.value.trim().toLowerCase() }, this.updateChart);
+    this.setState(
+      { filter: event.target.value.trim().toLowerCase() },
+      this.updateChart
+    );
   }
 
   // sorts JSON data by key
   sortJSONData(key, data) {
     const sorted = [];
     let compare = function (a, b) {
-      const tempComparision = (data[a][key] < data[b][key]) ? -1 : 0;
-      return (data[a][key] > data[b][key]) ? 1 : (tempComparision);
+      const tempComparision = data[a][key] < data[b][key] ? -1 : 0;
+      return data[a][key] > data[b][key] ? 1 : tempComparision;
     };
     if (this.state.desc) {
       compare = function (a, b) {
-        const tempComparision = (data[b][key] < data[a][key] ? -1 : 0);
-        return (data[b][key] > data[a][key]) ? 1 : (tempComparision);
+        const tempComparision = data[b][key] < data[a][key] ? -1 : 0;
+        return data[b][key] > data[a][key] ? 1 : tempComparision;
       };
     }
-    Object.keys(data).sort(compare).forEach((id) => {
-      sorted.push(data[id]);
-    });
+    Object.keys(data)
+      .sort(compare)
+      .forEach((id) => {
+        sorted.push(data[id]);
+      });
     return sorted;
   }
 
@@ -67,11 +75,16 @@ class Barchart extends Component {
     const sorted = this.sortJSONData(this.state.sort, response.products);
     let count = 0;
     for (let i = 0; i < sorted.length; i++) {
-      if (String(sorted[i].name.trim().toLowerCase().match(this.state.filter)) !== String(this.state.filter)) { continue; }
+      if (
+        String(sorted[i].name.trim().toLowerCase().match(this.state.filter)) !==
+        String(this.state.filter)
+      ) {
+        continue;
+      }
       if (count % 2) {
-        data.colors.push('rgba(0,255,0,0.5)');
+        data.colors.push("rgba(0,255,0,0.5)");
       } else {
-        data.colors.push('rgba(0,0,255,0.5)');
+        data.colors.push("rgba(0,0,255,0.5)");
       }
       data.names.push(sorted[i].name);
       data.values.push(sorted[i].count);
@@ -84,7 +97,7 @@ class Barchart extends Component {
   async initialize() {
     // Fetch API call
     await fetch(`${this.props.url}`, {
-      method: 'GET',
+      method: "GET",
     })
       .then((response) => response.json())
       .then((response) => {
@@ -92,35 +105,38 @@ class Barchart extends Component {
         const data = this.convertData(response);
         // Create the chart
         this.setState({
-          chart: new Chart(document.getElementById('myChart').getContext('2d'), {
-            type: 'bar',
-            data: {
-              labels: data.names,
-              datasets: [
-                {
-                  data: data.values,
-                  backgroundColor: data.colors,
-                },
-              ],
-            },
-            options: {
-              responsive: false,
-              maintainAspectRatio: false,
-              responsiveAnimationDuration: 0,
-              legend: {
-                display: false,
-              },
-              scales: {
-                yAxes: [
+          chart: new Chart(
+            document.getElementById("myChart").getContext("2d"),
+            {
+              type: "bar",
+              data: {
+                labels: data.names,
+                datasets: [
                   {
-                    ticks: {
-                      beginAtZero: true,
-                    },
+                    data: data.values,
+                    backgroundColor: data.colors,
                   },
                 ],
               },
-            },
-          }),
+              options: {
+                responsive: false,
+                maintainAspectRatio: false,
+                responsiveAnimationDuration: 0,
+                legend: {
+                  display: false,
+                },
+                scales: {
+                  yAxes: [
+                    {
+                      ticks: {
+                        beginAtZero: true,
+                      },
+                    },
+                  ],
+                },
+              },
+            }
+          ),
         });
       });
   }
@@ -130,7 +146,7 @@ class Barchart extends Component {
   updateChart() {
     const { chart } = this.state;
     if (chart == null) {
-      console.log('chart is null');
+      console.log("chart is null");
       return;
     }
     // remove current data
@@ -156,28 +172,41 @@ class Barchart extends Component {
 
   render() {
     return (
-      <div id="wrapper" className="chartWrapper">
-        <canvas id="myChart" width={10000} height="500" />
-        <div className="btn-group" role="group">
-          <div className="btn-group" role="group">
-            <button id="btnGroupDrop1" type="button" className="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <div>
+        <div id="wrapper" className="chartWrapper">
+          <canvas id="myChart" width={10000} height="500" />
+        </div>
+        <div class="input-group mt-2">
+          <div class="btn-group" role="group">
+            <button
+              id="btnGroupDrop1"
+              type="button"
+              className="btn btn-secondary dropdown-toggle"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
               Sort by
             </button>
             <div className="dropdown-menu" aria-labelledby="btnGroupDrop1">
               <button
                 type="button"
-                className={`dropdown-item ${this.state.sort === String('count') ? 'active' : ''}`}
+                className={`dropdown-item ${
+                  this.state.sort === String("count") ? "active" : ""
+                }`}
                 onClick={() => {
-                  this.setSort('count');
+                  this.setSort("count");
                 }}
               >
                 Count
               </button>
               <button
                 type="button"
-                className={`dropdown-item ${this.state.sort === String('name') ? 'active' : ''}`}
+                className={`dropdown-item ${
+                  this.state.sort === String("name") ? "active" : ""
+                }`}
                 onClick={() => {
-                  this.setSort('name');
+                  this.setSort("name");
                 }}
               >
                 Name
@@ -185,10 +214,18 @@ class Barchart extends Component {
             </div>
           </div>
 
-          <button type="button" className="btn btn-secondary" onClick={this.handleDescendingToggle}>
-            {this.state.desc ? 'Set ascending' : 'Set descending'}
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={this.handleDescendingToggle}
+          >
+            {this.state.desc ? "Set ascending" : "Set descending"}
           </button>
-          <input type="text" className="form-control" onChange={this.handleChangeFilter} />
+          <input
+            type="text"
+            className="form-control"
+            onChange={this.handleChangeFilter}
+          />
         </div>
       </div>
     );

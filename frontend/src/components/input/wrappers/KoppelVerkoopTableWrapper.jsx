@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { format } from "date-fns";
 import IntervalDatePicker from "../IntervalDatePicker";
 import KoppelVerkoopTable from "../../charts/KoppelVerkoopTable";
+import RetrieveButton from "../../design/RetrieveButton";
 
 class KoppelVerkoopTableWrapper extends Component {
   constructor(props) {
@@ -60,13 +61,10 @@ class KoppelVerkoopTableWrapper extends Component {
           startDate={this.state.startDate}
           endDate={this.state.endDate}
         />
-        <button
-          type="button"
-          className="btn btn-secondary mt-2 mb-2 btn-block"
-          onClick={this.handleRetrieveButton}
-        >
-          retrieve
-        </button>
+        <RetrieveButton
+          handleRetrieveButton={this.handleRetrieveButton}
+          retrieve={this.state.retrieve}
+        />
         {this.renderKoppelVerkoopTable()}
       </div>
     );

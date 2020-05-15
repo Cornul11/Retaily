@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
 /** Component that displays a table with the current product information */
 
@@ -7,50 +7,47 @@ class ProductInfoTable extends Component {
     super(props);
     this.state = {
       data: this.getEmptyData(),
+      loading: false,
     };
   }
 
   componentDidUpdate() {
-    if (this.props.retrieve === true) {
+    if (this.props.retrieve && !this.state.loading) {
       this.loadTable();
     }
   }
 
   getEmptyData() {
     if (this.props.extended) {
-      return (
-        {
-          plu: null,
-          name: null,
-          buying_price: null,
-          selling_price: null,
-          discount: null,
-          sales_last_week: null,
-          sales_last_month: null,
-          sales_last_quarter: null,
-          sales_last_year: null,
-        }
-      );
-    }
-
-    return (
-      {
+      return {
         plu: null,
         name: null,
+        buying_price: null,
+        selling_price: null,
+        discount: null,
         sales_last_week: null,
         sales_last_month: null,
         sales_last_quarter: null,
         sales_last_year: null,
-      }
-    );
+      };
+    }
+
+    return {
+      plu: null,
+      name: null,
+      sales_last_week: null,
+      sales_last_month: null,
+      sales_last_quarter: null,
+      sales_last_year: null,
+    };
   }
 
   async loadTable() {
-    this.props.onLoaded();
+    this.setState({ loading: true });
     const newData = this.getEmptyData();
     let url = `/product/?${this.props.identifier}=${this.props.text}`;
     await fetch(url, {
-      method: 'GET',
+      method: "GET",
     })
       .then((response) => response.json())
       .then(
@@ -65,11 +62,11 @@ class ProductInfoTable extends Component {
         },
         (error) => {
           console.log(error);
-        },
+        }
       );
     url = `/sales/quick/?${this.props.identifier}=${this.props.text}`;
     await fetch(url, {
-      method: 'GET',
+      method: "GET",
     })
       .then((response) => response.json())
       .then(
@@ -81,9 +78,11 @@ class ProductInfoTable extends Component {
         },
         (error) => {
           console.log(error);
-        },
+        }
       );
     this.setState({ data: newData });
+    this.props.onLoaded();
+    this.setState({ loading: false });
   }
 
   renderTable() {
@@ -91,10 +90,10 @@ class ProductInfoTable extends Component {
     let index = 0;
     Object.keys(this.state.data).forEach((key) => {
       table.push(
-          <tr key={index}>
-            <th scope="row">{key}</th>
-            <td>{this.state.data[key]}</td>
-          </tr>
+        <tr key={index}>
+          <th scope="row">{key}</th>
+          <td>{this.state.data[key]}</td>
+        </tr>
       );
       index += 1;
     });
@@ -105,9 +104,7 @@ class ProductInfoTable extends Component {
     return (
       <div className="productInfoTable">
         <table className="table table-striped table-bordered table-sm">
-          <tbody>
-            {this.renderTable()}
-          </tbody>
+          <tbody>{this.renderTable()}</tbody>
         </table>
       </div>
     );

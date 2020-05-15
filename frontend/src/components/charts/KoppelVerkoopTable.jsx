@@ -7,17 +7,18 @@ class KoppelVerkoopTable extends Component {
     super(props);
     this.state = {
       data: null,
+      loading: false,
     };
   }
 
   componentDidUpdate() {
-    if (this.props.retrieve === true) {
+    if (this.props.retrieve === true && !this.state.loading) {
       this.loadTable();
     }
   }
 
   async loadTable() {
-    this.props.onLoaded();
+    this.setState({ loading: true });
     let url = `/koppelverkoop/lijst/?${this.props.identifier}=${this.props.text}&start=${this.props.start}&end=${this.props.end}`;
     await fetch(url, {
       method: "GET",
@@ -26,12 +27,13 @@ class KoppelVerkoopTable extends Component {
       .then(
         (response) => {
           this.setState({ data: response });
-          console.log(response);
         },
         (error) => {
           console.log(error);
         }
       );
+    this.props.onLoaded();
+    this.setState({ loading: false });
   }
 
   renderTable() {

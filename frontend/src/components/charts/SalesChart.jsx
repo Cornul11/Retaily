@@ -7,17 +7,18 @@ class ProductSalesChart extends Component {
     this.state = {
       width: "1000",
       chart: null,
+      loading: false,
     };
   }
 
   componentDidUpdate() {
-    if (this.props.retrieve === true) {
+    if (this.props.retrieve === true && !this.state.loading) {
       this.loadChart();
     }
   }
 
   async loadChart() {
-    this.props.onLoaded();
+    this.setState({ loading: true });
     const url = `/sales/?start=${this.props.start}&end=${this.props.end}&interval=${this.props.interval}`;
     await fetch(url, {
       method: "GET",
@@ -87,6 +88,8 @@ class ProductSalesChart extends Component {
         },
       }
     );
+    this.props.onLoaded();
+    this.setState({ loading: false });
   }
 
   render() {
