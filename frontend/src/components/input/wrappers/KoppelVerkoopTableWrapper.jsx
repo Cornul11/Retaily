@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import IntervalDatePicker from '../IntervalDatePicker';
 import KoppelVerkoopTable from '../../charts/KoppelVerkoopTable';
 import RetrieveButton from '../../design/RetrieveButton';
+import RetrieveError from '../../design/RetrieveError';
 
 class KoppelVerkoopTableWrapper extends Component {
   constructor(props) {
@@ -11,19 +12,21 @@ class KoppelVerkoopTableWrapper extends Component {
       startDate: new Date(),
       endDate: new Date(),
       retrieve: false,
+      error: '',
     };
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
     this.handleRetrieveButton = this.handleRetrieveButton.bind(this);
+    this.handleError = this.handleError.bind(this);
     this.onLoaded = this.onLoaded.bind(this);
-  }
-
-  onLoaded() {
-    this.setState({ retrieve: false });
   }
 
   componentDidMount() {
     this.props.setRetrieve(this.handleRetrieveButton);
+  }
+
+  onLoaded() {
+    this.setState({ retrieve: false });
   }
 
   handleStartDateChange(date) {
@@ -38,6 +41,10 @@ class KoppelVerkoopTableWrapper extends Component {
     this.setState({ retrieve: true });
   }
 
+  handleError(error) {
+    this.setState({ error });
+  }
+
   renderKoppelVerkoopTable() {
     return (
       <KoppelVerkoopTable
@@ -47,6 +54,7 @@ class KoppelVerkoopTableWrapper extends Component {
         start={format(this.state.startDate, 'yyyy-MM-dd')}
         end={format(this.state.endDate, 'yyyy-MM-dd')}
         onLoaded={this.onLoaded}
+        onError={this.handleError}
         extended={this.props.extended}
       />
     );
@@ -64,6 +72,10 @@ class KoppelVerkoopTableWrapper extends Component {
         <RetrieveButton
           handleRetrieveButton={this.handleRetrieveButton}
           retrieve={this.state.retrieve}
+        />
+        <RetrieveError
+          error={this.state.error}
+          handleError={this.handleError}
         />
         {this.renderKoppelVerkoopTable()}
       </div>

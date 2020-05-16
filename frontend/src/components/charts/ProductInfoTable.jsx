@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Absolute from '../Absolute';
 
 /** Component that displays a table with the current product information */
 
@@ -45,13 +46,26 @@ class ProductInfoTable extends Component {
   async loadTable() {
     this.setState({ loading: true });
     const newData = this.getEmptyData();
-    let url = `https://retaily.site:7000/product/?${this.props.identifier}=${this.props.text}`;
+    const absolute = this.context;
+    let url = `${absolute ? 'https://retaily.site:7000' : ''}/product/?${this.props.identifier}=${this.props.text}`;
     await fetch(url, {
       method: 'GET',
     })
-      .then((response) => response.json())
-      .then(
-        (response) => {
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        response.text().then((text) => {
+          try {
+            text = JSON.parse(text);
+            this.props.onError(text.message);
+          } catch (error) {
+            this.props.onError('Connection failed');
+          }
+        });
+      })
+      .then((response) => {
+        if (response != null) {
           newData.plu = response.plu;
           newData.name = response.name;
           if (this.props.extended) {
@@ -59,12 +73,9 @@ class ProductInfoTable extends Component {
             newData.selling_price = response.selling_price;
             newData.discount = response.discount;
           }
-        },
-        (error) => {
-          console.log(error);
-        },
-      );
-    url = `https://retaily.site:7000/sales/quick/?${this.props.identifier}=${this.props.text}`;
+        }
+      });
+    url = `${absolute ? 'https://retaily.site:7000' : ''}/sales/quick/?${this.props.identifier}=${this.props.text}`;
     await fetch(url, {
       method: 'GET',
     })
@@ -80,9 +91,8 @@ class ProductInfoTable extends Component {
           console.log(error);
         },
       );
-    this.setState({ data: newData });
     this.props.onLoaded();
-    this.setState({ loading: false });
+    this.setState({ data: newData, loading: false });
   }
 
   renderTable() {
@@ -110,5 +120,7 @@ class ProductInfoTable extends Component {
     );
   }
 }
+
+ProductInfoTable.contextType = Absolute;
 
 export default ProductInfoTable;

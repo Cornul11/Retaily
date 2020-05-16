@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Chart } from 'chart.js';
+import Absolute from '../Absolute';
 
-class ProductSalesChart extends Component {
+class SalesChart extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -19,7 +20,8 @@ class ProductSalesChart extends Component {
 
   async loadChart() {
     this.setState({ loading: true });
-    const url = `https://retaily.site:7000/sales/?start=${this.props.start}&end=${this.props.end}&interval=${this.props.interval}`;
+    const absolute = this.context;
+    const url = `${absolute ? 'https://retaily.site:7000' : ''}/sales/?start=${this.props.start}&end=${this.props.end}&interval=${this.props.interval}`;
     await fetch(url, {
       method: 'GET',
     })
@@ -105,5 +107,6 @@ class ProductSalesChart extends Component {
     );
   }
 }
+SalesChart.contextType = Absolute;
 
-export default ProductSalesChart;
+export default SalesChart;

@@ -26,10 +26,12 @@ def get_sales(items, start, end, interval, product):
             count = 0
             start = start + interval
         count += 1
-    data.append({"t": (start + (interval / 2)).strftime(time_format), "y": count})
+    data.append(
+        {"t": (start + (interval / 2)).strftime(time_format), "y": count})
     start = start + interval
     while start < end:
-        data.append({"t": (start + (interval / 2)).strftime(time_format), "y": 0})
+        data.append(
+            {"t": (start + (interval / 2)).strftime(time_format), "y": 0})
         start = start + interval
     return data
 
@@ -94,7 +96,8 @@ def sales():
             items = (
                 db.session.query(Transaction)
                 .filter(
-                    (Transaction.date_time >= start) & (Transaction.date_time <= end)
+                    (Transaction.date_time >= start) & (
+                        Transaction.date_time <= end)
                 )
                 .order_by(Transaction.date_time)
             )
@@ -128,7 +131,7 @@ def quick():
     if request.method == "GET":
         plu = request.args.get("plu", None)
         name = request.args.get("name", None)
-        if plu is None and name is None:
+        if (plu is None or plu is "") and (name is None or name is ""):
             abort(400)
         end = datetime.datetime.now()
         return jsonify(

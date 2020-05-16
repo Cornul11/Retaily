@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Absolute from '../Absolute';
 
 /** Component that displays a table with the current product information */
 
@@ -19,30 +20,41 @@ class KoppelVerkoopTable extends Component {
 
   async loadTable() {
     this.setState({ loading: true });
-    const url = `https://retaily.site:7000/koppelverkoop/lijst/?${this.props.identifier}=${this.props.text}&start=${this.props.start}&end=${this.props.end}`;
+    const absolute = this.context;
+    const url = `${absolute ? 'https://retaily.site:7000' : ''}/koppelverkoop/lijst/?${this.props.identifier}=${this.props.text}&start=${this.props.start}&end=${this.props.end}`;
     await fetch(url, {
       method: 'GET',
     })
-      .then((response) => response.json())
-      .then(
-        (response) => {
-          this.setState({ data: response });
-        },
-        (error) => {
-          console.log(error);
-        },
-      );
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        response.text().then((text) => {
+          try {
+            text = JSON.parse(text);
+            this.props.onError(text.message);
+          } catch (error) {
+            this.props.onError('Connection failed');
+          }
+        });
+      })
+      .then((response) => {
+        this.setState({ data: response });
+      });
+
     this.props.onLoaded();
     this.setState({ loading: false });
   }
 
   renderTable() {
-    if (this.state.data == null || this.state.data.length < 1) {
+    const { data } = this.state;
+    if (typeof data === 'undefined' || data === null || data.length < 1) {
       return null;
     }
     const table = [];
-    const data = this.state.data.slice();
-    const key = data[0];
+    console.log(data);
+    const newData = data.slice();
+    const key = newData[0];
     table.push(
       <tr key={key.name} className="table-secondary">
         <th scope="row" colSpan="2" className="text-center">
@@ -50,8 +62,8 @@ class KoppelVerkoopTable extends Component {
         </th>
       </tr>,
     );
-    data.splice(0, 1);
-    data.forEach((dataKey) => {
+    newData.splice(0, 1);
+    newData.forEach((dataKey) => {
       table.push(
         <tr key={dataKey.name}>
           <th>{dataKey.name}</th>
@@ -72,5 +84,7 @@ class KoppelVerkoopTable extends Component {
     );
   }
 }
+
+KoppelVerkoopTable.contextType = Absolute;
 
 export default KoppelVerkoopTable;

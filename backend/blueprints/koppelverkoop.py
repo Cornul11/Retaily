@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, abort
+from flask import Blueprint, request, make_response, jsonify, abort
 from models import Product, Transaction
 from app import db
 import datetime
@@ -52,6 +52,10 @@ def get_id(plu, name, start, end):
             length = length + 1
         if length == 0:
             product = Product.query.filter(Product.plu == plu).first()
+            if product is None:
+                response = make_response(
+                    jsonify(message="EAN code not found"), 400)
+                abort(response)
             name = (product.serialized)["name"]
         else:
             name = items[0].Product.serialized["name"]
@@ -85,5 +89,7 @@ def lijst():
         except:
             abort(400)
         if (plu is None or plu is "") and (name is None or name is ""):
-            abort(400)
+            response = make_response(
+                jsonify(message="EAN code not found"), 400)
+            abort(response)
         return jsonify(get_koppel_products(plu, name, start, end))
