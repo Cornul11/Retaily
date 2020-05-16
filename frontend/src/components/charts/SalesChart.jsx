@@ -25,12 +25,25 @@ class SalesChart extends Component {
     await fetch(url, {
       method: 'GET',
     })
-      .then((response) => response.json())
       .then((response) => {
-        this.setState({
-          data: response,
-          width: (response.length * 40).toString(),
+        if (response.ok) {
+          return response.json();
+        }
+        response.text().then((text) => {
+          try {
+            text = JSON.parse(text);
+            this.props.onError(text.message);
+          } catch (error) {
+            this.props.onError('Connection failed');
+          }
         });
+      }).then((response) => {
+        if (response != null) {
+          this.setState({
+            data: response,
+            width: (response.length * 40).toString(),
+          });
+        }
       });
     if (this.state.chart !== null) {
       this.state.chart.destroy();

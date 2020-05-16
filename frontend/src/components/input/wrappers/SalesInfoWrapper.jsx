@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import SalesChart from '../../charts/SalesChart';
 import IntervalDatePicker from '../IntervalDatePicker';
 import RetrieveButton from '../../design/RetrieveButton';
+import RetrieveError from '../../design/RetrieveError';
 
 class SalesInfoWrapper extends Component {
   constructor(props) {
@@ -12,12 +13,14 @@ class SalesInfoWrapper extends Component {
       endDate: new Date(),
       interval: 'hour',
       retrieve: false,
+      error: '',
     };
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
     this.handleIntervalChange = this.handleIntervalChange.bind(this);
     this.handleRetrieveButton = this.handleRetrieveButton.bind(this);
     this.onLoaded = this.onLoaded.bind(this);
+    this.handleError = this.handleError.bind(this);
   }
 
   onLoaded() {
@@ -50,6 +53,10 @@ class SalesInfoWrapper extends Component {
     }
   };
 
+  handleError(error) {
+    this.setState({ error });
+  }
+
   renderSalesChart() {
     return (
       <SalesChart
@@ -59,6 +66,7 @@ class SalesInfoWrapper extends Component {
         start={format(this.state.startDate, 'yyyy-MM-dd')}
         end={format(this.state.endDate, 'yyyy-MM-dd')}
         interval={this.state.interval}
+        onError={this.handleError}
         onLoaded={this.onLoaded}
       />
     );
@@ -79,6 +87,10 @@ class SalesInfoWrapper extends Component {
         <RetrieveButton
           handleRetrieveButton={this.handleRetrieveButton}
           retrieve={this.state.retrieve}
+        />
+        <RetrieveError
+          error={this.state.error}
+          handleError={this.handleError}
         />
         {this.renderSalesChart()}
       </div>

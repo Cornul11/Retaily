@@ -192,8 +192,7 @@ class Barchart extends Component {
               <button
                 type="button"
                 className={`dropdown-item ${
-                  this.state.sort === String('count') ? 'active' : ''
-                }`}
+                  this.state.sort === String('count') ? 'active' : ''}`}
                 onClick={() => {
                   this.setSort('count');
                 }}
@@ -203,8 +202,7 @@ class Barchart extends Component {
               <button
                 type="button"
                 className={`dropdown-item ${
-                  this.state.sort === String('name') ? 'active' : ''
-                }`}
+                  this.state.sort === String('name') ? 'active' : ''}`}
                 onClick={() => {
                   this.setSort('name');
                 }}

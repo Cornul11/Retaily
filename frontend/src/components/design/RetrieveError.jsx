@@ -11,11 +11,15 @@ const RetrieveError = class extends Component {
   }
 
   componentDidUpdate() {
+    const { error } = this.props;
+    if (error !== '') {
+      this.addNewErrorMessage();
+    }
+  }
+
+  addNewErrorMessage() {
     const { errorMessages, index } = this.state;
     const { error, handleError } = this.props;
-    if (error === '') {
-      return;
-    }
     const newMessages = errorMessages;
     newMessages.push(
       <div
@@ -39,7 +43,6 @@ const RetrieveError = class extends Component {
         </button>
       </div>,
     );
-    // eslint-disable-next-line react/no-did-update-set-state
     this.setState({ index: index + 1, errorMessages: newMessages });
   }
 
