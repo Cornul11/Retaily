@@ -4,7 +4,7 @@ import SalesChart from '../../charts/SalesChart';
 import IntervalDatePicker from '../IntervalDatePicker';
 import RetrieveButton from '../../design/RetrieveButton';
 
-class SalesChartWrapper extends Component {
+class SalesInfoWrapper extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -86,4 +86,4 @@ class SalesChartWrapper extends Component {
   }
 }
 
-export default SalesChartWrapper;
+export default SalesInfoWrapper;

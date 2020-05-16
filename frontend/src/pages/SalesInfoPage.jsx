@@ -1,10 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import SalesInfoWrapper from '../components/input/wrappers/SalesInfoWrapper';
 import BlueprintPage from './BlueprintPage';
 
-class SalesInfoPage extends Component {
-  render() {
-    return <BlueprintPage content={<SalesInfoWrapper />} />;
-  }
-}
+const SalesInfoPage = () => (
+  <BlueprintPage content={<SalesInfoWrapper />} />
+);
 export default SalesInfoPage;
