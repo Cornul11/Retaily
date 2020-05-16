@@ -3,6 +3,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { getDay, addDays } from 'date-fns';
 import nl from 'date-fns/locale/nl';
+import PropTypes from 'prop-types';
 
 class IntervalDatePicker extends Component {
   constructor(props) {
@@ -14,46 +15,51 @@ class IntervalDatePicker extends Component {
   }
 
   handleStartDateChange(date) {
-    this.props.onChangeStartDate(date);
+    const { onChangeStartDate } = this.props;
+    onChangeStartDate(date);
   }
 
   handleEndDateChange(date) {
-    this.props.onChangeEndDate(date);
+    const { onChangeEndDate } = this.props;
+    onChangeEndDate(date);
   }
 
   handleIntervalChange(event) {
-    let startDate = new Date(this.props.startDate);
-    let endDate = new Date(this.props.endDate);
+    const { startDate, endDate, OnIntervalChange } = this.props;
+    let startDateF = new Date(startDate);
+    let endDateF = new Date(endDate);
     if (event.target.value === 'week') {
-      while (getDay(startDate) !== 1) {
-        startDate = addDays(startDate, -1);
+      while (getDay(startDateF) !== 1) {
+        startDateF = addDays(startDateF, -1);
       }
-      while (getDay(endDate) !== 1) {
-        endDate = addDays(endDate, 1);
+      while (getDay(endDateF) !== 1) {
+        endDateF = addDays(endDateF, 1);
       }
     }
     if (event.target.value === 'month') {
-      while (startDate.getDate() !== 1) {
-        startDate = addDays(startDate, -1);
+      while (startDateF.getDate() !== 1) {
+        startDateF = addDays(startDateF, -1);
       }
-      while (endDate.getDate() !== 1) {
-        endDate = addDays(endDate, 1);
+      while (endDateF.getDate() !== 1) {
+        endDateF = addDays(endDateF, 1);
       }
     }
-    this.props.OnIntervalChange(event.target.value, startDate, endDate);
+    OnIntervalChange(event.target.value, startDateF, endDateF);
   }
 
   filterDate(date) {
-    if (this.props.interval === 'week') {
+    const { interval } = this.props;
+    if (interval === 'week') {
       return getDay(date) === 1;
     }
-    if (this.props.interval === 'month') {
+    if (interval === 'month') {
       return date.getDate() === 1;
     }
     return true;
   }
 
   renderIntervalSelect() {
+    const { interval } = this.props;
     return (
       <div className="input-group mt-2">
         <div className="input-group-prepend">
@@ -63,7 +69,7 @@ class IntervalDatePicker extends Component {
         </div>
         <select
           id="interval"
-          value={this.props.interval}
+          value={interval}
           onChange={this.handleIntervalChange}
           className="form-control"
         >
@@ -78,6 +84,9 @@ class IntervalDatePicker extends Component {
   }
 
   render() {
+    const {
+      startDate, endDate, interval, useInterval,
+    } = this.props;
     return (
       <div>
         <div className="input-group justify-content-center">
@@ -85,13 +94,13 @@ class IntervalDatePicker extends Component {
             <div className="card-header">start date</div>
             <div className="card-body">
               <DatePicker
-                selected={this.props.startDate}
+                selected={startDate}
                 onChange={this.handleStartDateChange}
                 dateFormat="dd-MM-yyyy"
                 inline
-                maxDate={this.props.endDate}
+                maxDate={endDate}
                 locale={nl}
-                showWeekNumbers={this.props.interval === 'week'}
+                showWeekNumbers={interval === 'week'}
                 showMonthDropdown
                 filterDate={this.filterDate}
               />
@@ -101,23 +110,31 @@ class IntervalDatePicker extends Component {
             <div className="card-header">end date</div>
             <div className="card-body">
               <DatePicker
-                selected={this.props.endDate}
+                selected={endDate}
                 onChange={this.handleEndDateChange}
                 dateFormat="dd-MM-yyyy"
                 inline
-                minDate={this.props.startDate}
+                minDate={startDate}
                 locale={nl}
-                showWeekNumbers={this.props.interval === 'week'}
+                showWeekNumbers={interval === 'week'}
                 showMonthDropdown
                 filterDate={this.filterDate}
               />
             </div>
           </div>
         </div>
-        {this.props.useInterval ? this.renderIntervalSelect() : ''}
+        {useInterval ? this.renderIntervalSelect() : ''}
       </div>
     );
   }
 }
+
+IntervalDatePicker.propTypes = { useInterval: PropTypes.bool.isRequired };
+IntervalDatePicker.propTypes = { onChangeStartDate: PropTypes.func.isRequired };
+IntervalDatePicker.propTypes = { onChangeEndDate: PropTypes.func.isRequired };
+IntervalDatePicker.propTypes = { OnIntervalChange: PropTypes.func.isRequired };
+IntervalDatePicker.propTypes = { startDate: PropTypes.string.isRequired };
+IntervalDatePicker.propTypes = { endDate: PropTypes.string.isRequired };
+IntervalDatePicker.propTypes = { interval: PropTypes.string.isRequired };
 
 export default IntervalDatePicker;

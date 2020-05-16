@@ -1,9 +1,10 @@
-import React, { Component } from "react";
-import { format } from "date-fns";
-import SalesChart from "../../charts/SalesChart";
-import IntervalDatePicker from "../IntervalDatePicker";
-import RetrieveButton from "../../design/RetrieveButton";
-import RetrieveError from "../../design/RetrieveError";
+import React, { Component } from 'react';
+import { format } from 'date-fns';
+import PropTypes from 'prop-types';
+import SalesChart from '../../charts/SalesChart';
+import IntervalDatePicker from '../IntervalDatePicker';
+import RetrieveButton from '../../design/RetrieveButton';
+import RetrieveError from '../../design/RetrieveError';
 
 class SalesInfoWrapper extends Component {
   constructor(props) {
@@ -11,10 +12,10 @@ class SalesInfoWrapper extends Component {
     this.state = {
       startDate: new Date(),
       endDate: new Date(),
-      interval: "hour",
+      interval: 'hour',
       retrieve: false,
-      error: "",
-      saleType: "customers",
+      error: '',
+      saleType: 'customers',
     };
     this.handleSaleTypeChange = this.handleSaleTypeChange.bind(this);
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
@@ -23,6 +24,7 @@ class SalesInfoWrapper extends Component {
     this.handleRetrieveButton = this.handleRetrieveButton.bind(this);
     this.onLoaded = this.onLoaded.bind(this);
     this.handleError = this.handleError.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
   }
 
   onLoaded() {
@@ -53,42 +55,49 @@ class SalesInfoWrapper extends Component {
     this.setState({ retrieve: true });
   }
 
-  handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      this.handleRetrieveButton();
+  handleKeyDown(e) {
+    if (e.key === 'Enter') {
+      this.retrieveInChild();
     }
-  };
+  }
 
   handleError(error) {
     this.setState({ error });
   }
 
   renderSalesChart() {
+    const {
+      retrieve, startDate, endDate, interval, saleType,
+    } = this.state;
+    const { identifier, text } = this.props;
     return (
       <SalesChart
-        retrieve={this.state.retrieve}
-        identifier={this.props.identifier}
-        text={this.props.text}
-        start={format(this.state.startDate, "yyyy-MM-dd")}
-        end={format(this.state.endDate, "yyyy-MM-dd")}
-        interval={this.state.interval}
+        retrieve={retrieve}
+        identifier={identifier}
+        text={text}
+        start={format(startDate, 'yyyy-MM-dd')}
+        end={format(endDate, 'yyyy-MM-dd')}
+        interval={interval}
         onError={this.handleError}
         onLoaded={this.onLoaded}
-        saleType={this.state.saleType}
+        saleType={saleType}
       />
     );
   }
 
   render() {
+    const {
+      retrieve, startDate, endDate, interval, saleType, error,
+    } = this.state;
     return (
-      <div onKeyDown={this.handleKeyDown}>
+      <div role="textbox" tabIndex={0} onKeyDown={this.handleKeyDown}>
         <div className="input-group-prepend">
           <span className="input-group-text" id="basic-addon1">
             sale type
           </span>
           <select
             id="saleType"
-            value={this.state.saleType}
+            value={saleType}
             onChange={this.handleSaleTypeChange}
             className="form-control"
           >
@@ -100,17 +109,17 @@ class SalesInfoWrapper extends Component {
           onChangeStartDate={this.handleStartDateChange}
           onChangeEndDate={this.handleEndDateChange}
           OnIntervalChange={this.handleIntervalChange}
-          startDate={this.state.startDate}
-          endDate={this.state.endDate}
-          interval={this.state.interval}
+          startDate={startDate}
+          endDate={endDate}
+          interval={interval}
           useInterval
         />
         <RetrieveButton
           handleRetrieveButton={this.handleRetrieveButton}
-          retrieve={this.state.retrieve}
+          retrieve={retrieve}
         />
         <RetrieveError
-          error={this.state.error}
+          error={error}
           handleError={this.handleError}
         />
         {this.renderSalesChart()}
@@ -118,5 +127,8 @@ class SalesInfoWrapper extends Component {
     );
   }
 }
+
+SalesInfoWrapper.propTypes = { identifier: PropTypes.string.isRequired };
+SalesInfoWrapper.propTypes = { text: PropTypes.string.isRequired };
 
 export default SalesInfoWrapper;

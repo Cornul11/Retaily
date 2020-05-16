@@ -14,5 +14,5 @@ const ProductInfoPage = (props) => {
   );
 };
 
-ProductInfoPage.propTypes = { extended: PropTypes.element.isRequired };
+ProductInfoPage.propTypes = { extended: PropTypes.bool.isRequired };
 export default ProductInfoPage;

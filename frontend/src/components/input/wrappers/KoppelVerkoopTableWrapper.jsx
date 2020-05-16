@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { format } from 'date-fns';
+import PropTypes from 'prop-types';
 import IntervalDatePicker from '../IntervalDatePicker';
 import KoppelVerkoopTable from '../../charts/KoppelVerkoopTable';
 import RetrieveButton from '../../design/RetrieveButton';
@@ -22,7 +23,8 @@ class KoppelVerkoopTableWrapper extends Component {
   }
 
   componentDidMount() {
-    this.props.setRetrieve(this.handleRetrieveButton);
+    const { setRetrieve } = this.props;
+    setRetrieve(this.handleRetrieveButton);
   }
 
   onLoaded() {
@@ -46,35 +48,39 @@ class KoppelVerkoopTableWrapper extends Component {
   }
 
   renderKoppelVerkoopTable() {
+    const { retrieve, startDate, endDate } = this.state;
+    const { identifier, text } = this.props;
     return (
       <KoppelVerkoopTable
-        retrieve={this.state.retrieve}
-        identifier={this.props.identifier}
-        text={this.props.text}
-        start={format(this.state.startDate, 'yyyy-MM-dd')}
-        end={format(this.state.endDate, 'yyyy-MM-dd')}
+        retrieve={retrieve}
+        identifier={identifier}
+        text={text}
+        start={format(startDate, 'yyyy-MM-dd')}
+        end={format(endDate, 'yyyy-MM-dd')}
         onLoaded={this.onLoaded}
         onError={this.handleError}
-        extended={this.props.extended}
       />
     );
   }
 
   render() {
+    const {
+      retrieve, startDate, endDate, error,
+    } = this.state;
     return (
       <div>
         <IntervalDatePicker
           onChangeStartDate={this.handleStartDateChange}
           onChangeEndDate={this.handleEndDateChange}
-          startDate={this.state.startDate}
-          endDate={this.state.endDate}
+          startDate={startDate}
+          endDate={endDate}
         />
         <RetrieveButton
           handleRetrieveButton={this.handleRetrieveButton}
-          retrieve={this.state.retrieve}
+          retrieve={retrieve}
         />
         <RetrieveError
-          error={this.state.error}
+          error={error}
           handleError={this.handleError}
         />
         {this.renderKoppelVerkoopTable()}
@@ -82,5 +88,9 @@ class KoppelVerkoopTableWrapper extends Component {
     );
   }
 }
+
+KoppelVerkoopTableWrapper.propTypes = { setRetrieve: PropTypes.func.isRequired };
+KoppelVerkoopTableWrapper.propTypes = { identifier: PropTypes.string.isRequired };
+KoppelVerkoopTableWrapper.propTypes = { text: PropTypes.string.isRequired };
 
 export default KoppelVerkoopTableWrapper;

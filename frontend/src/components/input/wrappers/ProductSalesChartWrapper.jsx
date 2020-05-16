@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { format } from 'date-fns';
+import PropTypes from 'prop-types';
 import ProductSalesChart from '../../charts/ProductSalesChart';
 import IntervalDatePicker from '../IntervalDatePicker';
 import RetrieveButton from '../../design/RetrieveButton';
@@ -23,12 +24,13 @@ class ProductSalesChartWrapper extends Component {
     this.handleError = this.handleError.bind(this);
   }
 
-  onLoaded() {
-    this.setState({ retrieve: false });
+  componentDidMount() {
+    const { setRetrieve } = this.props;
+    setRetrieve(this.handleRetrieveButton);
   }
 
-  componentDidMount() {
-    this.props.setRetrieve(this.handleRetrieveButton);
+  onLoaded() {
+    this.setState({ retrieve: false });
   }
 
   handleStartDateChange(date) {
@@ -56,14 +58,18 @@ class ProductSalesChartWrapper extends Component {
   }
 
   renderSalesChart() {
+    const {
+      retrieve, startDate, endDate, interval,
+    } = this.state;
+    const { identifier, text } = this.props;
     return (
       <ProductSalesChart
-        retrieve={this.state.retrieve}
-        identifier={this.props.identifier}
-        text={this.props.text}
-        start={format(this.state.startDate, 'yyyy-MM-dd')}
-        end={format(this.state.endDate, 'yyyy-MM-dd')}
-        interval={this.state.interval}
+        retrieve={retrieve}
+        identifier={identifier}
+        text={text}
+        start={format(startDate, 'yyyy-MM-dd')}
+        end={format(endDate, 'yyyy-MM-dd')}
+        interval={interval}
         onError={this.handleError}
         onLoaded={this.onLoaded}
       />
@@ -71,23 +77,26 @@ class ProductSalesChartWrapper extends Component {
   }
 
   render() {
+    const {
+      retrieve, startDate, endDate, interval, error,
+    } = this.state;
     return (
       <div>
         <IntervalDatePicker
           onChangeStartDate={this.handleStartDateChange}
           onChangeEndDate={this.handleEndDateChange}
           OnIntervalChange={this.handleIntervalChange}
-          startDate={this.state.startDate}
-          endDate={this.state.endDate}
-          interval={this.state.interval}
+          startDate={startDate}
+          endDate={endDate}
+          interval={interval}
           useInterval
         />
         <RetrieveButton
           handleRetrieveButton={this.handleRetrieveButton}
-          retrieve={this.state.retrieve}
+          retrieve={retrieve}
         />
         <RetrieveError
-          error={this.state.error}
+          error={error}
           handleError={this.handleError}
         />
         {this.renderSalesChart()}
@@ -95,5 +104,9 @@ class ProductSalesChartWrapper extends Component {
     );
   }
 }
+
+ProductSalesChartWrapper.propTypes = { identifier: PropTypes.string.isRequired };
+ProductSalesChartWrapper.propTypes = { text: PropTypes.string.isRequired };
+ProductSalesChartWrapper.propTypes = { setRetrieve: PropTypes.func.isRequired };
 
 export default ProductSalesChartWrapper;

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import ProductInfoTable from '../../charts/ProductInfoTable';
 import RetrieveButton from '../../design/RetrieveButton';
 import RetrieveError from '../../design/RetrieveError';
@@ -16,7 +17,8 @@ class ProductInfoTableWrapper extends Component {
   }
 
   componentDidMount() {
-    this.props.setRetrieve(this.handleRetrieveButton);
+    const { setRetrieve } = this.props;
+    setRetrieve(this.handleRetrieveButton);
   }
 
   onLoaded() {
@@ -33,27 +35,30 @@ class ProductInfoTableWrapper extends Component {
   }
 
   renderProductInfoTable() {
+    const { retrieve } = this.state;
+    const { identifier, text, extended } = this.props;
     return (
       <ProductInfoTable
-        retrieve={this.state.retrieve}
-        identifier={this.props.identifier}
-        text={this.props.text}
+        retrieve={retrieve}
+        identifier={identifier}
+        text={text}
         onLoaded={this.onLoaded}
         onError={this.handleError}
-        extended={this.props.extended}
+        extended={extended}
       />
     );
   }
 
   render() {
+    const { retrieve, error } = this.state;
     return (
       <div>
         <RetrieveButton
           handleRetrieveButton={this.handleRetrieveButton}
-          retrieve={this.state.retrieve}
+          retrieve={retrieve}
         />
         <RetrieveError
-          error={this.state.error}
+          error={error}
           handleError={this.handleError}
         />
         {this.renderProductInfoTable()}
@@ -61,5 +66,10 @@ class ProductInfoTableWrapper extends Component {
     );
   }
 }
+
+ProductInfoTableWrapper.propTypes = { identifier: PropTypes.string.isRequired };
+ProductInfoTableWrapper.propTypes = { extended: PropTypes.bool.isRequired };
+ProductInfoTableWrapper.propTypes = { text: PropTypes.string.isRequired };
+ProductInfoTableWrapper.propTypes = { setRetrieve: PropTypes.func.isRequired };
 
 export default ProductInfoTableWrapper;
