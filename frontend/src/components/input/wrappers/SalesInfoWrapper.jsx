@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { format } from 'date-fns';
-import SalesChart from '../../charts/SalesChart';
-import IntervalDatePicker from '../IntervalDatePicker';
-import RetrieveButton from '../../design/RetrieveButton';
-import RetrieveError from '../../design/RetrieveError';
+import React, { Component } from "react";
+import { format } from "date-fns";
+import SalesChart from "../../charts/SalesChart";
+import IntervalDatePicker from "../IntervalDatePicker";
+import RetrieveButton from "../../design/RetrieveButton";
+import RetrieveError from "../../design/RetrieveError";
 
 class SalesInfoWrapper extends Component {
   constructor(props) {
@@ -11,10 +11,12 @@ class SalesInfoWrapper extends Component {
     this.state = {
       startDate: new Date(),
       endDate: new Date(),
-      interval: 'hour',
+      interval: "hour",
       retrieve: false,
-      error: '',
+      error: "",
+      saleType: "customers",
     };
+    this.handleSaleTypeChange = this.handleSaleTypeChange.bind(this);
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
     this.handleIntervalChange = this.handleIntervalChange.bind(this);
@@ -25,6 +27,10 @@ class SalesInfoWrapper extends Component {
 
   onLoaded() {
     this.setState({ retrieve: false });
+  }
+
+  handleSaleTypeChange(event) {
+    this.setState({ saleType: event.target.value });
   }
 
   handleStartDateChange(date) {
@@ -48,7 +54,7 @@ class SalesInfoWrapper extends Component {
   }
 
   handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       this.handleRetrieveButton();
     }
   };
@@ -63,11 +69,12 @@ class SalesInfoWrapper extends Component {
         retrieve={this.state.retrieve}
         identifier={this.props.identifier}
         text={this.props.text}
-        start={format(this.state.startDate, 'yyyy-MM-dd')}
-        end={format(this.state.endDate, 'yyyy-MM-dd')}
+        start={format(this.state.startDate, "yyyy-MM-dd")}
+        end={format(this.state.endDate, "yyyy-MM-dd")}
         interval={this.state.interval}
         onError={this.handleError}
         onLoaded={this.onLoaded}
+        saleType={this.state.saleType}
       />
     );
   }
@@ -75,6 +82,20 @@ class SalesInfoWrapper extends Component {
   render() {
     return (
       <div onKeyDown={this.handleKeyDown}>
+        <div className="input-group-prepend">
+          <span className="input-group-text" id="basic-addon1">
+            sale type
+          </span>
+          <select
+            id="saleType"
+            value={this.state.saleType}
+            onChange={this.handleSaleTypeChange}
+            className="form-control"
+          >
+            <option value="customers">customers</option>
+            <option value="revenue">revenue</option>
+          </select>
+        </div>
         <IntervalDatePicker
           onChangeStartDate={this.handleStartDateChange}
           onChangeEndDate={this.handleEndDateChange}
