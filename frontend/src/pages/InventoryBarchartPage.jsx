@@ -1,16 +1,17 @@
-import React, { Component } from 'react';
+import React, { useContext } from 'react';
 import Barchart from '../components/charts/Barchart';
 import BlueprintPage from './BlueprintPage';
+import Absolute from '../components/Absolute';
 
-class InventoryBarchartPage extends Component {
-  render() {
-    return (
-      <BlueprintPage
-        content={
-          <Barchart url="https://retaily.site:7000/inventory/" />
-        }
-      />
-    );
-  }
-}
+const InventoryBarchartPage = () => {
+  const absolute = useContext(Absolute);
+  return (
+    <BlueprintPage
+      content={
+        <Barchart url={`${absolute ? 'https://retaily.site:7000' : ''}/inventory/`} />
+      }
+    />
+  );
+};
+
 export default InventoryBarchartPage;

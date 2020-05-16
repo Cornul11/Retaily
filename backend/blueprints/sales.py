@@ -11,7 +11,7 @@ time_format = "%Y-%m-%d %H:%M"
 sales_bp = Blueprint("sales", __name__)
 
 
-def get_sales(items, start, end, interval, product):
+def get_sales(items, start, end, interval, product, revenue):
     data = []
     count = 0
     for item in items:
@@ -25,7 +25,13 @@ def get_sales(items, start, end, interval, product):
             )
             count = 0
             start = start + interval
-        count += 1
+        if revenue is not None:
+            if product:
+                count += item.Transaction.serialized["total_amount"]
+            else:
+                count += item.serialized["total_amount"]
+        else:
+            count += 1
     data.append({"t": (start + (interval / 2)).strftime(time_format), "y": count})
     start = start + interval
     while start < end:
@@ -67,6 +73,7 @@ def sales():
         start = request.args.get("start", None)
         end = request.args.get("end", None)
         interval = request.args.get("interval", None)
+        revenue = request.args.get("revenue", None)
 
         try:
             start = datetime.datetime.strptime(start, "%Y-%m-%d")
@@ -98,7 +105,7 @@ def sales():
                 )
                 .order_by(Transaction.date_time)
             )
-            return jsonify(get_sales(items, start, end, interval, False))
+            return jsonify(get_sales(items, start, end, interval, False, revenue))
         elif plu is not None:
             items = (
                 db.session.query(Product, Transaction)
@@ -120,7 +127,7 @@ def sales():
                     & (Transaction.date_time <= end)
                 )
             )
-        return jsonify(get_sales(items, start, end, interval, True))
+        return jsonify(get_sales(items, start, end, interval, True, revenue))
 
 
 @sales_bp.route("/quick/", methods=["GET"])
@@ -128,7 +135,7 @@ def quick():
     if request.method == "GET":
         plu = request.args.get("plu", None)
         name = request.args.get("name", None)
-        if plu is None and name is None:
+        if (plu is None or plu == "") and (name is None or name == ""):
             abort(400)
         end = datetime.datetime.now()
         return jsonify(

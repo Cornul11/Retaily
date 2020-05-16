@@ -1,46 +1,70 @@
-import React, { Component } from "react";
-import { Chart } from "chart.js";
+import React, { Component } from 'react';
+import { Chart } from 'chart.js';
+import PropTypes from 'prop-types';
+import Absolute from '../Absolute';
 
 class ProductSalesChart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      width: "1000",
+      width: '1000',
       chart: null,
+      loading: false,
     };
   }
 
   componentDidUpdate() {
-    if (this.props.retrieve === true) {
+    const { retrieve } = this.props;
+    const { loading } = this.state;
+    if (retrieve && !loading) {
       this.loadChart();
     }
   }
 
   async loadChart() {
-    this.props.onLoaded();
-    const url = `https://retaily.site:7000/sales/?${this.props.identifier}=${this.props.text}&start=${this.props.start}&end=${this.props.end}&interval=${this.props.interval}`;
+    this.setState({ loading: true });
+    const {
+      identifier, text, start, end, interval, onError, onLoaded,
+    } = this.props;
+    const absolute = this.context;
+    const url = `${absolute ? 'https://retaily.site:7000' : ''}/sales/?${identifier}=${text}&start=${start}&end=${end}&interval=${interval}`;
     await fetch(url, {
-      method: "GET",
+      method: 'GET',
     })
-      .then((response) => response.json())
       .then((response) => {
-        this.setState({
-          data: response,
-          width: (response.length * 40).toString(),
+        if (response.ok) {
+          return response.json();
+        }
+        response.text().then((msg) => {
+          try {
+            const parsed = JSON.parse(msg);
+            onError(parsed.message);
+          } catch (error) {
+            onError('Connection failed');
+          }
         });
+        return null;
+      }).then((response) => {
+        if (response != null) {
+          this.setState({
+            data: response,
+            width: (response.length * 40).toString(),
+          });
+        }
       });
-    if (this.state.chart !== null) {
-      this.state.chart.destroy();
+    const { chart, data } = this.state;
+    if (chart !== null) {
+      chart.destroy();
     }
     this.state.chart = new Chart(
-      document.getElementById("myChart").getContext("2d"),
+      document.getElementById('myChart').getContext('2d'),
       {
-        type: "bar",
+        type: 'bar',
         data: {
           datasets: [
             {
-              data: this.state.data,
-              backgroundColor: "rgba(55,155,255,0.5)",
+              data,
+              backgroundColor: 'rgba(55,155,255,0.5)',
             },
           ],
         },
@@ -53,17 +77,17 @@ class ProductSalesChart extends Component {
           scales: {
             xAxes: [
               {
-                type: "time",
+                type: 'time',
                 time: {
                   unit:
-                    this.props.interval === "half_an_hour"
-                      ? "hour"
-                      : this.props.interval,
+                    interval === 'half_an_hour'
+                      ? 'hour'
+                      : interval,
                   displayFormats: {
-                    hour: "HH:mm",
-                    day: "D MMM",
-                    week: "D MMM",
-                    month: "MMM",
+                    hour: 'HH:mm',
+                    day: 'D MMM',
+                    week: 'D MMM',
+                    month: 'MMM',
                   },
                 },
                 offset: true,
@@ -80,21 +104,24 @@ class ProductSalesChart extends Component {
           tooltips: {
             callbacks: {
               title() {
-                return "";
+                return '';
               },
             },
           },
         },
-      }
+      },
     );
+    onLoaded();
+    this.setState({ loading: false });
   }
 
   render() {
+    const { width } = this.state;
     return (
       <div className="chartWrapper">
         <div
           className="chartWrapper2"
-          style={{ width: this.state.width + "px", height: "500px" }}
+          style={{ width: `${width}px`, height: '500px' }}
         >
           <canvas id="myChart" />
         </div>
@@ -102,5 +129,15 @@ class ProductSalesChart extends Component {
     );
   }
 }
+
+ProductSalesChart.contextType = Absolute;
+ProductSalesChart.propTypes = { retrieve: PropTypes.bool.isRequired };
+ProductSalesChart.propTypes = { onLoaded: PropTypes.func.isRequired };
+ProductSalesChart.propTypes = { onError: PropTypes.func.isRequired };
+ProductSalesChart.propTypes = { identifier: PropTypes.string.isRequired };
+ProductSalesChart.propTypes = { text: PropTypes.string.isRequired };
+ProductSalesChart.propTypes = { start: PropTypes.string.isRequired };
+ProductSalesChart.propTypes = { end: PropTypes.string.isRequired };
+ProductSalesChart.propTypes = { interval: PropTypes.string.isRequired };
 
 export default ProductSalesChart;

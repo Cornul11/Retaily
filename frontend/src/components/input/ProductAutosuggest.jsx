@@ -1,5 +1,6 @@
-import React, { Component } from "react";
-import Autosuggest from "react-autosuggest";
+import React, { Component } from 'react';
+import Autosuggest from 'react-autosuggest';
+import PropTypes from 'prop-types';
 
 const products = [];
 
@@ -38,11 +39,28 @@ const ProductAutosuggest = class extends Component {
       suggestions: [],
     };
     this.handleTextChange = this.handleTextChange.bind(this);
+    this.onSuggestionSelectedByUser = this.onSuggestionSelectedByUser.bind(this);
+    this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
+    this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
+
     this.fillProductsArray();
   }
 
-  handleTextChange(event) {
-    this.props.onTextChange(event);
+  onSuggestionsFetchRequested({ value }) {
+    this.setState({
+      suggestions: getSuggestions(value),
+    });
+  }
+
+  onSuggestionsClearRequested() {
+    this.setState({
+      suggestions: [],
+    });
+  }
+
+  onSuggestionSelectedByUser(event, { suggestionValue }) {
+    const { onTextChangeAuto } = this.props;
+    onTextChangeAuto(suggestionValue);
   }
 
   async fillProductsArray() {
@@ -59,35 +77,21 @@ const ProductAutosuggest = class extends Component {
         },
         (error) => {
           console.log(error);
-        }
+        },
       );
   }
 
-  onSuggestionsFetchRequested = ({ value }) => {
-    this.setState({
-      suggestions: getSuggestions(value),
-    });
-  };
-
-  onSuggestionsClearRequested = () => {
-    this.setState({
-      suggestions: [],
-    });
-  };
-
-  onSuggestionSelectedByUser = (
-    event,
-    { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }
-  ) => {
-    this.props.onTextChangeAuto(suggestionValue);
-  };
+  handleTextChange(event) {
+    const { onTextChange } = this.props;
+    onTextChange(event);
+  }
 
   render() {
-    const value = this.props.text;
+    const { text } = this.props;
     const { suggestions } = this.state;
     const inputProps = {
-      placeholder: "Test input",
-      value,
+      placeholder: 'Test input',
+      value: text,
       onChange: this.handleTextChange,
     };
     return (
@@ -104,5 +108,10 @@ const ProductAutosuggest = class extends Component {
     );
   }
 };
+
+ProductAutosuggest.propTypes = { text: PropTypes.string.isRequired };
+ProductAutosuggest.propTypes = { onTextChangeAuto: PropTypes.func.isRequired };
+ProductAutosuggest.propTypes = { onTextChange: PropTypes.func.isRequired };
+
 
 export default ProductAutosuggest;

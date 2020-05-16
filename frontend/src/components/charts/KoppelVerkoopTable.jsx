@@ -1,4 +1,6 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Absolute from '../Absolute';
 
 /** Component that displays a table with the current product information */
 
@@ -7,54 +9,72 @@ class KoppelVerkoopTable extends Component {
     super(props);
     this.state = {
       data: null,
+      loading: false,
     };
   }
 
   componentDidUpdate() {
-    if (this.props.retrieve === true) {
+    const { retrieve } = this.props;
+    const { loading } = this.state;
+    if (retrieve === true && !loading) {
       this.loadTable();
     }
   }
 
   async loadTable() {
-    this.props.onLoaded();
-    let url = `https://retaily.site:7000/koppelverkoop/lijst/?${this.props.identifier}=${this.props.text}&start=${this.props.start}&end=${this.props.end}`;
+    this.setState({ loading: true });
+    const {
+      identifier, text, start, end, onError, onLoaded,
+    } = this.props;
+    const absolute = this.context;
+    const url = `${absolute ? 'https://retaily.site:7000' : ''}/koppelverkoop/lijst/?${identifier}=${text}&start=${start}&end=${end}`;
     await fetch(url, {
-      method: "GET",
+      method: 'GET',
     })
-      .then((response) => response.json())
-      .then(
-        (response) => {
-          this.setState({ data: response });
-          console.log(response);
-        },
-        (error) => {
-          console.log(error);
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
         }
-      );
+        response.text().then((msg) => {
+          try {
+            const parsed = JSON.parse(msg);
+            onError(parsed.message);
+          } catch (error) {
+            onError('Connection failed');
+          }
+        });
+        return null;
+      })
+      .then((response) => {
+        this.setState({ data: response });
+      });
+
+    onLoaded();
+    this.setState({ loading: false });
   }
 
   renderTable() {
-    if (this.state.data == null || this.state.data.length < 1) {
+    const { data } = this.state;
+    if (typeof data === 'undefined' || data === null || data.length < 1) {
       return null;
     }
     const table = [];
-    let data = this.state.data.slice();
-    let key = data[0];
+    const newData = data.slice();
+    const key = newData[0];
     table.push(
       <tr key={key.name} className="table-secondary">
         <th scope="row" colSpan="2" className="text-center">
           {key.name}
         </th>
-      </tr>
+      </tr>,
     );
-    data.splice(0, 1);
-    data.forEach((key) => {
+    newData.splice(0, 1);
+    newData.forEach((dataKey) => {
       table.push(
-        <tr key={key.name}>
-          <th>{key.name}</th>
-          <td>{key.count}</td>
-        </tr>
+        <tr key={dataKey.name}>
+          <th>{dataKey.name}</th>
+          <td>{dataKey.count}</td>
+        </tr>,
       );
     });
     return table;
@@ -70,5 +90,14 @@ class KoppelVerkoopTable extends Component {
     );
   }
 }
+
+KoppelVerkoopTable.contextType = Absolute;
+KoppelVerkoopTable.propTypes = { retrieve: PropTypes.bool.isRequired };
+KoppelVerkoopTable.propTypes = { onLoaded: PropTypes.func.isRequired };
+KoppelVerkoopTable.propTypes = { onError: PropTypes.func.isRequired };
+KoppelVerkoopTable.propTypes = { identifier: PropTypes.string.isRequired };
+KoppelVerkoopTable.propTypes = { start: PropTypes.string.isRequired };
+KoppelVerkoopTable.propTypes = { end: PropTypes.string.isRequired };
+KoppelVerkoopTable.propTypes = { text: PropTypes.string.isRequired };
 
 export default KoppelVerkoopTable;

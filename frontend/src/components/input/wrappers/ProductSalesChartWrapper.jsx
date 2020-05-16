@@ -1,7 +1,10 @@
-import React, { Component } from "react";
-import { format } from "date-fns";
-import ProductSalesChart from "../../charts/ProductSalesChart";
-import IntervalDatePicker from "../IntervalDatePicker";
+import React, { Component } from 'react';
+import { format } from 'date-fns';
+import PropTypes from 'prop-types';
+import ProductSalesChart from '../../charts/ProductSalesChart';
+import IntervalDatePicker from '../IntervalDatePicker';
+import RetrieveButton from '../../design/RetrieveButton';
+import RetrieveError from '../../design/RetrieveError';
 
 class ProductSalesChartWrapper extends Component {
   constructor(props) {
@@ -9,22 +12,25 @@ class ProductSalesChartWrapper extends Component {
     this.state = {
       startDate: new Date(),
       endDate: new Date(),
-      interval: "hour",
+      interval: 'hour',
       retrieve: false,
+      error: '',
     };
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
     this.handleIntervalChange = this.handleIntervalChange.bind(this);
     this.handleRetrieveButton = this.handleRetrieveButton.bind(this);
     this.onLoaded = this.onLoaded.bind(this);
+    this.handleError = this.handleError.bind(this);
+  }
+
+  componentDidMount() {
+    const { setRetrieve } = this.props;
+    setRetrieve(this.handleRetrieveButton);
   }
 
   onLoaded() {
     this.setState({ retrieve: false });
-  }
-
-  componentDidMount() {
-    this.props.setRetrieve(this.handleRetrieveButton);
   }
 
   handleStartDateChange(date) {
@@ -37,9 +43,9 @@ class ProductSalesChartWrapper extends Component {
 
   handleIntervalChange(interval, startDate, endDate) {
     this.setState({
-      startDate: startDate,
-      endDate: endDate,
-      interval: interval,
+      startDate,
+      endDate,
+      interval,
     });
   }
 
@@ -47,43 +53,60 @@ class ProductSalesChartWrapper extends Component {
     this.setState({ retrieve: true });
   }
 
+  handleError(error) {
+    this.setState({ error });
+  }
+
   renderSalesChart() {
+    const {
+      retrieve, startDate, endDate, interval,
+    } = this.state;
+    const { identifier, text } = this.props;
     return (
       <ProductSalesChart
-        retrieve={this.state.retrieve}
-        identifier={this.props.identifier}
-        text={this.props.text}
-        start={format(this.state.startDate, "yyyy-MM-dd")}
-        end={format(this.state.endDate, "yyyy-MM-dd")}
-        interval={this.state.interval}
+        retrieve={retrieve}
+        identifier={identifier}
+        text={text}
+        start={format(startDate, 'yyyy-MM-dd')}
+        end={format(endDate, 'yyyy-MM-dd')}
+        interval={interval}
+        onError={this.handleError}
         onLoaded={this.onLoaded}
       />
     );
   }
 
   render() {
+    const {
+      retrieve, startDate, endDate, interval, error,
+    } = this.state;
     return (
       <div>
         <IntervalDatePicker
           onChangeStartDate={this.handleStartDateChange}
           onChangeEndDate={this.handleEndDateChange}
           OnIntervalChange={this.handleIntervalChange}
-          startDate={this.state.startDate}
-          endDate={this.state.endDate}
-          interval={this.state.interval}
+          startDate={startDate}
+          endDate={endDate}
+          interval={interval}
           useInterval
         />
-        <button
-          type="button"
-          className="btn btn-secondary mt-2 btn-block"
-          onClick={this.handleRetrieveButton}
-        >
-          retrieve
-        </button>
+        <RetrieveButton
+          handleRetrieveButton={this.handleRetrieveButton}
+          retrieve={retrieve}
+        />
+        <RetrieveError
+          error={error}
+          handleError={this.handleError}
+        />
         {this.renderSalesChart()}
       </div>
     );
   }
 }
+
+ProductSalesChartWrapper.propTypes = { identifier: PropTypes.string.isRequired };
+ProductSalesChartWrapper.propTypes = { text: PropTypes.string.isRequired };
+ProductSalesChartWrapper.propTypes = { setRetrieve: PropTypes.func.isRequired };
 
 export default ProductSalesChartWrapper;

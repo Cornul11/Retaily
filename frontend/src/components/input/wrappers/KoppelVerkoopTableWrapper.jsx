@@ -1,7 +1,10 @@
-import React, { Component } from "react";
-import { format } from "date-fns";
-import IntervalDatePicker from "../IntervalDatePicker";
-import KoppelVerkoopTable from "../../charts/KoppelVerkoopTable";
+import React, { Component } from 'react';
+import { format } from 'date-fns';
+import PropTypes from 'prop-types';
+import IntervalDatePicker from '../IntervalDatePicker';
+import KoppelVerkoopTable from '../../charts/KoppelVerkoopTable';
+import RetrieveButton from '../../design/RetrieveButton';
+import RetrieveError from '../../design/RetrieveError';
 
 class KoppelVerkoopTableWrapper extends Component {
   constructor(props) {
@@ -10,19 +13,22 @@ class KoppelVerkoopTableWrapper extends Component {
       startDate: new Date(),
       endDate: new Date(),
       retrieve: false,
+      error: '',
     };
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
     this.handleRetrieveButton = this.handleRetrieveButton.bind(this);
+    this.handleError = this.handleError.bind(this);
     this.onLoaded = this.onLoaded.bind(this);
+  }
+
+  componentDidMount() {
+    const { setRetrieve } = this.props;
+    setRetrieve(this.handleRetrieveButton);
   }
 
   onLoaded() {
     this.setState({ retrieve: false });
-  }
-
-  componentDidMount() {
-    this.props.setRetrieve(this.handleRetrieveButton);
   }
 
   handleStartDateChange(date) {
@@ -37,40 +43,54 @@ class KoppelVerkoopTableWrapper extends Component {
     this.setState({ retrieve: true });
   }
 
+  handleError(error) {
+    this.setState({ error });
+  }
+
   renderKoppelVerkoopTable() {
+    const { retrieve, startDate, endDate } = this.state;
+    const { identifier, text } = this.props;
     return (
       <KoppelVerkoopTable
-        retrieve={this.state.retrieve}
-        identifier={this.props.identifier}
-        text={this.props.text}
-        start={format(this.state.startDate, "yyyy-MM-dd")}
-        end={format(this.state.endDate, "yyyy-MM-dd")}
+        retrieve={retrieve}
+        identifier={identifier}
+        text={text}
+        start={format(startDate, 'yyyy-MM-dd')}
+        end={format(endDate, 'yyyy-MM-dd')}
         onLoaded={this.onLoaded}
-        extended={this.props.extended}
+        onError={this.handleError}
       />
     );
   }
 
   render() {
+    const {
+      retrieve, startDate, endDate, error,
+    } = this.state;
     return (
       <div>
         <IntervalDatePicker
           onChangeStartDate={this.handleStartDateChange}
           onChangeEndDate={this.handleEndDateChange}
-          startDate={this.state.startDate}
-          endDate={this.state.endDate}
+          startDate={startDate}
+          endDate={endDate}
         />
-        <button
-          type="button"
-          className="btn btn-secondary mt-2 mb-2 btn-block"
-          onClick={this.handleRetrieveButton}
-        >
-          retrieve
-        </button>
+        <RetrieveButton
+          handleRetrieveButton={this.handleRetrieveButton}
+          retrieve={retrieve}
+        />
+        <RetrieveError
+          error={error}
+          handleError={this.handleError}
+        />
         {this.renderKoppelVerkoopTable()}
       </div>
     );
   }
 }
+
+KoppelVerkoopTableWrapper.propTypes = { setRetrieve: PropTypes.func.isRequired };
+KoppelVerkoopTableWrapper.propTypes = { identifier: PropTypes.string.isRequired };
+KoppelVerkoopTableWrapper.propTypes = { text: PropTypes.string.isRequired };
 
 export default KoppelVerkoopTableWrapper;

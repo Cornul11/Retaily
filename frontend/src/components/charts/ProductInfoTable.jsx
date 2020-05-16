@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Absolute from '../Absolute';
 
 /** Component that displays a table with the current product information */
 
@@ -7,67 +9,80 @@ class ProductInfoTable extends Component {
     super(props);
     this.state = {
       data: this.getEmptyData(),
+      loading: false,
     };
   }
 
   componentDidUpdate() {
-    if (this.props.retrieve === true) {
+    const { retrieve } = this.props;
+    const { loading } = this.state;
+    if (retrieve && !loading) {
       this.loadTable();
     }
   }
 
   getEmptyData() {
-    if (this.props.extended) {
-      return (
-        {
-          plu: null,
-          name: null,
-          buying_price: null,
-          selling_price: null,
-          discount: null,
-          sales_last_week: null,
-          sales_last_month: null,
-          sales_last_quarter: null,
-          sales_last_year: null,
-        }
-      );
-    }
-
-    return (
-      {
+    const { extended } = this.props;
+    if (extended) {
+      return {
         plu: null,
         name: null,
+        buying_price: null,
+        selling_price: null,
+        discount: null,
         sales_last_week: null,
         sales_last_month: null,
         sales_last_quarter: null,
         sales_last_year: null,
-      }
-    );
+      };
+    }
+    return {
+      plu: null,
+      name: null,
+      sales_last_week: null,
+      sales_last_month: null,
+      sales_last_quarter: null,
+      sales_last_year: null,
+    };
   }
 
   async loadTable() {
-    this.props.onLoaded();
+    this.setState({ loading: true });
     const newData = this.getEmptyData();
-    let url = `https://retaily.site:7000/product/?${this.props.identifier}=${this.props.text}`;
+    const {
+      extended, identifier, text, onError, onLoaded,
+    } = this.props;
+    const absolute = this.context;
+    let url = `${absolute ? 'https://retaily.site:7000' : ''}/product/?${identifier}=${text}`;
     await fetch(url, {
       method: 'GET',
     })
-      .then((response) => response.json())
-      .then(
-        (response) => {
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        response.text().then((msg) => {
+          try {
+            const parsed = JSON.parse(msg);
+            onError(parsed.message);
+          } catch (error) {
+            onError('Connection failed');
+          }
+        });
+        return null;
+      })
+      .then((response) => {
+        if (response != null) {
           newData.plu = response.plu;
           newData.name = response.name;
-          if (this.props.extended) {
+          if (extended) {
             newData.buying_price = response.buying_price;
             newData.selling_price = response.selling_price;
             newData.discount = response.discount;
           }
-        },
-        (error) => {
-          console.log(error);
-        },
-      );
-    url = `https://retaily.site:7000/sales/quick/?${this.props.identifier}=${this.props.text}`;
+        }
+      });
+    url = `${absolute ? 'https://retaily.site:7000' : ''}/sales/quick/?${identifier}=${text}`;
     await fetch(url, {
       method: 'GET',
     })
@@ -83,18 +98,20 @@ class ProductInfoTable extends Component {
           console.log(error);
         },
       );
-    this.setState({ data: newData });
+    onLoaded();
+    this.setState({ data: newData, loading: false });
   }
 
   renderTable() {
     const table = [];
     let index = 0;
-    Object.keys(this.state.data).forEach((key) => {
+    const { data } = this.state;
+    Object.keys(data).forEach((key) => {
       table.push(
-          <tr key={index}>
-            <th scope="row">{key}</th>
-            <td>{this.state.data[key]}</td>
-          </tr>
+        <tr key={index}>
+          <th scope="row">{key}</th>
+          <td>{data[key]}</td>
+        </tr>,
       );
       index += 1;
     });
@@ -105,13 +122,19 @@ class ProductInfoTable extends Component {
     return (
       <div className="productInfoTable">
         <table className="table table-striped table-bordered table-sm">
-          <tbody>
-            {this.renderTable()}
-          </tbody>
+          <tbody>{this.renderTable()}</tbody>
         </table>
       </div>
     );
   }
 }
+
+ProductInfoTable.contextType = Absolute;
+ProductInfoTable.propTypes = { extended: PropTypes.bool.isRequired };
+ProductInfoTable.propTypes = { retrieve: PropTypes.bool.isRequired };
+ProductInfoTable.propTypes = { onLoaded: PropTypes.func.isRequired };
+ProductInfoTable.propTypes = { onError: PropTypes.func.isRequired };
+ProductInfoTable.propTypes = { identifier: PropTypes.string.isRequired };
+ProductInfoTable.propTypes = { text: PropTypes.string.isRequired };
 
 export default ProductInfoTable;
