@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Chart } from 'chart.js';
+import PropTypes from 'prop-types';
 import './charts.css';
 import './App.css';
 
@@ -47,12 +48,13 @@ class Barchart extends Component {
   // sorts JSON data by key
   sortJSONData(key, data) {
     const sorted = [];
-    let compare = function (a, b) {
+    const { desc } = this.state;
+    let compare = (a, b) => {
       const tempComparision = data[a][key] < data[b][key] ? -1 : 0;
       return data[a][key] > data[b][key] ? 1 : tempComparision;
     };
-    if (this.state.desc) {
-      compare = function (a, b) {
+    if (desc) {
+      compare = (a, b) => {
         const tempComparision = data[b][key] < data[a][key] ? -1 : 0;
         return data[b][key] > data[a][key] ? 1 : tempComparision;
       };
@@ -72,31 +74,29 @@ class Barchart extends Component {
       values: [],
       colors: [],
     };
-    const sorted = this.sortJSONData(this.state.sort, response.products);
+    const { sort, filter } = this.state;
+    const sorted = this.sortJSONData(sort, response.products);
     let count = 0;
     for (let i = 0; i < sorted.length; i += 1) {
-      if (
-        String(sorted[i].name.trim().toLowerCase().match(this.state.filter))
-        !== String(this.state.filter)
-      ) {
-        continue;
+      if (String(sorted[i].name.trim().toLowerCase().match(filter)) === String(filter)) {
+        if (count % 2) {
+          data.colors.push('rgba(0,255,0,0.5)');
+        } else {
+          data.colors.push('rgba(0,0,255,0.5)');
+        }
+        data.names.push(sorted[i].name);
+        data.values.push(sorted[i].count);
+        count += 1;
       }
-      if (count % 2) {
-        data.colors.push('rgba(0,255,0,0.5)');
-      } else {
-        data.colors.push('rgba(0,0,255,0.5)');
-      }
-      data.names.push(sorted[i].name);
-      data.values.push(sorted[i].count);
-      count += 1;
     }
     return data;
   }
 
   // initializes the Barchart
   async initialize() {
+    const { url } = this.props;
     // Fetch API call
-    await fetch(`${this.props.url}`, {
+    await fetch(`${url}`, {
       method: 'GET',
     })
       .then((response) => response.json())
@@ -144,9 +144,8 @@ class Barchart extends Component {
   /* function that removes the data of the chart and sets new data
   based on the chartJSON, sort and desc state */
   updateChart() {
-    const { chart } = this.state;
+    const { chart, chartJSON } = this.state;
     if (chart == null) {
-      console.log('chart is null');
       return;
     }
     // remove current data
@@ -155,7 +154,7 @@ class Barchart extends Component {
       dataset.data.pop();
     });
     // add the new data
-    const data = this.convertData(this.state.chartJSON);
+    const data = this.convertData(chartJSON);
     chart.data.labels.push(data.names);
     chart.data = {
       labels: data.names,
@@ -171,6 +170,7 @@ class Barchart extends Component {
   }
 
   render() {
+    const { sort, desc } = this.state;
     return (
       <div>
         <div id="wrapper" className="chartWrapper">
@@ -192,7 +192,7 @@ class Barchart extends Component {
               <button
                 type="button"
                 className={`dropdown-item ${
-                  this.state.sort === String('count') ? 'active' : ''}`}
+                  sort === String('count') ? 'active' : ''}`}
                 onClick={() => {
                   this.setSort('count');
                 }}
@@ -202,7 +202,7 @@ class Barchart extends Component {
               <button
                 type="button"
                 className={`dropdown-item ${
-                  this.state.sort === String('name') ? 'active' : ''}`}
+                  sort === String('name') ? 'active' : ''}`}
                 onClick={() => {
                   this.setSort('name');
                 }}
@@ -217,7 +217,7 @@ class Barchart extends Component {
             className="btn btn-secondary"
             onClick={this.handleDescendingToggle}
           >
-            {this.state.desc ? 'Set ascending' : 'Set descending'}
+            {desc ? 'Set ascending' : 'Set descending'}
           </button>
           <input
             type="text"
@@ -230,4 +230,5 @@ class Barchart extends Component {
   }
 }
 
+Barchart.propTypes = { url: PropTypes.string.isRequired };
 export default Barchart;

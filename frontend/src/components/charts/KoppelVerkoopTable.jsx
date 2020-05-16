@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Absolute from '../Absolute';
 
 /** Component that displays a table with the current product information */
@@ -13,15 +14,20 @@ class KoppelVerkoopTable extends Component {
   }
 
   componentDidUpdate() {
-    if (this.props.retrieve === true && !this.state.loading) {
+    const { retrieve } = this.props;
+    const { loading } = this.state;
+    if (retrieve === true && !loading) {
       this.loadTable();
     }
   }
 
   async loadTable() {
     this.setState({ loading: true });
+    const {
+      identifier, text, start, end, onError, onLoaded,
+    } = this.props;
     const absolute = this.context;
-    const url = `${absolute ? 'https://retaily.site:7000' : ''}/koppelverkoop/lijst/?${this.props.identifier}=${this.props.text}&start=${this.props.start}&end=${this.props.end}`;
+    const url = `${absolute ? 'https://retaily.site:7000' : ''}/koppelverkoop/lijst/?${identifier}=${text}&start=${start}&end=${end}`;
     await fetch(url, {
       method: 'GET',
     })
@@ -29,20 +35,21 @@ class KoppelVerkoopTable extends Component {
         if (response.ok) {
           return response.json();
         }
-        response.text().then((text) => {
+        response.text().then((msg) => {
           try {
-            text = JSON.parse(text);
-            this.props.onError(text.message);
+            const parsed = JSON.parse(msg);
+            onError(parsed.message);
           } catch (error) {
-            this.props.onError('Connection failed');
+            onError('Connection failed');
           }
         });
+        return null;
       })
       .then((response) => {
         this.setState({ data: response });
       });
 
-    this.props.onLoaded();
+    onLoaded();
     this.setState({ loading: false });
   }
 
@@ -52,7 +59,6 @@ class KoppelVerkoopTable extends Component {
       return null;
     }
     const table = [];
-    console.log(data);
     const newData = data.slice();
     const key = newData[0];
     table.push(
@@ -86,5 +92,12 @@ class KoppelVerkoopTable extends Component {
 }
 
 KoppelVerkoopTable.contextType = Absolute;
+KoppelVerkoopTable.propTypes = { retrieve: PropTypes.bool.isRequired };
+KoppelVerkoopTable.propTypes = { onLoaded: PropTypes.func.isRequired };
+KoppelVerkoopTable.propTypes = { onError: PropTypes.func.isRequired };
+KoppelVerkoopTable.propTypes = { identifier: PropTypes.string.isRequired };
+KoppelVerkoopTable.propTypes = { start: PropTypes.string.isRequired };
+KoppelVerkoopTable.propTypes = { end: PropTypes.string.isRequired };
+KoppelVerkoopTable.propTypes = { text: PropTypes.string.isRequired };
 
 export default KoppelVerkoopTable;

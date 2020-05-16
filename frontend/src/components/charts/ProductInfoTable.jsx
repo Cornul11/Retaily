@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Absolute from '../Absolute';
 
 /** Component that displays a table with the current product information */
@@ -13,13 +14,16 @@ class ProductInfoTable extends Component {
   }
 
   componentDidUpdate() {
-    if (this.props.retrieve && !this.state.loading) {
+    const { retrieve } = this.props;
+    const { loading } = this.state;
+    if (retrieve && !loading) {
       this.loadTable();
     }
   }
 
   getEmptyData() {
-    if (this.props.extended) {
+    const { extended } = this.props;
+    if (extended) {
       return {
         plu: null,
         name: null,
@@ -32,7 +36,6 @@ class ProductInfoTable extends Component {
         sales_last_year: null,
       };
     }
-
     return {
       plu: null,
       name: null,
@@ -46,8 +49,11 @@ class ProductInfoTable extends Component {
   async loadTable() {
     this.setState({ loading: true });
     const newData = this.getEmptyData();
+    const {
+      extended, identifier, text, onError, onLoaded,
+    } = this.props;
     const absolute = this.context;
-    let url = `${absolute ? 'https://retaily.site:7000' : ''}/product/?${this.props.identifier}=${this.props.text}`;
+    let url = `${absolute ? 'https://retaily.site:7000' : ''}/product/?${identifier}=${text}`;
     await fetch(url, {
       method: 'GET',
     })
@@ -55,27 +61,28 @@ class ProductInfoTable extends Component {
         if (response.ok) {
           return response.json();
         }
-        response.text().then((text) => {
+        response.text().then((msg) => {
           try {
-            text = JSON.parse(text);
-            this.props.onError(text.message);
+            const parsed = JSON.parse(msg);
+            onError(parsed.message);
           } catch (error) {
-            this.props.onError('Connection failed');
+            onError('Connection failed');
           }
         });
+        return null;
       })
       .then((response) => {
         if (response != null) {
           newData.plu = response.plu;
           newData.name = response.name;
-          if (this.props.extended) {
+          if (extended) {
             newData.buying_price = response.buying_price;
             newData.selling_price = response.selling_price;
             newData.discount = response.discount;
           }
         }
       });
-    url = `${absolute ? 'https://retaily.site:7000' : ''}/sales/quick/?${this.props.identifier}=${this.props.text}`;
+    url = `${absolute ? 'https://retaily.site:7000' : ''}/sales/quick/?${identifier}=${text}`;
     await fetch(url, {
       method: 'GET',
     })
@@ -91,18 +98,19 @@ class ProductInfoTable extends Component {
           console.log(error);
         },
       );
-    this.props.onLoaded();
+    onLoaded();
     this.setState({ data: newData, loading: false });
   }
 
   renderTable() {
     const table = [];
     let index = 0;
-    Object.keys(this.state.data).forEach((key) => {
+    const { data } = this.state;
+    Object.keys(data).forEach((key) => {
       table.push(
         <tr key={index}>
           <th scope="row">{key}</th>
-          <td>{this.state.data[key]}</td>
+          <td>{data[key]}</td>
         </tr>,
       );
       index += 1;
@@ -122,5 +130,11 @@ class ProductInfoTable extends Component {
 }
 
 ProductInfoTable.contextType = Absolute;
+ProductInfoTable.propTypes = { extended: PropTypes.bool.isRequired };
+ProductInfoTable.propTypes = { retrieve: PropTypes.bool.isRequired };
+ProductInfoTable.propTypes = { onLoaded: PropTypes.func.isRequired };
+ProductInfoTable.propTypes = { onError: PropTypes.func.isRequired };
+ProductInfoTable.propTypes = { identifier: PropTypes.string.isRequired };
+ProductInfoTable.propTypes = { text: PropTypes.string.isRequired };
 
 export default ProductInfoTable;
