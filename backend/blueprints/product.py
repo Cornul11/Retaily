@@ -40,19 +40,22 @@ def product():
         name = request.args.get("name", None)
         if plu is not None:
             product = ProductInfo.query.filter(ProductInfo.plu == plu).first()
+            if product is None:
+                response = make_response(
+                    jsonify(message="EAN code not found"), 400)
+                abort(response)
         elif name is not None:
             product = ProductInfo.query.filter(
                 ProductInfo.name == name).first()
+            if product is None:
+                response = make_response(
+                    jsonify(message="product name not found"), 400)
+                abort(response)
         else:
             products = ProductInfo.query
             if products is not None:
                 return {"products": [product.serialized for product in products]}
-        if product is not None:
-            return jsonify(product.serialized)
-        else:
-            response = make_response(
-                jsonify(message="EAN code or name not found"), 400)
-            abort(response)
+        return jsonify(product.serialized)
 
 
 @product_bp.route("/buyprice/", methods=["PUT"])

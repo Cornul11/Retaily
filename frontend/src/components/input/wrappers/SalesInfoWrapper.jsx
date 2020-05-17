@@ -91,10 +91,12 @@ class SalesInfoWrapper extends Component {
     } = this.state;
     return (
       <div role="textbox" tabIndex={0} onKeyDown={this.handleKeyDown}>
-        <div className="input-group-prepend">
-          <span className="input-group-text" id="basic-addon1">
-            sale type
-          </span>
+        <div className="input-group">
+          <div className="input-group-prepend">
+            <span className="input-group-text" id="basic-addon1">
+              sale type
+            </span>
+          </div>
           <select
             id="saleType"
             value={saleType}
