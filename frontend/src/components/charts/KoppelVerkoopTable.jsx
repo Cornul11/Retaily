@@ -92,12 +92,14 @@ class KoppelVerkoopTable extends Component {
 }
 
 KoppelVerkoopTable.contextType = Absolute;
-KoppelVerkoopTable.propTypes = { retrieve: PropTypes.bool.isRequired };
-KoppelVerkoopTable.propTypes = { onLoaded: PropTypes.func.isRequired };
-KoppelVerkoopTable.propTypes = { onError: PropTypes.func.isRequired };
-KoppelVerkoopTable.propTypes = { identifier: PropTypes.string.isRequired };
-KoppelVerkoopTable.propTypes = { start: PropTypes.string.isRequired };
-KoppelVerkoopTable.propTypes = { end: PropTypes.string.isRequired };
-KoppelVerkoopTable.propTypes = { text: PropTypes.string.isRequired };
+KoppelVerkoopTable.propTypes = {
+  retrieve: PropTypes.bool.isRequired,
+  onLoaded: PropTypes.func.isRequired,
+  onError: PropTypes.func.isRequired,
+  identifier: PropTypes.string.isRequired,
+  start: PropTypes.string.isRequired,
+  end: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+};
 
 export default KoppelVerkoopTable;

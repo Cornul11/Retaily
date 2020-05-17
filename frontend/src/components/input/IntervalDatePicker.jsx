@@ -129,12 +129,20 @@ class IntervalDatePicker extends Component {
   }
 }
 
-IntervalDatePicker.propTypes = { useInterval: PropTypes.bool.isRequired };
-IntervalDatePicker.propTypes = { onChangeStartDate: PropTypes.func.isRequired };
-IntervalDatePicker.propTypes = { onChangeEndDate: PropTypes.func.isRequired };
-IntervalDatePicker.propTypes = { OnIntervalChange: PropTypes.func.isRequired };
-IntervalDatePicker.propTypes = { startDate: PropTypes.string.isRequired };
-IntervalDatePicker.propTypes = { endDate: PropTypes.string.isRequired };
-IntervalDatePicker.propTypes = { interval: PropTypes.string.isRequired };
+IntervalDatePicker.propTypes = {
+  useInterval: PropTypes.bool,
+  onChangeStartDate: PropTypes.func.isRequired,
+  onChangeEndDate: PropTypes.func.isRequired,
+  OnIntervalChange: PropTypes.func,
+  startDate: PropTypes.objectOf(Date).isRequired,
+  endDate: PropTypes.objectOf(Date).isRequired,
+  interval: PropTypes.string,
+};
+
+IntervalDatePicker.defaultProps = {
+  useInterval: false,
+  interval: '',
+  OnIntervalChange: () => { },
+};
 
 export default IntervalDatePicker;

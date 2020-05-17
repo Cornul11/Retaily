@@ -152,8 +152,9 @@ const ProductInfo = class extends Component {
 
   renderProductInfoTableWrapper() {
     const {
-      chartType, identifier, text, extended,
+      chartType, identifier, text,
     } = this.state;
+    const { extended } = this.props;
     if (chartType === 'productInfoTable') {
       return (
         <ProductInfoTableWrapper

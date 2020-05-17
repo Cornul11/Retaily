@@ -52,6 +52,8 @@ const RetrieveError = class extends Component {
   }
 };
 
-RetrieveError.propTypes = { error: PropTypes.string.isRequired };
-RetrieveError.propTypes = { handleError: PropTypes.func.isRequired };
+RetrieveError.propTypes = {
+  error: PropTypes.string.isRequired,
+  handleError: PropTypes.func.isRequired,
+};
 export default RetrieveError;

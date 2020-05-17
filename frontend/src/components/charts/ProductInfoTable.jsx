@@ -130,11 +130,14 @@ class ProductInfoTable extends Component {
 }
 
 ProductInfoTable.contextType = Absolute;
-ProductInfoTable.propTypes = { extended: PropTypes.bool.isRequired };
-ProductInfoTable.propTypes = { retrieve: PropTypes.bool.isRequired };
-ProductInfoTable.propTypes = { onLoaded: PropTypes.func.isRequired };
-ProductInfoTable.propTypes = { onError: PropTypes.func.isRequired };
-ProductInfoTable.propTypes = { identifier: PropTypes.string.isRequired };
-ProductInfoTable.propTypes = { text: PropTypes.string.isRequired };
+
+ProductInfoTable.propTypes = {
+  extended: PropTypes.bool.isRequired,
+  retrieve: PropTypes.bool.isRequired,
+  onLoaded: PropTypes.func.isRequired,
+  onError: PropTypes.func.isRequired,
+  identifier: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+};
 
 export default ProductInfoTable;

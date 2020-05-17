@@ -105,8 +105,10 @@ class ProductSalesChartWrapper extends Component {
   }
 }
 
-ProductSalesChartWrapper.propTypes = { identifier: PropTypes.string.isRequired };
-ProductSalesChartWrapper.propTypes = { text: PropTypes.string.isRequired };
-ProductSalesChartWrapper.propTypes = { setRetrieve: PropTypes.func.isRequired };
+ProductSalesChartWrapper.propTypes = {
+  identifier: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  setRetrieve: PropTypes.func.isRequired,
+};
 
 export default ProductSalesChartWrapper;

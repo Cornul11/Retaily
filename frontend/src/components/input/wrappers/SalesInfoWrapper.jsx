@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { format } from 'date-fns';
-import PropTypes from 'prop-types';
 import SalesChart from '../../charts/SalesChart';
 import IntervalDatePicker from '../IntervalDatePicker';
 import RetrieveButton from '../../design/RetrieveButton';
@@ -69,12 +68,9 @@ class SalesInfoWrapper extends Component {
     const {
       retrieve, startDate, endDate, interval, saleType,
     } = this.state;
-    const { identifier, text } = this.props;
     return (
       <SalesChart
         retrieve={retrieve}
-        identifier={identifier}
-        text={text}
         start={format(startDate, 'yyyy-MM-dd')}
         end={format(endDate, 'yyyy-MM-dd')}
         interval={interval}
@@ -129,8 +125,5 @@ class SalesInfoWrapper extends Component {
     );
   }
 }
-
-SalesInfoWrapper.propTypes = { identifier: PropTypes.string.isRequired };
-SalesInfoWrapper.propTypes = { text: PropTypes.string.isRequired };
 
 export default SalesInfoWrapper;

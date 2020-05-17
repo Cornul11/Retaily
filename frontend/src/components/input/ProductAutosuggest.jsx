@@ -109,9 +109,11 @@ const ProductAutosuggest = class extends Component {
   }
 };
 
-ProductAutosuggest.propTypes = { text: PropTypes.string.isRequired };
-ProductAutosuggest.propTypes = { onTextChangeAuto: PropTypes.func.isRequired };
-ProductAutosuggest.propTypes = { onTextChange: PropTypes.func.isRequired };
+ProductAutosuggest.propTypes = {
+  text: PropTypes.string.isRequired,
+  onTextChangeAuto: PropTypes.func.isRequired,
+  onTextChange: PropTypes.func.isRequired,
+};
 
 
 export default ProductAutosuggest;

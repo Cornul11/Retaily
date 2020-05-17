@@ -1,9 +1,9 @@
-import React from "react";
-import BlueprintPage from "./BlueprintPage";
+import React from 'react';
+import BlueprintPage from './BlueprintPage';
 
 const HomePage = () => (
   <BlueprintPage
-    content={
+    content={(
       <div>
         <a
           className="btn btn-primary btn-block mb-4"
@@ -27,7 +27,7 @@ const HomePage = () => (
           Sales Info
         </a>
       </div>
-    }
+    )}
   />
 );
 export default HomePage;

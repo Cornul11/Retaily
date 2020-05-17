@@ -89,8 +89,10 @@ class KoppelVerkoopTableWrapper extends Component {
   }
 }
 
-KoppelVerkoopTableWrapper.propTypes = { setRetrieve: PropTypes.func.isRequired };
-KoppelVerkoopTableWrapper.propTypes = { identifier: PropTypes.string.isRequired };
-KoppelVerkoopTableWrapper.propTypes = { text: PropTypes.string.isRequired };
+KoppelVerkoopTableWrapper.propTypes = {
+  setRetrieve: PropTypes.func.isRequired,
+  identifier: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+};
 
 export default KoppelVerkoopTableWrapper;

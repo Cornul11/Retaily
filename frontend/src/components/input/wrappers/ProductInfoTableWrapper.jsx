@@ -67,9 +67,11 @@ class ProductInfoTableWrapper extends Component {
   }
 }
 
-ProductInfoTableWrapper.propTypes = { identifier: PropTypes.string.isRequired };
-ProductInfoTableWrapper.propTypes = { extended: PropTypes.bool.isRequired };
-ProductInfoTableWrapper.propTypes = { text: PropTypes.string.isRequired };
-ProductInfoTableWrapper.propTypes = { setRetrieve: PropTypes.func.isRequired };
+ProductInfoTableWrapper.propTypes = {
+  identifier: PropTypes.string.isRequired,
+  extended: PropTypes.bool.isRequired,
+  text: PropTypes.string.isRequired,
+  setRetrieve: PropTypes.func.isRequired,
+};
 
 export default ProductInfoTableWrapper;

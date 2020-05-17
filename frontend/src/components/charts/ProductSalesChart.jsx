@@ -131,13 +131,15 @@ class ProductSalesChart extends Component {
 }
 
 ProductSalesChart.contextType = Absolute;
-ProductSalesChart.propTypes = { retrieve: PropTypes.bool.isRequired };
-ProductSalesChart.propTypes = { onLoaded: PropTypes.func.isRequired };
-ProductSalesChart.propTypes = { onError: PropTypes.func.isRequired };
-ProductSalesChart.propTypes = { identifier: PropTypes.string.isRequired };
-ProductSalesChart.propTypes = { text: PropTypes.string.isRequired };
-ProductSalesChart.propTypes = { start: PropTypes.string.isRequired };
-ProductSalesChart.propTypes = { end: PropTypes.string.isRequired };
-ProductSalesChart.propTypes = { interval: PropTypes.string.isRequired };
+ProductSalesChart.propTypes = {
+  retrieve: PropTypes.bool.isRequired,
+  onLoaded: PropTypes.func.isRequired,
+  onError: PropTypes.func.isRequired,
+  identifier: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  start: PropTypes.string.isRequired,
+  end: PropTypes.string.isRequired,
+  interval: PropTypes.string.isRequired,
+};
 
 export default ProductSalesChart;

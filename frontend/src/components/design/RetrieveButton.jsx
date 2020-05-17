@@ -19,6 +19,8 @@ const RetrieveButton = (props) => {
   );
 };
 
-RetrieveButton.propTypes = { retrieve: PropTypes.bool.isRequired };
-RetrieveButton.propTypes = { handleRetrieveButton: PropTypes.func.isRequired };
+RetrieveButton.propTypes = {
+  retrieve: PropTypes.bool.isRequired,
+  handleRetrieveButton: PropTypes.func.isRequired,
+};
 export default RetrieveButton;
