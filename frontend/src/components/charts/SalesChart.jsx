@@ -3,7 +3,7 @@ import { Chart } from 'chart.js';
 import PropTypes from 'prop-types';
 import Absolute from '../Absolute';
 
-class ProductSalesChart extends Component {
+class SalesChart extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,11 +23,14 @@ class ProductSalesChart extends Component {
 
   async loadChart() {
     this.setState({ loading: true });
-    const {
-      identifier, text, start, end, interval, onError, onLoaded,
-    } = this.props;
     const absolute = this.context;
-    const url = `${absolute ? 'https://retaily.site:7000' : ''}/sales/?${identifier}=${text}&start=${start}&end=${end}&interval=${interval}`;
+    const {
+      start, end, interval, onError, onLoaded, saleType,
+    } = this.props;
+    let url = `${absolute ? 'https://retaily.site:7000' : ''}/sales/?start=${start}&end=${end}&interval=${interval}`;
+    if (saleType === 'revenue') {
+      url += '&revenue';
+    }
     await fetch(url, {
       method: 'GET',
     })
@@ -44,7 +47,8 @@ class ProductSalesChart extends Component {
           }
         });
         return null;
-      }).then((response) => {
+      })
+      .then((response) => {
         if (response != null) {
           this.setState({
             data: response,
@@ -79,10 +83,7 @@ class ProductSalesChart extends Component {
               {
                 type: 'time',
                 time: {
-                  unit:
-                    interval === 'half_an_hour'
-                      ? 'hour'
-                      : interval,
+                  unit: interval === 'half_an_hour' ? 'hour' : interval,
                   displayFormats: {
                     hour: 'HH:mm',
                     day: 'D MMM',
@@ -130,14 +131,13 @@ class ProductSalesChart extends Component {
   }
 }
 
-ProductSalesChart.contextType = Absolute;
-ProductSalesChart.propTypes = { retrieve: PropTypes.bool.isRequired };
-ProductSalesChart.propTypes = { onLoaded: PropTypes.func.isRequired };
-ProductSalesChart.propTypes = { onError: PropTypes.func.isRequired };
-ProductSalesChart.propTypes = { identifier: PropTypes.string.isRequired };
-ProductSalesChart.propTypes = { text: PropTypes.string.isRequired };
-ProductSalesChart.propTypes = { start: PropTypes.string.isRequired };
-ProductSalesChart.propTypes = { end: PropTypes.string.isRequired };
-ProductSalesChart.propTypes = { interval: PropTypes.string.isRequired };
+SalesChart.contextType = Absolute;
+SalesChart.propTypes = { retrieve: PropTypes.bool.isRequired };
+SalesChart.propTypes = { onLoaded: PropTypes.func.isRequired };
+SalesChart.propTypes = { onError: PropTypes.func.isRequired };
+SalesChart.propTypes = { start: PropTypes.string.isRequired };
+SalesChart.propTypes = { end: PropTypes.string.isRequired };
+SalesChart.propTypes = { interval: PropTypes.string.isRequired };
+SalesChart.propTypes = { saleType: PropTypes.string.isRequired };
 
-export default ProductSalesChart;
+export default SalesChart;

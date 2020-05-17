@@ -83,5 +83,7 @@ class ArchiveWatcher:
 
 if __name__ == '__main__':
     src_path = sys.argv[1] if len(sys.argv) > 1 else '.'
+    print('Journal parser started at: ', time.ctime())
+    print('Following folder ', src_path)
     logger.info('Started watching for changes in \'%s\'', src_path)
     ArchiveWatcher(src_path).run()

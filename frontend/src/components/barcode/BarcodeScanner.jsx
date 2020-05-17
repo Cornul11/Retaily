@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Quagga from 'quagga';
 import styles from './scanner.css';
 
@@ -8,8 +9,12 @@ import styles from './scanner.css';
  * barcodes from the camera footage.
  */
 
-class Scanner extends Component {
-  ref = React.createRef();
+class BarcodeScanner extends Component {
+  constructor(props) {
+    super(props);
+    this.ref = React.createRef();
+    this.onDetected = this.onDetected.bind(this);
+  }
 
   async componentDidMount() {
     /** Request camera footage from user */
@@ -22,8 +27,8 @@ class Scanner extends Component {
           type: 'LiveStream',
           target: document.getElementById('camera'),
           constraints: {
-            width: 480,
-            height: 320,
+            width: 960,
+            height: 640,
             facingMode: 'environment',
           },
         },
@@ -46,17 +51,20 @@ class Scanner extends Component {
     Quagga.stop();
   }
 
-  onDetected = (result) => {
-    this.props.onDetected(result.codeResult.code);
-  };
+  onDetected(result) {
+    const { onDetected } = this.props;
+    onDetected(result.codeResult.code);
+  }
 
   render() {
     return (
       <div style={styles}>
-        <video id="camera" width="480" height="320" ref={this.ref} autoPlay />
+        <video muted id="camera" width="480" height="320" ref={this.ref} autoPlay />
       </div>
     );
   }
 }
 
-export default Scanner;
+BarcodeScanner.propTypes = { onDetected: PropTypes.func.isRequired };
+
+export default BarcodeScanner;

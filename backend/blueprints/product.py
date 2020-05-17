@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, abort
+from flask import Blueprint, request, make_response, jsonify, abort
 from models import ProductInfo
 from app import db
 
@@ -25,7 +25,8 @@ def get_price(price_identifier):
                 {price_identifier: price}
             )
             db.session.commit()
-            product = ProductInfo.query.filter(ProductInfo.name == name).first()
+            product = ProductInfo.query.filter(
+                ProductInfo.name == name).first()
         else:
             abort(400)
         return jsonify(product.serialized)
@@ -40,7 +41,8 @@ def product():
         if plu is not None:
             product = ProductInfo.query.filter(ProductInfo.plu == plu).first()
         elif name is not None:
-            product = ProductInfo.query.filter(ProductInfo.name == name).first()
+            product = ProductInfo.query.filter(
+                ProductInfo.name == name).first()
         else:
             products = ProductInfo.query
             if products is not None:
@@ -48,7 +50,9 @@ def product():
         if product is not None:
             return jsonify(product.serialized)
         else:
-            abort(400)
+            response = make_response(
+                jsonify(message="EAN code or name not found"), 400)
+            abort(response)
 
 
 @product_bp.route("/buyprice/", methods=["PUT"])

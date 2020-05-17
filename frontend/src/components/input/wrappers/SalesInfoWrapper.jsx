@@ -1,34 +1,38 @@
 import React, { Component } from 'react';
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
+import SalesChart from '../../charts/SalesChart';
 import IntervalDatePicker from '../IntervalDatePicker';
-import KoppelVerkoopTable from '../../charts/KoppelVerkoopTable';
 import RetrieveButton from '../../design/RetrieveButton';
 import RetrieveError from '../../design/RetrieveError';
 
-class KoppelVerkoopTableWrapper extends Component {
+class SalesInfoWrapper extends Component {
   constructor(props) {
     super(props);
     this.state = {
       startDate: new Date(),
       endDate: new Date(),
+      interval: 'hour',
       retrieve: false,
       error: '',
+      saleType: 'customers',
     };
+    this.handleSaleTypeChange = this.handleSaleTypeChange.bind(this);
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
+    this.handleIntervalChange = this.handleIntervalChange.bind(this);
     this.handleRetrieveButton = this.handleRetrieveButton.bind(this);
-    this.handleError = this.handleError.bind(this);
     this.onLoaded = this.onLoaded.bind(this);
-  }
-
-  componentDidMount() {
-    const { setRetrieve } = this.props;
-    setRetrieve(this.handleRetrieveButton);
+    this.handleError = this.handleError.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
   }
 
   onLoaded() {
     this.setState({ retrieve: false });
+  }
+
+  handleSaleTypeChange(event) {
+    this.setState({ saleType: event.target.value });
   }
 
   handleStartDateChange(date) {
@@ -39,41 +43,76 @@ class KoppelVerkoopTableWrapper extends Component {
     this.setState({ endDate: date });
   }
 
+  handleIntervalChange(interval, startDate, endDate) {
+    this.setState({
+      startDate,
+      endDate,
+      interval,
+    });
+  }
+
   handleRetrieveButton() {
     this.setState({ retrieve: true });
+  }
+
+  handleKeyDown(e) {
+    if (e.key === 'Enter') {
+      this.retrieveInChild();
+    }
   }
 
   handleError(error) {
     this.setState({ error });
   }
 
-  renderKoppelVerkoopTable() {
-    const { retrieve, startDate, endDate } = this.state;
+  renderSalesChart() {
+    const {
+      retrieve, startDate, endDate, interval, saleType,
+    } = this.state;
     const { identifier, text } = this.props;
     return (
-      <KoppelVerkoopTable
+      <SalesChart
         retrieve={retrieve}
         identifier={identifier}
         text={text}
         start={format(startDate, 'yyyy-MM-dd')}
         end={format(endDate, 'yyyy-MM-dd')}
-        onLoaded={this.onLoaded}
+        interval={interval}
         onError={this.handleError}
+        onLoaded={this.onLoaded}
+        saleType={saleType}
       />
     );
   }
 
   render() {
     const {
-      retrieve, startDate, endDate, error,
+      retrieve, startDate, endDate, interval, saleType, error,
     } = this.state;
     return (
-      <div>
+      <div role="textbox" tabIndex={0} onKeyDown={this.handleKeyDown}>
+        <div className="input-group-prepend">
+          <span className="input-group-text" id="basic-addon1">
+            sale type
+          </span>
+          <select
+            id="saleType"
+            value={saleType}
+            onChange={this.handleSaleTypeChange}
+            className="form-control"
+          >
+            <option value="customers">customers</option>
+            <option value="revenue">revenue</option>
+          </select>
+        </div>
         <IntervalDatePicker
           onChangeStartDate={this.handleStartDateChange}
           onChangeEndDate={this.handleEndDateChange}
+          OnIntervalChange={this.handleIntervalChange}
           startDate={startDate}
           endDate={endDate}
+          interval={interval}
+          useInterval
         />
         <RetrieveButton
           handleRetrieveButton={this.handleRetrieveButton}
@@ -83,14 +122,13 @@ class KoppelVerkoopTableWrapper extends Component {
           error={error}
           handleError={this.handleError}
         />
-        {this.renderKoppelVerkoopTable()}
+        {this.renderSalesChart()}
       </div>
     );
   }
 }
 
-KoppelVerkoopTableWrapper.propTypes = { setRetrieve: PropTypes.func.isRequired };
-KoppelVerkoopTableWrapper.propTypes = { identifier: PropTypes.string.isRequired };
-KoppelVerkoopTableWrapper.propTypes = { text: PropTypes.string.isRequired };
+SalesInfoWrapper.propTypes = { identifier: PropTypes.string.isRequired };
+SalesInfoWrapper.propTypes = { text: PropTypes.string.isRequired };
 
-export default KoppelVerkoopTableWrapper;
+export default SalesInfoWrapper;

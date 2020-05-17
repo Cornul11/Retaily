@@ -1,45 +1,13 @@
 import React, { Component } from 'react';
-import Autosuggest from 'react-autosuggest';
-import Scanner from '../barcode/Scanner';
+import PropTypes from 'prop-types';
+import ProductAutosuggest from './ProductAutosuggest';
+import BarcodeScanner from '../barcode/BarcodeScanner';
 import ProductSalesChartWrapper from './wrappers/ProductSalesChartWrapper';
 import ProductInfoTableWrapper from './wrappers/ProductInfoTableWrapper';
 import '../charts/App.css';
 
+
 /** Component that retrieves information about an individual product */
-
-const products = [];
-
-const escapeRegexCharacters = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-const getSuggestions = (value) => {
-  const escapedValue = escapeRegexCharacters(value.trim());
-
-  if (escapedValue === '') {
-    return [];
-  }
-
-  const regex = new RegExp(`^${escapedValue}`, 'i');
-
-  return products.filter((product) => regex.test(product.name));
-};
-
-const getSuggestionValue = (suggestion) => suggestion.name;
-
-const renderSuggestion = (suggestion) => (
-  <span>
-    {suggestion.name}
-  </span>
-);
-
-/**
- * Decides whether to show suggestions or not.
- * Returns true only if the input size is larger than 2.
- * @param value the input of the user
- * @returns {boolean} whether to show the suggestions
- */
-function shouldRenderSuggestions(value) {
-  return value.trim().length > 2;
-}
 
 const ProductInfo = class extends Component {
   constructor(props) {
@@ -49,57 +17,42 @@ const ProductInfo = class extends Component {
       text: '',
       scanning: false,
       chartType: 'productInfoTable',
-      suggestions: [],
     };
     this.handleIdentifierChange = this.handleIdentifierChange.bind(this);
     this.handleTextChange = this.handleTextChange.bind(this);
+    this.handleTextChangeByAutosuggest = this.handleTextChangeByAutosuggest.bind(
+      this,
+    );
     this.handleScanButton = this.handleScanButton.bind(this);
     this.onDetected = this.onDetected.bind(this);
     this.handleChartTypeChange = this.handleChartTypeChange.bind(this);
-    this.fillProductsArray();
+    this.handleKeyDown = this.handleKeyDown.bind(this);
   }
 
-  onChange = (event, { newValue }) => {
-    this.setState({
-      value: newValue,
-    });
-  }
-
-  async fillProductsArray() {
-    await fetch('/inventory/list', {
-      method: 'GET',
-    })
-      .then((response) => response.json())
-      .then(
-        (response) => {
-          for (const product in response) {
-            products.push(response[product]);
-          }
-        },
-        (error) => {
-          console.log(error);
-        },
-      );
-  }
-
-  handleIdentifierChange(event) {
-    this.setState({ identifier: event.target.value });
-  }
-
-  handleTextChange(event) {
-    this.setState({ text: event.target.value, scanning: false });
+  onDetected(result) {
+    this.setState({ scanning: false, text: result });
+    this.retrieveInChild();
   }
 
   handleScanButton() {
     this.setState((prevState) => ({ scanning: !prevState.scanning }));
   }
 
-  onDetected(result) {
-    this.setState({ scanning: false, text: result });
+  handleTextChangeByAutosuggest(text) {
+    this.setState({ text });
+  }
+
+  handleTextChange(event) {
+    this.setState({ text: event.target.value, scanning: false });
+  }
+
+  handleIdentifierChange(event) {
+    this.setState({ identifier: event.target.value, text: '' });
   }
 
   scanButtonText() {
-    if (this.state.scanning) {
+    const { scanning } = this.state;
+    if (scanning) {
       return 'stop scanner';
     }
     return 'start scanner';
@@ -109,12 +62,18 @@ const ProductInfo = class extends Component {
     this.setState({ chartType: event.target.value });
   }
 
+  handleKeyDown(e) {
+    if (e.key === 'Enter') {
+      this.retrieveInChild();
+    }
+  }
 
   renderSelectIdentifier() {
+    const { identifier } = this.state;
     return (
       <select
         id="identifier"
-        value={this.state.identifier}
+        value={identifier}
         onChange={this.handleIdentifierChange}
         className="form-control btn btn-primary"
       >
@@ -124,78 +83,52 @@ const ProductInfo = class extends Component {
     );
   }
 
-  onSuggestionSelectedByUser = (event, {
-    suggestion, suggestionValue, suggestionIndex, sectionIndex, method,
-  }) => {
-    this.setState({ text: suggestionValue });
-  };
-
   renderInputText() {
-    if (this.state.identifier === 'name') {
-      const value = this.state.text;
-      const { suggestions } = this.state;
-      const inputProps = {
-        placeholder: 'Test input',
-        value,
-        onChange: this.handleTextChange,
-      };
+    const { identifier, text } = this.state;
+    const { extended } = this.props;
+    if (identifier === 'name') {
       return (
-        <Autosuggest
-          suggestions={suggestions}
-          onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-          onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-          getSuggestionValue={getSuggestionValue}
-          renderSuggestion={renderSuggestion}
-          shouldRenderSuggestions={shouldRenderSuggestions}
-          onSuggestionSelected={this.onSuggestionSelectedByUser}
-          inputProps={inputProps}
+        <ProductAutosuggest
+          text={text}
+          onTextChangeAuto={this.handleTextChangeByAutosuggest}
+          onTextChange={this.handleTextChange}
         />
       );
     }
     return (
       <input
         type="text"
-        value={this.state.text}
+        value={text}
         className="form-control"
-        placeholder={(this.props.extended ? '' : 'EAN-code')}
+        placeholder={extended ? '' : 'EAN-code'}
         onChange={this.handleTextChange}
       />
     );
   }
 
   renderScanButton() {
-    if (this.state.identifier === 'plu') {
-      if (this.props.extended) {
-        return (
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={this.handleScanButton}
-          >
-            {this.scanButtonText()}
-          </button>
-        );
-      }
-      if (!this.state.scanning) {
-        return (
-          <button
-            type="button"
-            className="btn btn-primary btn-lg btn-block mb-2"
-            onClick={this.handleScanButton}
-          >
-            {this.scanButtonText()}
-          </button>
-        );
-      }
+    const { extended } = this.props;
+    const { identifier } = this.state;
+    if (identifier === 'plu') {
+      return (
+        <button
+          type="button"
+          className={extended ? 'btn btn-secondary' : 'btn btn-primary btn-lg btn-block mb-2'}
+          onClick={this.handleScanButton}
+        >
+          {this.scanButtonText()}
+        </button>
+      );
     }
     return null;
   }
 
   renderScanner() {
-    if (this.state.scanning === true) {
+    const { scanning } = this.state;
+    if (scanning === true) {
       return (
-        <div onClick={this.handleScanButton}>
-          <Scanner onDetected={this.onDetected} />
+        <div>
+          <BarcodeScanner onDetected={this.onDetected} />
         </div>
       );
     }
@@ -203,10 +136,11 @@ const ProductInfo = class extends Component {
   }
 
   renderSelectChartType() {
+    const { chartType } = this.state;
     return (
       <select
         id="chartType"
-        value={this.state.chartType}
+        value={chartType}
         onChange={this.handleChartTypeChange}
         className="form-control"
       >
@@ -216,26 +150,18 @@ const ProductInfo = class extends Component {
     );
   }
 
-  onSuggestionsFetchRequested = ({ value }) => {
-    this.setState({
-      suggestions: getSuggestions(value),
-    });
-  }
-
-  onSuggestionsClearRequested = () => {
-    this.setState({
-      suggestions: [],
-    });
-  }
-
   renderProductInfoTableWrapper() {
-    if (this.state.chartType === 'productInfoTable') {
+    const {
+      chartType, identifier, text, extended,
+    } = this.state;
+    if (chartType === 'productInfoTable') {
       return (
         <ProductInfoTableWrapper
           id="table-wrapper"
-          identifier={this.state.identifier}
-          text={this.state.text}
-          extended={this.props.extended}
+          identifier={identifier}
+          text={text}
+          extended={extended}
+          setRetrieve={(retrieve) => { this.retrieveInChild = retrieve; }}
         />
       );
     }
@@ -243,11 +169,13 @@ const ProductInfo = class extends Component {
   }
 
   renderProductSalesChartWrapper() {
-    if (this.state.chartType === 'productSales') {
+    const { chartType, identifier, text } = this.state;
+    if (chartType === 'productSales') {
       return (
         <ProductSalesChartWrapper
-          identifier={this.state.identifier}
-          text={this.state.text}
+          identifier={identifier}
+          text={text}
+          setRetrieve={(retrieve) => { this.retrieveInChild = retrieve; }}
         />
       );
     }
@@ -255,9 +183,10 @@ const ProductInfo = class extends Component {
   }
 
   render() {
-    if (this.props.extended) {
+    const { extended } = this.props;
+    if (extended) {
       return (
-        <div>
+        <div role="textbox" tabIndex={0} onKeyDown={this.handleKeyDown}>
           <div className="input-group mb-2">
             <div className="input-group-prepend">
               {this.renderSelectIdentifier()}
@@ -274,7 +203,7 @@ const ProductInfo = class extends Component {
     }
     /* Less options, but easier to use */
     return (
-      <div>
+      <div role="textbox" tabIndex={0} onKeyDown={this.handleKeyDown}>
         {this.renderScanButton()}
         {this.renderScanner()}
         <center>
@@ -285,5 +214,7 @@ const ProductInfo = class extends Component {
     );
   }
 };
+
+ProductInfo.propTypes = { extended: PropTypes.bool.isRequired };
 
 export default ProductInfo;
