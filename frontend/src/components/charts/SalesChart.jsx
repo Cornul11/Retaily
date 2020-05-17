@@ -10,7 +10,10 @@ class SalesChart extends Component {
       width: '1000',
       chart: null,
       loading: false,
+      multiplier: 20,
     };
+    this.zoomIn = this.zoomIn.bind(this);
+    this.zoomOut = this.zoomOut.bind(this);
   }
 
   componentDidUpdate() {
@@ -27,7 +30,12 @@ class SalesChart extends Component {
     const {
       start, end, interval, onError, onLoaded, saleType,
     } = this.props;
-    let url = `${absolute ? 'https://retaily.site:7000' : ''}/sales/?start=${start}&end=${end}&interval=${interval}`;
+    const {
+      multiplier,
+    } = this.state;
+    let url = `${
+      absolute ? 'https://retaily.site:7000' : ''
+    }/sales/?start=${start}&end=${end}&interval=${interval}`;
     if (saleType === 'revenue') {
       url += '&revenue';
     }
@@ -52,79 +60,106 @@ class SalesChart extends Component {
         if (response != null) {
           this.setState({
             data: response,
-            width: (response.length * 40).toString(),
+            width: (response.length * multiplier).toString(),
           });
         }
       });
+    this.drawChart();
+    onLoaded();
+    this.setState({ loading: false });
+  }
+
+  drawChart() {
+    const { interval } = this.props;
     const { chart, data } = this.state;
     if (chart !== null) {
       chart.destroy();
     }
-    this.state.chart = new Chart(
-      document.getElementById('myChart').getContext('2d'),
-      {
-        type: 'bar',
-        data: {
-          datasets: [
-            {
-              data,
-              backgroundColor: 'rgba(55,155,255,0.5)',
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          legend: {
-            display: false,
-          },
-          scales: {
-            xAxes: [
+    this.setState({
+      chart: new Chart(
+        document.getElementById('myChart').getContext('2d'),
+        {
+          type: 'bar',
+          data: {
+            datasets: [
               {
-                type: 'time',
-                time: {
-                  unit: interval === 'half_an_hour' ? 'hour' : interval,
-                  displayFormats: {
-                    hour: 'HH:mm',
-                    day: 'D MMM',
-                    week: 'D MMM',
-                    month: 'MMM',
+                data,
+                backgroundColor: 'rgba(55,155,255,0.5)',
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: {
+              display: false,
+            },
+            scales: {
+              xAxes: [
+                {
+                  type: 'time',
+                  time: {
+                    unit: interval === 'half_an_hour' ? 'hour' : interval,
+                    displayFormats: {
+                      hour: 'HH:mm',
+                      day: 'D MMM',
+                      week: 'D MMM',
+                      month: 'MMM',
+                    },
+                  },
+                  offset: true,
+                },
+              ],
+              yAxes: [
+                {
+                  ticks: {
+                    beginAtZero: true,
                   },
                 },
-                offset: true,
-              },
-            ],
-            yAxes: [
-              {
-                ticks: {
-                  beginAtZero: true,
+              ],
+            },
+            tooltips: {
+              callbacks: {
+                title() {
+                  return '';
                 },
-              },
-            ],
-          },
-          tooltips: {
-            callbacks: {
-              title() {
-                return '';
               },
             },
           },
         },
-      },
-    );
-    onLoaded();
-    this.setState({ loading: false });
+      ),
+    });
+  }
+
+  zoomIn() {
+    const { multiplier, width } = this.state;
+    if (multiplier < 80) {
+      this.setState({ multiplier: multiplier * 2, width: width * 2 }, this.drawChart);
+    }
+  }
+
+  zoomOut() {
+    const { multiplier, width } = this.state;
+    if (multiplier > 5) {
+      this.setState({ multiplier: multiplier / 2, width: width / 2 }, this.drawChart);
+    }
   }
 
   render() {
     const { width } = this.state;
     return (
-      <div className="chartWrapper">
-        <div
-          className="chartWrapper2"
-          style={{ width: `${width}px`, height: '500px' }}
-        >
-          <canvas id="myChart" />
+      <div>
+        <div>
+          <button type="button" onClick={this.zoomIn}>zoom in (+)</button>
+          <button type="button" onClick={this.zoomOut}>zoom out(-)</button>
+        </div>
+        <div className="chartWrapper">
+          <div
+            className="chartWrapper2"
+            style={{ width: `${width}px`, height: '500px' }}
+          >
+            <canvas id="myChart" />
+          </div>
         </div>
       </div>
     );
