@@ -12,13 +12,22 @@ import styles from './scanner.css';
 class BarcodeScanner extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      stream: undefined,
+    };
     this.ref = React.createRef();
     this.onDetected = this.onDetected.bind(this);
   }
 
   async componentDidMount() {
     /** Request camera footage from user */
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      this.setState({ stream });
+    } catch (err) {
+      return;
+    }
+    const { stream } = this.state;
     this.ref.current.srcObject = stream;
     /** Initialize the scanner */
     Quagga.init(
@@ -38,7 +47,6 @@ class BarcodeScanner extends Component {
       },
       (err) => {
         if (err) {
-          console.log(err);
           return;
         }
         Quagga.start();
@@ -48,7 +56,10 @@ class BarcodeScanner extends Component {
   }
 
   componentWillUnmount() {
-    Quagga.stop();
+    const { stream } = this.state;
+    if (stream !== undefined) {
+      Quagga.stop();
+    }
   }
 
   onDetected(result) {
