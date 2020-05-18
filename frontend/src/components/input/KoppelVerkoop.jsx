@@ -29,7 +29,7 @@ class KoppelVerkoopInfo extends Component {
     const { text } = this.state;
     return (
       <input
-        type="text"
+        type="number"
         id="plu-input"
         value={text}
         className="form-control"

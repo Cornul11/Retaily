@@ -97,7 +97,7 @@ const ProductInfo = class extends Component {
     }
     return (
       <input
-        type="text"
+        type="number"
         value={text}
         className="form-control"
         placeholder={extended ? '' : 'EAN-code'}
