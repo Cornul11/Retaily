@@ -245,7 +245,7 @@ CARD_PAYMENT_ITEMS = {
     'card_payment_card_serial_number': 'Kaartserienummer',
     'card_payment_date': 'Datum',
     'card_payment_authorisation_code': 'Autorisatiecode',
-    'card_payment_total': 'Totaal',
+    'card_payment_total': ' Amount',
     'card_payment_card_type_id': 'CardTypeId',
     'card_payment_card_type_text': 'CardTypeText',
     'card_payment_drawer_amount': 'DrawerAmount',

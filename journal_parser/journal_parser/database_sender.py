@@ -55,7 +55,7 @@ class DataSender:
                 transaction_amount = 0
                 for product in transaction['journal_record_products']:
                     if 'card_payment_total' in product:
-                        transaction_amount = float(product['card_payment_total'].replace(',', '.').replace(' EUR', ''))
+                        transaction_amount = float(product['card_payment_total'].replace(',', '.'))
                         break
                     if 'cash_payment_amount' in product:
                         transaction_amount = float(product['cash_payment_amount'].replace(',', '.'))
