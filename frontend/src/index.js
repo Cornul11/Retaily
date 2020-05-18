@@ -13,8 +13,8 @@ const App = () => (
   <Absolute.Provider value={true}>
     <BrowserRouter>
       <Route exact path="/" component={HomePage} />
-      // not needed for now
-      {/* <Route path="/inventorybarchart" component={InventoryBarchartPage} /> */}
+      {/* Not needed for now
+      <Route path="/inventorybarchart" component={InventoryBarchartPage} /> */}
       <Route
         path="/extended/productinfo"
         render={(props) => <ProductInfoPage {...props} extended />}

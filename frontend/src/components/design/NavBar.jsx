@@ -24,11 +24,11 @@ const NavBar = () => (
               Home
             </a>
           </li>
-          <li className="nav-item active">
-            <a className="nav-link" href="/inventorybarchart">
-              Products sold
-            </a>
-          </li>
+          {/* <li className="nav-item active"> */}
+          {/*  <a className="nav-link" href="/inventorybarchart"> */}
+          {/*    Products sold */}
+          {/*  </a> */}
+          {/* </li> */}
           <li className="nav-item active">
             <a className="nav-link" href="/extended/productinfo">
               Extended Product info
