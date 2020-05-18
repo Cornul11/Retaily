@@ -78,21 +78,41 @@ class DataSender:
 
             for product in transaction['journal_record_products']:
                 if 'product_plu' in product:
-                    mysql_insert_query = last_query = (
-                            """INSERT INTO product (plu, name, selling_price, discount, transaction_id) VALUES ('%d', 
-                            '%s', '%f', '%f', '%d') """
-                            % (
-                                int(product['product_plu']),
-                                product['product_name'],
-                                float(product['product_price'].replace(',', '.')),
-                                float(product['product_discount'].replace(',', '.')),
-                                transaction_id
+                    is_piece = float(product['product_amount'].replace(',', '.')).is_integer()
+                    if is_piece:
+                        for _ in int(float(product['product_amount'].replace(',', '.'))):
+                            mysql_insert_query = last_query = (
+                                    """INSERT INTO product (plu, name, selling_price, discount, transaction_id) VALUES ('%d', 
+                                    '%s', '%f', '%f', '%d') """
+                                    % (
+                                        int(product['product_plu']),
+                                        product['product_name'],
+                                        float(product['product_price'].replace(',', '.')),
+                                        float(product['product_discount'].replace(',', '.')),
+                                        transaction_id
+                                    )
                             )
-                    )
-                    cursor = self.connection.cursor(buffered=True)
-                    cursor.execute(mysql_insert_query)
-                    self.connection.commit()
-                    cursor.close()
+                            cursor = self.connection.cursor(buffered=True)
+                            cursor.execute(mysql_insert_query)
+                            self.connection.commit()
+                            cursor.close()
+                    else:
+                        mysql_insert_query = last_query = (
+                                """INSERT INTO product (plu, name, selling_price, discount, transaction_id) VALUES ('%d', 
+                                '%s', '%f', '%f', '%d') """
+                                % (
+                                    int(product['product_plu']),
+                                    product['product_name'],
+                                    float(product['product_price'].replace(',', '.')),
+                                    float(product['product_discount'].replace(',', '.')),
+                                    transaction_id
+                                )
+                        )
+                        cursor = self.connection.cursor(buffered=True)
+                        cursor.execute(mysql_insert_query)
+                        self.connection.commit()
+                        cursor.close()
+
         except Error as error:
             logger.error('Error while inserting/selecting transaction data into the database: %s\nWhile executing: %s',
                          error, last_query)
