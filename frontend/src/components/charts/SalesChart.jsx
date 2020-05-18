@@ -33,9 +33,7 @@ class SalesChart extends Component {
     const {
       multiplier,
     } = this.state;
-    let url = `${
-      absolute ? 'https://retaily.site:7000' : ''
-    }/sales/?start=${start}&end=${end}&interval=${interval}`;
+    let url = `${absolute ? 'https://retaily.site:7000' : ''}/sales/?start=${start}&end=${end}&interval=${interval}`;
     if (saleType === 'revenue') {
       url += '&revenue';
     }
@@ -149,17 +147,17 @@ class SalesChart extends Component {
     const { width } = this.state;
     return (
       <div>
-        <div>
-          <button type="button" onClick={this.zoomIn}>zoom in (+)</button>
-          <button type="button" onClick={this.zoomOut}>zoom out(-)</button>
-        </div>
-        <div className="chartWrapper">
+        <div className="chartWrapper" tabIndex={0} role="textbox">
           <div
             className="chartWrapper2"
             style={{ width: `${width}px`, height: '500px' }}
           >
             <canvas id="myChart" />
           </div>
+        </div>
+        <div className="input-group mt-2">
+          <button type="button" className="btn btn-secondary form-control mr-sm-2 mr-1" onClick={this.zoomOut}>zoom out (-)</button>
+          <button type="button" className="btn btn-secondary form-control ml-sm-2 ml-1" onClick={this.zoomIn}>zoom in (+)</button>
         </div>
       </div>
     );
