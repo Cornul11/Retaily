@@ -236,22 +236,22 @@ def parse_subtotal(product: str) -> Dict:
 
 
 CARD_PAYMENT_ITEMS = {
-    'cp_poi': 'POI',
-    'cp_terminal': 'Terminal',
-    'cp_merchant': 'Merchant',
-    'cp_period': 'Periode',
-    'cp_transaction': 'Transactie',
-    'cp_card': 'Kaart',
-    'cp_card_serial_number': 'Kaartserienummer',
-    'cp_date': 'Datum',
-    'cp_authorisation_code': 'Autorisatiecode',
-    'cp_total': 'Totaal',
-    'cp_card_type_id': 'CardTypeId',
-    'cp_card_type_text': 'CardTypeText',
-    'cp_drawer_amount': 'DrawerAmount',
-    'cp_drawer_id': 'DrawerId',
-    'cp_cancelable': 'Cancelable',
-    'cp_card_type': 'Leesmethode',
+    'card_payment_poi': 'POI',
+    'card_payment_terminal': 'Terminal',
+    'card_payment_merchant': 'Merchant',
+    'card_payment_period': 'Periode',
+    'card_payment_transaction': 'Transactie',
+    'card_payment_card': 'Kaart',
+    'card_payment_card_serial_number': 'Kaartserienummer',
+    'card_payment_date': 'Datum',
+    'card_payment_authorisation_code': 'Autorisatiecode',
+    'card_payment_total': 'Totaal',
+    'card_payment_card_type_id': 'CardTypeId',
+    'card_payment_card_type_text': 'CardTypeText',
+    'card_payment_drawer_amount': 'DrawerAmount',
+    'card_payment_drawer_id': 'DrawerId',
+    'card_payment_cancelable': 'Cancelable',
+    'card_payment_card_type': 'Leesmethode',
 }
 
 
@@ -314,14 +314,14 @@ def parse_cash_withdrawal(product: str) -> Dict:
 
 
 CASH_PAYMENT_ITEMS = {
-    'cp_text': 'Text',
-    'cp_is_change': 'IsChange',
-    'cp_amount': ' Amount',
-    'cp_drawer_amount': 'DrawerAmount',
-    'cp_number': ' Number',
-    'cp_drawer_id': 'DrawerId',
-    'cp_drawer_number': 'DrawerNumber',
-    'cp_cancelable': 'IsCancelable',
+    'cash_payment_text': 'Text',
+    'cash_payment_is_change': 'IsChange',
+    'cash_payment_amount': ' Amount',
+    'cash_payment_drawer_amount': 'DrawerAmount',
+    'cash_payment_number': ' Number',
+    'cash_payment_drawer_id': 'DrawerId',
+    'cash_payment_drawer_number': 'DrawerNumber',
+    'cash_payment_cancelable': 'IsCancelable',
 }
 
 
