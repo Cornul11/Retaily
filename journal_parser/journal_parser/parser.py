@@ -15,7 +15,7 @@ def parse_file(filepath: str) -> object:
 
     # these journal records can be ignored as they contain no valuable information for our scope
     record_ignore_words = ['Cancellation', 'Customer', 'InOutPayment', 'ReportRecord',
-                           'JournalRecordNumberReset', 'NoSale', 'DataClear', 'NeutralList']
+                           'JournalRecordNumberReset', 'NoSale', 'DataClear', 'NeutralList', 'ProductReturn']
 
     # fix for various products that have stars in their naming and break the tokenizing of products
     record_replace_strings = {'*FOUT NR*)': '[FOUT NR])',
@@ -38,7 +38,7 @@ def parse_file(filepath: str) -> object:
 
         for journal_record in journal_records:
 
-            if 'Aborted Sale' or 'ProductReturn' in journal_record:
+            if 'Aborted Sale' in journal_record:
                 continue
             splitter_string = '---\n---'
             # This code is required if we want to store data about the aborted sales, at this moment, we don't
