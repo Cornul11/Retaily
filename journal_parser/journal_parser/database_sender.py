@@ -53,13 +53,17 @@ class DataSender:
             cursor.execute(mysql_select_query)
             if cursor.rowcount == 0:
                 transaction_amount = 0
+                number_of_cash_payment_amounts = 0
+                for product in transaction['journal_record_products']:
+                    if 'cash_payment_amount' in product:
+                        number_of_cash_payment_amounts += 1
                 for product in transaction['journal_record_products']:
                     if 'card_payment_total' in product:
                         transaction_amount = float(product['card_payment_total'].replace(',', '.'))
                         break
                     if 'cash_payment_amount' in product:
-                        transaction_amount = float(product['cash_payment_amount'].replace(',', '.'))
-                        break
+                        if number_of_cash_payment_amounts > 1:
+                            transaction_amount += float(product['cash_payment_amount'].replace(',', '.'))
                 transaction_datetime = datetime.strptime(transaction['journal_record_date'], '%Y-%m-%d %H:%M:%S')
                 mysql_insert_query = last_query = (
                         """INSERT INTO transaction (id, date_time, receipt_number, total_amount) VALUES ('%d', '%s', '%d', '%f')"""
