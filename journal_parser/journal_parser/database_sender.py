@@ -80,7 +80,7 @@ class DataSender:
                 if 'product_plu' in product:
                     is_piece = float(product['product_amount'].replace(',', '.')).is_integer()
                     if is_piece:
-                        for _ in int(float(product['product_amount'].replace(',', '.'))):
+                        for _ in range(int(float(product['product_amount'].replace(',', '.')))):
                             mysql_insert_query = last_query = (
                                     """INSERT INTO product (plu, name, selling_price, discount, transaction_id) VALUES ('%d', 
                                     '%s', '%f', '%f', '%d') """
