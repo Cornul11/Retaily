@@ -38,7 +38,7 @@ def parse_file(filepath: str) -> object:
 
         for journal_record in journal_records:
 
-            if 'Aborted Sale' in journal_record:
+            if 'Aborted Sale' or 'ProductReturn' in journal_record:
                 continue
             splitter_string = '---\n---'
             # This code is required if we want to store data about the aborted sales, at this moment, we don't
