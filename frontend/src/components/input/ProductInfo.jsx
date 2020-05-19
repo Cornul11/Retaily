@@ -4,6 +4,7 @@ import ProductAutosuggest from './ProductAutosuggest';
 import BarcodeScanner from '../barcode/BarcodeScanner';
 import ProductSalesChartWrapper from './wrappers/ProductSalesChartWrapper';
 import ProductInfoTableWrapper from './wrappers/ProductInfoTableWrapper';
+import KoppelVerkoopTableWrapper from './wrappers/KoppelVerkoopTableWrapper';
 import '../charts/App.css';
 
 
@@ -146,6 +147,7 @@ const ProductInfo = class extends Component {
       >
         <option value="productInfoTable">current product information</option>
         <option value="productSales">product sales</option>
+        <option value="koppelverkoop">koppelverkoop</option>
       </select>
     );
   }
@@ -183,6 +185,21 @@ const ProductInfo = class extends Component {
     return null;
   }
 
+  renderKoppelVerkoopTableWrapper() {
+    const { identifier, text, chartType } = this.state;
+    if (chartType === 'koppelverkoop') {
+      return (
+        <KoppelVerkoopTableWrapper
+          id="table-wrapper"
+          identifier={identifier}
+          text={text}
+          setRetrieve={(retrieve) => { this.retrieveInChild = retrieve; }}
+        />
+      );
+    }
+    return null;
+  }
+
   render() {
     const { extended } = this.props;
     if (extended) {
@@ -199,6 +216,7 @@ const ProductInfo = class extends Component {
           {this.renderSelectChartType()}
           {this.renderProductInfoTableWrapper()}
           {this.renderProductSalesChartWrapper()}
+          {this.renderKoppelVerkoopTableWrapper()}
         </div>
       );
     }

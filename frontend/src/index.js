@@ -10,7 +10,7 @@ import Absolute from './components/Absolute';
 
 const App = () => (
   // eslint-disable-next-line react/jsx-filename-extension
-  <Absolute.Provider value={true}>
+  <Absolute.Provider value={false}>
     <BrowserRouter>
       <Route exact path="/" component={HomePage} />
       {/* Not needed for now
@@ -23,7 +23,6 @@ const App = () => (
         path="/simple/productinfo"
         render={(props) => <ProductInfoPage {...props} extended={false} />}
       />
-      <Route path="/koppelverkoop" component={KoppelVerkoopPage} />
       <Route path="/salesinfo" component={SalesInfoPage} />
     </BrowserRouter>
   </Absolute.Provider>

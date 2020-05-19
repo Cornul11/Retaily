@@ -17,12 +17,6 @@ const HomePage = () => (
         >
           Extended Product Info
         </a>
-        <a className="btn btn-primary btn-block mb-4" href="/inventorybarchart">
-          Overview of sales
-        </a>
-        <a className="btn btn-primary btn-block mb-4" href="/koppelverkoop">
-          KoppelVerkoop
-        </a>
         <a className="btn btn-primary btn-block mb-1" href="/salesinfo">
           Sales Info
         </a>

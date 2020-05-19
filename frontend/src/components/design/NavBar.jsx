@@ -40,11 +40,6 @@ const NavBar = () => (
             </a>
           </li>
           <li className="nav-item active">
-            <a className="nav-link" href="/koppelverkoop">
-              KoppelVerkoop
-            </a>
-          </li>
-          <li className="nav-item active">
             <a className="nav-link" href="/salesinfo">
               Sales Info
             </a>
