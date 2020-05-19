@@ -8,7 +8,7 @@ koppelverkoop_bp = Blueprint("koppelverkoop", __name__)
 
 
 def get_koppel_products(plu, name, start, end):
-    name, trans_ids = get_id(plu, name, start, end)
+    trans_ids = get_id(plu, name, start, end)
     trans_ids = list(set(trans_ids))
     data = []
     for trans_id in trans_ids:
@@ -46,20 +46,9 @@ def get_id(plu, name, start, end):
                 & (Transaction.date_time <= end)
             )
         )
-        length = 0
         for item in items:
             data.append(item.Product.serialized["transaction_id"])
-            length = length + 1
-        if length == 0:
-            product = Product.query.filter(Product.plu == plu).first()
-            if product is None:
-                response = make_response(
-                    jsonify(message="EAN code not found"), 400)
-                abort(response)
-            name = (product.serialized)["name"]
-        else:
-            name = items[0].Product.serialized["name"]
-        return name, data
+        return data
     else:
         data = []
         items = (
@@ -73,7 +62,7 @@ def get_id(plu, name, start, end):
         )
         for item in items:
             data.append(item.Product.serialized["transaction_id"])
-        return name, data
+        return data
 
 
 @koppelverkoop_bp.route("/lijst/", methods=["GET"])
@@ -88,8 +77,25 @@ def lijst():
             end = datetime.datetime.strptime(end, "%Y-%m-%d")
         except:
             abort(400)
-        if (plu is None or plu is "") and (name is None or name is ""):
+        if plu is None and name == "":
             response = make_response(
-                jsonify(message="EAN code not found"), 400)
+                jsonify(message="please enter a product name"), 400)
             abort(response)
+        elif plu == "" and name is None:
+            response = make_response(
+                jsonify(message="please enter a plu"), 400)
+            abort(response)
+        if name is None:
+            product = Product.query.filter(Product.plu == plu).first()
+            if product is None:
+                response = make_response(
+                    jsonify(message="EAN code not found"), 400)
+                abort(response)
+            name = (product.serialized)["name"]
+        elif plu is None:
+            product = Product.query.filter(Product.name == name).first()
+            if product is None:
+                response = make_response(
+                    jsonify(message="product name not found"), 400)
+                abort(response)
         return jsonify(get_koppel_products(plu, name, start, end))
