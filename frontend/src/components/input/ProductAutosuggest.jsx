@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Autosuggest from 'react-autosuggest';
 import PropTypes from 'prop-types';
+import Absolute from '../Absolute';
 
 const products = [];
 
@@ -64,7 +65,9 @@ const ProductAutosuggest = class extends Component {
   }
 
   async fillProductsArray() {
-    await fetch('https://retaily.site:7000/inventory/list', {
+    const absolute = this.context;
+    const url = `${absolute ? 'https://retaily.site:7000' : ''}/inventory/list`;
+    await fetch(url, {
       method: 'GET',
       mode: 'cors',
     })
@@ -115,5 +118,6 @@ ProductAutosuggest.propTypes = {
   onTextChange: PropTypes.func.isRequired,
 };
 
+ProductAutosuggest.contextType = Absolute;
 
 export default ProductAutosuggest;
