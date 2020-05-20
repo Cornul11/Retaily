@@ -8,6 +8,12 @@ const RetrieveError = class extends Component {
       errorMessages: [],
       index: 0,
     };
+    this.clearMessages = this.clearMessages.bind(this);
+  }
+
+  componentDidMount() {
+    const { setClear } = this.props;
+    setClear(this.clearMessages);
   }
 
   componentDidUpdate() {
@@ -15,6 +21,10 @@ const RetrieveError = class extends Component {
     if (error !== '') {
       this.addNewErrorMessage();
     }
+  }
+
+  clearMessages() {
+    this.setState({ errorMessages: [] });
   }
 
   addNewErrorMessage() {
@@ -54,6 +64,7 @@ const RetrieveError = class extends Component {
 
 RetrieveError.propTypes = {
   error: PropTypes.string.isRequired,
+  setClear: PropTypes.func.isRequired,
   handleError: PropTypes.func.isRequired,
 };
 export default RetrieveError;
