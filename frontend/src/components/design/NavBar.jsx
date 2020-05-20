@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const NavBar = () => (
   <nav className="navbar navbar-expand-lg navbar-light bg-light static-top mb-5 shadow">
@@ -30,18 +30,18 @@ const NavBar = () => (
           {/*  </a> */}
           {/* </li> */}
           <li className="nav-item active">
-            <a className="nav-link" href="/extended/productinfo">
-              Extended Product info
+            <a className="nav-link" href="/simple/productinfo">
+              Standaard Product Info
             </a>
           </li>
           <li className="nav-item active">
-            <a className="nav-link" href="/simple/productinfo">
-              Simple Product Info
+            <a className="nav-link" href="/extended/productinfo">
+              Uitgebreide Product info
             </a>
           </li>
           <li className="nav-item active">
             <a className="nav-link" href="/salesinfo">
-              Sales Info
+              Verkoop Informatie
             </a>
           </li>
         </ul>

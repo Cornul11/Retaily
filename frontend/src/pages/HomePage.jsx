@@ -9,16 +9,16 @@ const HomePage = () => (
           className="btn btn-primary btn-block mb-4"
           href="/simple/productinfo"
         >
-          Simple Product Info
+          Standaard Product Info
         </a>
         <a
           className="btn btn-primary btn-block mb-4"
           href="/extended/productinfo"
         >
-          Extended Product Info
+          Uitgebreide Product Info
         </a>
         <a className="btn btn-primary btn-block mb-1" href="/salesinfo">
-          Sales Info
+          Verkoop Informatie
         </a>
       </div>
     )}
