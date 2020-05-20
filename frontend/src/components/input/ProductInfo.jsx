@@ -1,12 +1,11 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import ProductAutosuggest from './ProductAutosuggest';
-import BarcodeScanner from '../barcode/BarcodeScanner';
-import ProductSalesChartWrapper from './wrappers/ProductSalesChartWrapper';
-import ProductInfoTableWrapper from './wrappers/ProductInfoTableWrapper';
-import KoppelVerkoopTableWrapper from './wrappers/KoppelVerkoopTableWrapper';
-import '../charts/App.css';
-
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import ProductAutosuggest from "./ProductAutosuggest";
+import BarcodeScanner from "../barcode/BarcodeScanner";
+import ProductSalesChartWrapper from "./wrappers/ProductSalesChartWrapper";
+import ProductInfoTableWrapper from "./wrappers/ProductInfoTableWrapper";
+import KoppelVerkoopTableWrapper from "./wrappers/KoppelVerkoopTableWrapper";
+import "../charts/App.css";
 
 /** Component that retrieves information about an individual product */
 
@@ -14,15 +13,15 @@ const ProductInfo = class extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      identifier: 'plu',
-      text: '',
+      identifier: "plu",
+      text: "",
       scanning: false,
-      chartType: 'productInfoTable',
+      chartType: "productInfoTable",
     };
     this.handleIdentifierChange = this.handleIdentifierChange.bind(this);
     this.handleTextChange = this.handleTextChange.bind(this);
     this.handleTextChangeByAutosuggest = this.handleTextChangeByAutosuggest.bind(
-      this,
+      this
     );
     this.handleScanButton = this.handleScanButton.bind(this);
     this.onDetected = this.onDetected.bind(this);
@@ -48,15 +47,15 @@ const ProductInfo = class extends Component {
   }
 
   handleIdentifierChange(event) {
-    this.setState({ identifier: event.target.value, text: '' });
+    this.setState({ identifier: event.target.value, text: "" });
   }
 
   scanButtonText() {
     const { scanning } = this.state;
     if (scanning) {
-      return 'stop scanner';
+      return "stop scanner";
     }
-    return 'start scanner';
+    return "start scanner";
   }
 
   handleChartTypeChange(event) {
@@ -64,7 +63,7 @@ const ProductInfo = class extends Component {
   }
 
   handleKeyDown(e) {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       this.retrieveInChild();
     }
   }
@@ -79,7 +78,7 @@ const ProductInfo = class extends Component {
         className="form-control btn btn-primary"
       >
         <option value="plu">plu</option>
-        <option value="name">name</option>
+        <option value="name">naam</option>
       </select>
     );
   }
@@ -87,7 +86,7 @@ const ProductInfo = class extends Component {
   renderInputText() {
     const { identifier, text } = this.state;
     const { extended } = this.props;
-    if (identifier === 'name') {
+    if (identifier === "name") {
       return (
         <ProductAutosuggest
           text={text}
@@ -101,7 +100,7 @@ const ProductInfo = class extends Component {
         type="number"
         value={text}
         className="form-control"
-        placeholder={extended ? '' : 'EAN-code'}
+        placeholder={extended ? "" : "EAN-code"}
         onChange={this.handleTextChange}
       />
     );
@@ -110,11 +109,15 @@ const ProductInfo = class extends Component {
   renderScanButton() {
     const { extended } = this.props;
     const { identifier } = this.state;
-    if (identifier === 'plu') {
+    if (identifier === "plu") {
       return (
         <button
           type="button"
-          className={extended ? 'btn btn-secondary' : 'btn btn-primary btn-lg btn-block mb-2'}
+          className={
+            extended
+              ? "btn btn-secondary"
+              : "btn btn-primary btn-lg btn-block mb-2"
+          }
           onClick={this.handleScanButton}
         >
           {this.scanButtonText()}
@@ -145,26 +148,26 @@ const ProductInfo = class extends Component {
         onChange={this.handleChartTypeChange}
         className="form-control"
       >
-        <option value="productInfoTable">current product information</option>
-        <option value="productSales">product sales</option>
+        <option value="productInfoTable">huidige informatie</option>
+        <option value="productSales">verkoopcijfers</option>
         <option value="koppelverkoop">koppelverkoop</option>
       </select>
     );
   }
 
   renderProductInfoTableWrapper() {
-    const {
-      chartType, identifier, text,
-    } = this.state;
+    const { chartType, identifier, text } = this.state;
     const { extended } = this.props;
-    if (chartType === 'productInfoTable') {
+    if (chartType === "productInfoTable") {
       return (
         <ProductInfoTableWrapper
           id="table-wrapper"
           identifier={identifier}
           text={text}
           extended={extended}
-          setRetrieve={(retrieve) => { this.retrieveInChild = retrieve; }}
+          setRetrieve={(retrieve) => {
+            this.retrieveInChild = retrieve;
+          }}
         />
       );
     }
@@ -173,12 +176,14 @@ const ProductInfo = class extends Component {
 
   renderProductSalesChartWrapper() {
     const { chartType, identifier, text } = this.state;
-    if (chartType === 'productSales') {
+    if (chartType === "productSales") {
       return (
         <ProductSalesChartWrapper
           identifier={identifier}
           text={text}
-          setRetrieve={(retrieve) => { this.retrieveInChild = retrieve; }}
+          setRetrieve={(retrieve) => {
+            this.retrieveInChild = retrieve;
+          }}
         />
       );
     }
@@ -187,13 +192,15 @@ const ProductInfo = class extends Component {
 
   renderKoppelVerkoopTableWrapper() {
     const { identifier, text, chartType } = this.state;
-    if (chartType === 'koppelverkoop') {
+    if (chartType === "koppelverkoop") {
       return (
         <KoppelVerkoopTableWrapper
           id="table-wrapper"
           identifier={identifier}
           text={text}
-          setRetrieve={(retrieve) => { this.retrieveInChild = retrieve; }}
+          setRetrieve={(retrieve) => {
+            this.retrieveInChild = retrieve;
+          }}
         />
       );
     }
