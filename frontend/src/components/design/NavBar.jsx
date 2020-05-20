@@ -41,7 +41,7 @@ const NavBar = () => (
           </li>
           <li className="nav-item active">
             <a className="nav-link" href="/salesinfo">
-              Verkoop Informatie
+              Transactie Informatie
             </a>
           </li>
         </ul>

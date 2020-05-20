@@ -148,9 +148,9 @@ const ProductInfo = class extends Component {
         onChange={this.handleChartTypeChange}
         className="form-control"
       >
-        <option value="productInfoTable">huidige informatie</option>
-        <option value="productSales">verkoopcijfers</option>
-        <option value="koppelverkoop">koppelverkoop</option>
+        <option value="productInfoTable">Huidige informatie</option>
+        <option value="productSales">Verkoopcijfers</option>
+        <option value="koppelverkoop">Koppelverkoop</option>
       </select>
     );
   }
