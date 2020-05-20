@@ -49,7 +49,9 @@ const ProductAutosuggest = class extends Component {
     this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(
       this,
     );
+  }
 
+  componentDidMount() {
     this.fillProductsArray();
   }
 
@@ -75,14 +77,13 @@ const ProductAutosuggest = class extends Component {
     const url = `${absolute ? 'https://retaily.site:7000' : ''}/inventory/list`;
     await fetch(url, {
       method: 'GET',
-      mode: 'cors',
     })
       .then((response) => response.json())
       .then(
         (response) => {
-          for (const product in response) {
+          Object.keys(response).forEach((product) => {
             products.push(response[product]);
-          }
+          });
         },
         (error) => {
           console.log(error);
