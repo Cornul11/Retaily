@@ -25,9 +25,9 @@ class ProductInfoTableWrapper extends Component {
     this.setState({ retrieve: false });
   }
 
-
   handleRetrieveButton() {
     this.setState({ retrieve: true });
+    this.clearErrorMessages();
   }
 
   handleError(error) {
@@ -60,6 +60,7 @@ class ProductInfoTableWrapper extends Component {
         <RetrieveError
           error={error}
           handleError={this.handleError}
+          setClear={(clear) => { this.clearErrorMessages = clear; }}
         />
         {this.renderProductInfoTable()}
       </div>

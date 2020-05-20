@@ -51,6 +51,7 @@ class ProductSalesChartWrapper extends Component {
 
   handleRetrieveButton() {
     this.setState({ retrieve: true });
+    this.clearErrorMessages();
   }
 
   handleError(error) {
@@ -98,6 +99,7 @@ class ProductSalesChartWrapper extends Component {
         <RetrieveError
           error={error}
           handleError={this.handleError}
+          setClear={(clear) => { this.clearErrorMessages = clear; }}
         />
         {this.renderSalesChart()}
       </div>
