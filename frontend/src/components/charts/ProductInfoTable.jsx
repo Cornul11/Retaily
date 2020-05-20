@@ -29,7 +29,6 @@ class ProductInfoTable extends Component {
         name: null,
         buying_price: null,
         selling_price: null,
-        discount: null,
         sales_last_week: null,
         sales_last_month: null,
         sales_last_quarter: null,
@@ -78,7 +77,6 @@ class ProductInfoTable extends Component {
           if (extended) {
             newData.buying_price = response.buying_price;
             newData.selling_price = response.selling_price;
-            newData.discount = response.discount;
           }
         }
       });
