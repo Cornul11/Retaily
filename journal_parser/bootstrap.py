@@ -38,6 +38,10 @@ class ArchiveEventHandler(RegexMatchingEventHandler):
         super().__init__(self.ARCHIVE_REGEX)
 
     def on_created(self, event):
+        file_size = -1
+        while file_size != os.path.getsize(event.src_path):
+            file_size = os.path.getsize(event.src_path)
+            time.sleep(1)
         logger.info('New file, processing \'%s\'', event.src_path)
         process(event)
 
