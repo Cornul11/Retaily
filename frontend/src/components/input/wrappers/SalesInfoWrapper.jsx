@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import { format } from "date-fns";
-import SalesChart from "../../charts/SalesChart";
-import IntervalDatePicker from "../IntervalDatePicker";
-import RetrieveButton from "../../design/RetrieveButton";
-import RetrieveError from "../../design/RetrieveError";
+import React, { Component } from 'react';
+import { format } from 'date-fns';
+import SalesChart from '../../charts/SalesChart';
+import IntervalDatePicker from '../IntervalDatePicker';
+import RetrieveButton from '../../design/RetrieveButton';
+import RetrieveError from '../../design/RetrieveError';
 
 class SalesInfoWrapper extends Component {
   constructor(props) {
@@ -11,10 +11,10 @@ class SalesInfoWrapper extends Component {
     this.state = {
       startDate: new Date(),
       endDate: new Date(),
-      interval: "hour",
+      interval: 'hour',
       retrieve: false,
-      error: "",
-      saleType: "customers",
+      error: '',
+      saleType: 'customers',
     };
     this.handleSaleTypeChange = this.handleSaleTypeChange.bind(this);
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
@@ -55,7 +55,7 @@ class SalesInfoWrapper extends Component {
   }
 
   handleKeyDown(e) {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       this.retrieveInChild();
     }
   }
@@ -65,12 +65,14 @@ class SalesInfoWrapper extends Component {
   }
 
   renderSalesChart() {
-    const { retrieve, startDate, endDate, interval, saleType } = this.state;
+    const {
+      retrieve, startDate, endDate, interval, saleType,
+    } = this.state;
     return (
       <SalesChart
         retrieve={retrieve}
-        start={format(startDate, "yyyy-MM-dd")}
-        end={format(endDate, "yyyy-MM-dd")}
+        start={format(startDate, 'yyyy-MM-dd')}
+        end={format(endDate, 'yyyy-MM-dd')}
         interval={interval}
         onError={this.handleError}
         onLoaded={this.onLoaded}

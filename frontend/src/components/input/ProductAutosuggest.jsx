@@ -1,21 +1,20 @@
-import React, { Component } from "react";
-import Autosuggest from "react-autosuggest";
-import PropTypes from "prop-types";
-import Absolute from "../Absolute";
+import React, { Component } from 'react';
+import Autosuggest from 'react-autosuggest';
+import PropTypes from 'prop-types';
+import Absolute from '../Absolute';
 
 const products = [];
 
-const escapeRegexCharacters = (str) =>
-  str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const escapeRegexCharacters = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 const getSuggestions = (value) => {
   const escapedValue = escapeRegexCharacters(value.trim());
 
-  if (escapedValue === "") {
+  if (escapedValue === '') {
     return [];
   }
 
-  const regex = new RegExp(`^${escapedValue}`, "i");
+  const regex = new RegExp(`^${escapedValue}`, 'i');
 
   return products.filter((product) => regex.test(product.name));
 };
@@ -42,13 +41,13 @@ const ProductAutosuggest = class extends Component {
     };
     this.handleTextChange = this.handleTextChange.bind(this);
     this.onSuggestionSelectedByUser = this.onSuggestionSelectedByUser.bind(
-      this
+      this,
     );
     this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(
-      this
+      this,
     );
     this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(
-      this
+      this,
     );
 
     this.fillProductsArray();
@@ -73,10 +72,10 @@ const ProductAutosuggest = class extends Component {
 
   async fillProductsArray() {
     const absolute = this.context;
-    const url = `${absolute ? "https://retaily.site:7000" : ""}/inventory/list`;
+    const url = `${absolute ? 'https://retaily.site:7000' : ''}/inventory/list`;
     await fetch(url, {
-      method: "GET",
-      mode: "cors",
+      method: 'GET',
+      mode: 'cors',
     })
       .then((response) => response.json())
       .then(
@@ -87,7 +86,7 @@ const ProductAutosuggest = class extends Component {
         },
         (error) => {
           console.log(error);
-        }
+        },
       );
   }
 
@@ -100,7 +99,7 @@ const ProductAutosuggest = class extends Component {
     const { text } = this.props;
     const { suggestions } = this.state;
     const inputProps = {
-      placeholder: "Naam van product",
+      placeholder: 'Naam van product',
       value: text,
       onChange: this.handleTextChange,
     };
