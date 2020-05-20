@@ -42,14 +42,14 @@ def product():
             product = ProductInfo.query.filter(ProductInfo.plu == plu).first()
             if product is None:
                 response = make_response(
-                    jsonify(message="EAN code not found"), 400)
+                    jsonify(message="EAN code niet gevonden."), 400)
                 abort(response)
         elif name is not None:
             product = ProductInfo.query.filter(
                 ProductInfo.name == name).first()
             if product is None:
                 response = make_response(
-                    jsonify(message="product name not found"), 400)
+                    jsonify(message="Product naam niet gevonden."), 400)
                 abort(response)
         else:
             products = ProductInfo.query
