@@ -57,7 +57,7 @@ class SalesInfoWrapper extends Component {
 
   handleKeyDown(e) {
     if (e.key === 'Enter') {
-      this.retrieveInChild();
+      this.handleRetrieveButton();
     }
   }
 
@@ -82,33 +82,39 @@ class SalesInfoWrapper extends Component {
     );
   }
 
+  renderSaleTypeSelect() {
+    const saleType = this.state;
+    return (
+      <div className="input-group">
+        <div className="input-group-prepend">
+          <span className="input-group-text" id="basic-addon1">
+            Transactie Cijfers
+          </span>
+        </div>
+        <select
+          id="saleType"
+          value={saleType}
+          onChange={this.handleSaleTypeChange}
+          className="form-control"
+        >
+          <option value="customers">Klanten</option>
+          <option value="revenue">Omzet</option>
+        </select>
+      </div>
+    );
+  }
+
   render() {
     const {
       retrieve,
       startDate,
       endDate,
       interval,
-      saleType,
       error,
     } = this.state;
     return (
       <div role="textbox" tabIndex={0} onKeyDown={this.handleKeyDown}>
-        <div className="input-group">
-          <div className="input-group-prepend">
-            <span className="input-group-text" id="basic-addon1">
-              Transactie Cijfers
-            </span>
-          </div>
-          <select
-            id="saleType"
-            value={saleType}
-            onChange={this.handleSaleTypeChange}
-            className="form-control"
-          >
-            <option value="customers">Klanten</option>
-            <option value="revenue">Omzet</option>
-          </select>
-        </div>
+        {this.renderSaleTypeSelect()}
         <IntervalDatePicker
           onChangeStartDate={this.handleStartDateChange}
           onChangeEndDate={this.handleEndDateChange}
