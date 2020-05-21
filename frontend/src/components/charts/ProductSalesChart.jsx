@@ -56,61 +56,63 @@ class ProductSalesChart extends Component {
     if (chart !== null) {
       chart.destroy();
     }
-    this.state.chart = new Chart(
-      document.getElementById('myChart').getContext('2d'),
-      {
-        type: 'bar',
-        data: {
-          datasets: [
-            {
-              data,
-              backgroundColor: 'rgba(55,155,255,0.5)',
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          legend: {
-            display: false,
-          },
-          scales: {
-            xAxes: [
+    this.setState({
+      chart: new Chart(
+        document.getElementById('myChart').getContext('2d'),
+        {
+          type: 'bar',
+          data: {
+            datasets: [
               {
-                type: 'time',
-                time: {
-                  unit:
-                    interval === 'half_an_hour'
-                      ? 'hour'
-                      : interval,
-                  displayFormats: {
-                    hour: 'HH:mm',
-                    day: 'D MMM',
-                    week: 'D MMM',
-                    month: 'MMM',
+                data,
+                backgroundColor: 'rgba(55,155,255,0.5)',
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: {
+              display: false,
+            },
+            scales: {
+              xAxes: [
+                {
+                  type: 'time',
+                  time: {
+                    unit:
+                      interval === 'half_an_hour'
+                        ? 'hour'
+                        : interval,
+                    displayFormats: {
+                      hour: 'HH:mm',
+                      day: 'D MMM',
+                      week: 'D MMM',
+                      month: 'MMM',
+                    },
+                  },
+                  offset: true,
+                },
+              ],
+              yAxes: [
+                {
+                  ticks: {
+                    beginAtZero: true,
                   },
                 },
-                offset: true,
-              },
-            ],
-            yAxes: [
-              {
-                ticks: {
-                  beginAtZero: true,
+              ],
+            },
+            tooltips: {
+              callbacks: {
+                title() {
+                  return '';
                 },
-              },
-            ],
-          },
-          tooltips: {
-            callbacks: {
-              title() {
-                return '';
               },
             },
           },
         },
-      },
-    );
+      ),
+    });
     onLoaded();
     this.setState({ loading: false });
   }

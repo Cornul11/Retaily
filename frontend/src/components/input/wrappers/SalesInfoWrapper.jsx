@@ -52,6 +52,7 @@ class SalesInfoWrapper extends Component {
 
   handleRetrieveButton() {
     this.setState({ retrieve: true });
+    this.clearErrorMessages();
   }
 
   handleKeyDown(e) {
@@ -121,7 +122,11 @@ class SalesInfoWrapper extends Component {
           handleRetrieveButton={this.handleRetrieveButton}
           retrieve={retrieve}
         />
-        <RetrieveError error={error} handleError={this.handleError} />
+        <RetrieveError
+          error={error}
+          handleError={this.handleError}
+          setClear={(clear) => { this.clearErrorMessages = clear; }}
+        />
         {this.renderSalesChart()}
       </div>
     );
