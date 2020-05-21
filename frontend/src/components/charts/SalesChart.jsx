@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Chart } from 'chart.js';
 import PropTypes from 'prop-types';
 import Absolute from '../Absolute';
+import './charts.css';
 
 class SalesChart extends Component {
   constructor(props) {

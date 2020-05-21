@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ProductAutosuggest from './ProductAutosuggest';
 import BarcodeScanner from '../barcode/BarcodeScanner';
-import ProductSalesChartWrapper from './wrappers/ProductSalesChartWrapper';
-import ProductInfoTableWrapper from './wrappers/ProductInfoTableWrapper';
-import KoppelVerkoopTableWrapper from './wrappers/KoppelVerkoopTableWrapper';
 import '../charts/App.css';
+import Wrapper from './wrappers/Wrapper';
 
 /** Component that retrieves information about an individual product */
 
@@ -160,7 +158,8 @@ const ProductInfo = class extends Component {
     const { extended } = this.props;
     if (chartType === 'productInfoTable') {
       return (
-        <ProductInfoTableWrapper
+        <Wrapper
+          wrapperType="productInfo"
           id="table-wrapper"
           identifier={identifier}
           text={text}
@@ -178,7 +177,8 @@ const ProductInfo = class extends Component {
     const { chartType, identifier, text } = this.state;
     if (chartType === 'productSales') {
       return (
-        <ProductSalesChartWrapper
+        <Wrapper
+          wrapperType="productSalesChart"
           identifier={identifier}
           text={text}
           setRetrieve={(retrieve) => {
@@ -194,7 +194,8 @@ const ProductInfo = class extends Component {
     const { identifier, text, chartType } = this.state;
     if (chartType === 'koppelverkoop') {
       return (
-        <KoppelVerkoopTableWrapper
+        <Wrapper
+          wrapperType="koppelverkoop"
           id="table-wrapper"
           identifier={identifier}
           text={text}

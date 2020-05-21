@@ -1,9 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route } from 'react-router-dom';
-import InventoryBarchartPage from './pages/InventoryBarchartPage';
 import ProductInfoPage from './pages/ProductInfoPage';
-import KoppelVerkoopPage from './pages/KoppelVerkoopPage';
 import HomePage from './pages/HomePage';
 import SalesInfoPage from './pages/SalesInfoPage';
 import Absolute from './components/Absolute';

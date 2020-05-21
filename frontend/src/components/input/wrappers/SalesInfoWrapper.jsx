@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { format } from 'date-fns';
+import PropTypes from 'prop-types';
 import SalesChart from '../../charts/SalesChart';
 import IntervalDatePicker from '../IntervalDatePicker';
 import RetrieveButton from '../../design/RetrieveButton';
@@ -14,24 +15,22 @@ class SalesInfoWrapper extends Component {
       interval: 'hour',
       retrieve: false,
       error: '',
-      saleType: 'customers',
     };
-    this.handleSaleTypeChange = this.handleSaleTypeChange.bind(this);
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
     this.handleIntervalChange = this.handleIntervalChange.bind(this);
     this.handleRetrieveButton = this.handleRetrieveButton.bind(this);
     this.onLoaded = this.onLoaded.bind(this);
     this.handleError = this.handleError.bind(this);
-    this.handleKeyDown = this.handleKeyDown.bind(this);
+  }
+
+  componentDidMount() {
+    const { setRetrieve } = this.props;
+    setRetrieve(this.handleRetrieveButton);
   }
 
   onLoaded() {
     this.setState({ retrieve: false });
-  }
-
-  handleSaleTypeChange(event) {
-    this.setState({ saleType: event.target.value });
   }
 
   handleStartDateChange(date) {
@@ -55,20 +54,15 @@ class SalesInfoWrapper extends Component {
     this.clearErrorMessages();
   }
 
-  handleKeyDown(e) {
-    if (e.key === 'Enter') {
-      this.handleRetrieveButton();
-    }
-  }
-
   handleError(error) {
     this.setState({ error });
   }
 
   renderSalesChart() {
     const {
-      retrieve, startDate, endDate, interval, saleType,
+      retrieve, startDate, endDate, interval,
     } = this.state;
+    const { saleType } = this.props;
     return (
       <SalesChart
         retrieve={retrieve}
@@ -82,28 +76,6 @@ class SalesInfoWrapper extends Component {
     );
   }
 
-  renderSaleTypeSelect() {
-    const { saleType } = this.state;
-    return (
-      <div className="input-group">
-        <div className="input-group-prepend">
-          <span className="input-group-text" id="basic-addon1">
-            Transactie Cijfers
-          </span>
-        </div>
-        <select
-          id="saleType"
-          value={saleType}
-          onChange={this.handleSaleTypeChange}
-          className="form-control"
-        >
-          <option value="customers">Klanten</option>
-          <option value="revenue">Omzet</option>
-        </select>
-      </div>
-    );
-  }
-
   render() {
     const {
       retrieve,
@@ -113,8 +85,7 @@ class SalesInfoWrapper extends Component {
       error,
     } = this.state;
     return (
-      <div role="textbox" tabIndex={0} onKeyDown={this.handleKeyDown}>
-        {this.renderSaleTypeSelect()}
+      <div role="textbox" tabIndex={0}>
         <IntervalDatePicker
           onChangeStartDate={this.handleStartDateChange}
           onChangeEndDate={this.handleEndDateChange}
@@ -138,5 +109,10 @@ class SalesInfoWrapper extends Component {
     );
   }
 }
+
+SalesInfoWrapper.propTypes = {
+  setRetrieve: PropTypes.func.isRequired,
+  saleType: PropTypes.string.isRequired,
+};
 
 export default SalesInfoWrapper;
