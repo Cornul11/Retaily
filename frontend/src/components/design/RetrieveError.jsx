@@ -34,7 +34,7 @@ const RetrieveError = class extends Component {
     newMessages.push(
       <div
         key={index}
-        className="alert alert-warning alert-dismissible fade show"
+        className="alert alert-warning fade show"
         role="alert"
       >
         <strong>
@@ -42,18 +42,10 @@ const RetrieveError = class extends Component {
           {' '}
           {error}
         </strong>
-        <button
-          type="button"
-          className="close"
-          data-dismiss="alert"
-          aria-label="Close"
-          onClose={handleError('')}
-        >
-          <span aria-hidden="true">&times;</span>
-        </button>
       </div>,
     );
     this.setState({ index: index + 1, errorMessages: newMessages });
+    handleError('');
   }
 
   render() {
