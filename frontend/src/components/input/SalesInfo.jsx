@@ -46,7 +46,7 @@ const SalesInfo = class extends Component {
   render() {
     const { saleType } = this.state;
     return (
-      <div role="textbox" tabIndex={0} onKeyDown={this.handleKeyDown}>
+      <div role="textbox" tabIndex={-1} onKeyDown={this.handleKeyDown}>
         {this.renderSaleTypeSelect()}
         <Wrapper
           wrapperType="salesChart"

@@ -148,7 +148,7 @@ class SalesChart extends Component {
     const { width } = this.state;
     return (
       <div>
-        <div className="chartWrapper" tabIndex={0} role="textbox">
+        <div className="chartWrapper" role="textbox">
           <div
             className="chartWrapper2"
             style={{ width: `${width}px`, height: '500px' }}

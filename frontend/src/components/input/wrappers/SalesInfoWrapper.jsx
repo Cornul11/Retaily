@@ -85,7 +85,7 @@ class SalesInfoWrapper extends Component {
       error,
     } = this.state;
     return (
-      <div role="textbox" tabIndex={0}>
+      <div>
         <IntervalDatePicker
           onChangeStartDate={this.handleStartDateChange}
           onChangeEndDate={this.handleEndDateChange}

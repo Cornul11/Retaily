@@ -53,7 +53,7 @@ class KoppelVerkoopInfo extends Component {
 
   render() {
     return (
-      <div role="textbox" tabIndex={0} onKeyDown={this.handleKeyDown}>
+      <div role="textbox" tabIndex={-1} onKeyDown={this.handleKeyDown}>
         <center>
           {this.renderInputText()}
           {this.renderKoppelVerkoopTableWrapper()}

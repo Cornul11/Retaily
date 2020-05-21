@@ -212,7 +212,7 @@ const ProductInfo = class extends Component {
     const { extended } = this.props;
     if (extended) {
       return (
-        <div role="textbox" tabIndex={0} onKeyDown={this.handleKeyDown}>
+        <div role="textbox" tabIndex={-1} onKeyDown={this.handleKeyDown}>
           <div className="input-group mb-2">
             <div className="input-group-prepend">
               {this.renderSelectIdentifier()}
@@ -230,7 +230,7 @@ const ProductInfo = class extends Component {
     }
     /* Less options, but easier to use */
     return (
-      <div role="textbox" tabIndex={0} onKeyDown={this.handleKeyDown}>
+      <div role="textbox" tabIndex={-1} onKeyDown={this.handleKeyDown}>
         {this.renderScanButton()}
         {this.renderScanner()}
         <center>
