@@ -83,7 +83,7 @@ class SalesInfoWrapper extends Component {
   }
 
   renderSaleTypeSelect() {
-    const saleType = this.state;
+    const { saleType } = this.state;
     return (
       <div className="input-group">
         <div className="input-group-prepend">
