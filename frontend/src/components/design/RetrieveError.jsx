@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 
 const RetrieveError = class extends Component {
   constructor(props) {
@@ -18,7 +18,7 @@ const RetrieveError = class extends Component {
 
   componentDidUpdate() {
     const { error } = this.props;
-    if (error !== '') {
+    if (error !== "") {
       this.addNewErrorMessage();
     }
   }
@@ -32,20 +32,12 @@ const RetrieveError = class extends Component {
     const { error, handleError } = this.props;
     const newMessages = errorMessages;
     newMessages.push(
-      <div
-        key={index}
-        className="alert alert-warning fade show"
-        role="alert"
-      >
-        <strong>
-          Error:
-          {' '}
-          {error}
-        </strong>
-      </div>,
+      <div key={index} className="alert alert-warning fade show" role="alert">
+        <strong>Fout: {error}</strong>
+      </div>
     );
     this.setState({ index: index + 1, errorMessages: newMessages });
-    handleError('');
+    handleError("");
   }
 
   render() {
