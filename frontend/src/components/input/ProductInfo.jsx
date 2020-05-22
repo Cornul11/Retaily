@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ProductAutosuggest from './ProductAutosuggest';
 import BarcodeScanner from '../barcode/BarcodeScanner';
-import ProductSalesChartWrapper from './wrappers/ProductSalesChartWrapper';
-import ProductInfoTableWrapper from './wrappers/ProductInfoTableWrapper';
-import KoppelVerkoopTableWrapper from './wrappers/KoppelVerkoopTableWrapper';
-import '../charts/App.css';
+import Wrapper from './Wrapper';
 
 /** Component that retrieves information about an individual product */
 
@@ -35,7 +32,7 @@ const ProductInfo = class extends Component {
   }
 
   handleScanButton() {
-    this.setState((prevState) => ({ scanning: !prevState.scanning }));
+    this.setState((prevState) => ({ text: '', scanning: !prevState.scanning }));
   }
 
   handleTextChangeByAutosuggest(text) {
@@ -77,8 +74,8 @@ const ProductInfo = class extends Component {
         onChange={this.handleIdentifierChange}
         className="form-control btn btn-primary"
       >
-        <option value="plu">plu</option>
-        <option value="name">naam</option>
+        <option value="plu">PLU</option>
+        <option value="name">Naam</option>
       </select>
     );
   }
@@ -160,7 +157,8 @@ const ProductInfo = class extends Component {
     const { extended } = this.props;
     if (chartType === 'productInfoTable') {
       return (
-        <ProductInfoTableWrapper
+        <Wrapper
+          wrapperType="productInfo"
           id="table-wrapper"
           identifier={identifier}
           text={text}
@@ -178,7 +176,8 @@ const ProductInfo = class extends Component {
     const { chartType, identifier, text } = this.state;
     if (chartType === 'productSales') {
       return (
-        <ProductSalesChartWrapper
+        <Wrapper
+          wrapperType="productSalesChart"
           identifier={identifier}
           text={text}
           setRetrieve={(retrieve) => {
@@ -194,7 +193,8 @@ const ProductInfo = class extends Component {
     const { identifier, text, chartType } = this.state;
     if (chartType === 'koppelverkoop') {
       return (
-        <KoppelVerkoopTableWrapper
+        <Wrapper
+          wrapperType="koppelverkoop"
           id="table-wrapper"
           identifier={identifier}
           text={text}
@@ -211,7 +211,7 @@ const ProductInfo = class extends Component {
     const { extended } = this.props;
     if (extended) {
       return (
-        <div role="textbox" tabIndex={0} onKeyDown={this.handleKeyDown}>
+        <div role="textbox" tabIndex={-1} onKeyDown={this.handleKeyDown}>
           <div className="input-group mb-2">
             <div className="input-group-prepend">
               {this.renderSelectIdentifier()}
@@ -229,7 +229,7 @@ const ProductInfo = class extends Component {
     }
     /* Less options, but easier to use */
     return (
-      <div role="textbox" tabIndex={0} onKeyDown={this.handleKeyDown}>
+      <div role="textbox" tabIndex={-1} onKeyDown={this.handleKeyDown}>
         {this.renderScanButton()}
         {this.renderScanner()}
         <center>

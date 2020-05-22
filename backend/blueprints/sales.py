@@ -8,10 +8,10 @@ import datetime
 time_format = "%Y-%m-%d %H:%M"
 
 # Define the blueprint
-sales_bp = Blueprint("sales", __name__)
+sales_bp = Blueprint("verkoop", __name__)
 
 
-def get_sales(items, start, end, interval, product, revenue):
+def get_sales(items, start, end, interval, product, revenue, addHalfInterval):
     data = []
     count = 0
     for item in items:
@@ -20,9 +20,12 @@ def get_sales(items, start, end, interval, product, revenue):
         else:
             time = item.serialized["date_time"]
         while time > (start + interval):
-            data.append(
-                {"t": (start + (interval / 2)).strftime(time_format), "y": count}
-            )
+            if addHalfInterval:
+                data.append(
+                    {"t": (start + (interval / 2)).strftime(time_format), "y": count}
+                )
+            else:
+                data.append({"t": (start).strftime(time_format), "y": count})
             count = 0
             start = start + interval
         if revenue is not None:
@@ -32,10 +35,16 @@ def get_sales(items, start, end, interval, product, revenue):
                 count += item.serialized["total_amount"]
         else:
             count += 1
-    data.append({"t": (start + (interval / 2)).strftime(time_format), "y": count})
+    if addHalfInterval:
+        data.append({"t": (start + (interval / 2)).strftime(time_format), "y": count})
+    else:
+        data.append({"t": (start).strftime(time_format), "y": count})
     start = start + interval
     while start < end:
-        data.append({"t": (start + (interval / 2)).strftime(time_format), "y": 0})
+        if addHalfInterval:
+            data.append({"t": (start + (interval / 2)).strftime(time_format), "y": 0})
+        else:
+            data.append({"t": (start).strftime(time_format), "y": 0})
         start = start + interval
     return data
 
@@ -75,15 +84,19 @@ def sales():
         interval = request.args.get("interval", None)
         revenue = request.args.get("revenue", None)
 
+        addHalfInterval = False
+
         try:
             start = datetime.datetime.strptime(start, "%Y-%m-%d")
             end = datetime.datetime.strptime(end, "%Y-%m-%d")
             if interval == "half_an_hour":
                 interval = datetime.timedelta(minutes=30)
                 end += datetime.timedelta(days=1)
+                addHalfInterval = True
             elif interval == "hour":
                 interval = datetime.timedelta(hours=1)
                 end += datetime.timedelta(days=1)
+                addHalfInterval = True
             elif interval == "day":
                 interval = datetime.timedelta(days=1)
                 end += datetime.timedelta(days=1)
@@ -105,7 +118,9 @@ def sales():
                 )
                 .order_by(Transaction.date_time)
             )
-            return jsonify(get_sales(items, start, end, interval, False, revenue))
+            return jsonify(
+                get_sales(items, start, end, interval, False, revenue, addHalfInterval)
+            )
         elif plu is not None:
             items = (
                 db.session.query(Product, Transaction)
@@ -127,7 +142,9 @@ def sales():
                     & (Transaction.date_time <= end)
                 )
             )
-        return jsonify(get_sales(items, start, end, interval, True, revenue))
+        return jsonify(
+            get_sales(items, start, end, interval, True, revenue, addHalfInterval)
+        )
 
 
 @sales_bp.route("/quick/", methods=["GET"])

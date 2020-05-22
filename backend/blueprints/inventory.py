@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, abort
 from models import Product, ProductInfo
 
 # Define the blueprint
-inventory_bp = Blueprint("inventory", __name__)
+inventory_bp = Blueprint("inventaris", __name__)
 
 
 def get_counts(result):
@@ -50,7 +50,7 @@ def inventory():
         return abort(400)
 
 
-@inventory_bp.route('/list', methods=['GET'])
+@inventory_bp.route('/tabel', methods=['GET'])
 def list_products():
     if request.method == 'GET':
         products = ProductInfo.query.all()

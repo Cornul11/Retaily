@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Absolute from '../Absolute';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import Absolute from "../Absolute";
 
 /** Component that displays a table with the current product information */
 
@@ -29,34 +29,32 @@ class ProductInfoTable extends Component {
         Naam: null,
         Inkoopprijs: null,
         Verkoopprijs: null,
-        'Verkocht afgelopen week': null,
-        'Verkocht afgelopen maand': null,
-        'Verkocht afgelopen kwartaal': null,
-        'Verkocht afgelopen jaar': null,
+        "Verkocht afgelopen week": null,
+        "Verkocht afgelopen maand": null,
+        "Verkocht afgelopen kwartaal": null,
+        "Verkocht afgelopen jaar": null,
       };
     }
     return {
       PLU: null,
       Naam: null,
-      'Verkocht afgelopen week': null,
-      'Verkocht afgelopen maand': null,
-      'Verkocht afgelopen kwartaal': null,
-      'Verkocht afgelopen jaar': null,
+      "Verkocht afgelopen week": null,
+      "Verkocht afgelopen maand": null,
+      "Verkocht afgelopen kwartaal": null,
+      "Verkocht afgelopen jaar": null,
     };
   }
 
   async loadTable() {
     this.setState({ loading: true });
     const newData = this.getEmptyData();
-    const {
-      extended, identifier, text, onError, onLoaded,
-    } = this.props;
+    const { extended, identifier, text, onError, onLoaded } = this.props;
     const absolute = this.context;
     let url = `${
-      absolute ? 'https://retaily.site:7000' : ''
+      absolute ? "https://retaily.site:7000" : ""
     }/product/?${identifier}=${text}`;
     await fetch(url, {
-      method: 'GET',
+      method: "GET",
     })
       .then((response) => {
         if (response.ok) {
@@ -67,7 +65,7 @@ class ProductInfoTable extends Component {
             const parsed = JSON.parse(msg);
             onError(parsed.message);
           } catch (error) {
-            onError('Connection failed');
+            onError("Verbinding mislukt");
           }
         });
         return null;
@@ -83,22 +81,22 @@ class ProductInfoTable extends Component {
         }
       });
     url = `${
-      absolute ? 'https://retaily.site:7000' : ''
+      absolute ? "https://retaily.site:7000" : ""
     }/sales/quick/?${identifier}=${text}`;
     await fetch(url, {
-      method: 'GET',
+      method: "GET",
     })
       .then((response) => response.json())
       .then(
         (response) => {
-          newData['Verkocht afgelopen week'] = response.sales_last_week;
-          newData['Verkocht afgelopen maand'] = response.sales_last_month;
-          newData['Verkocht afgelopen kwartaal'] = response.sales_last_quarter;
-          newData['Verkocht afgelopen jaar'] = response.sales_last_year;
+          newData["Verkocht afgelopen week"] = response.sales_last_week;
+          newData["Verkocht afgelopen maand"] = response.sales_last_month;
+          newData["Verkocht afgelopen kwartaal"] = response.sales_last_quarter;
+          newData["Verkocht afgelopen jaar"] = response.sales_last_year;
         },
         (error) => {
           console.log(error);
-        },
+        }
       );
     onLoaded();
     this.setState({ data: newData, loading: false });
@@ -113,7 +111,7 @@ class ProductInfoTable extends Component {
         <tr key={index}>
           <th scope="row">{key}</th>
           <td>{data[key]}</td>
-        </tr>,
+        </tr>
       );
       index += 1;
     });

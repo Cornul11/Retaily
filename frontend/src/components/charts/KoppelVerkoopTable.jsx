@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Absolute from '../Absolute';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import Absolute from "../Absolute";
 
 /** Component that displays a table with the current product information */
 
@@ -23,13 +23,13 @@ class KoppelVerkoopTable extends Component {
 
   async loadTable() {
     this.setState({ loading: true });
-    const {
-      identifier, text, start, end, onError, onLoaded,
-    } = this.props;
+    const { identifier, text, start, end, onError, onLoaded } = this.props;
     const absolute = this.context;
-    const url = `${absolute ? 'https://retaily.site:7000' : ''}/koppelverkoop/lijst/?${identifier}=${text}&start=${start}&end=${end}`;
+    const url = `${
+      absolute ? "https://retaily.site:7000" : ""
+    }/koppelverkoop/lijst/?${identifier}=${text}&start=${start}&end=${end}`;
     await fetch(url, {
-      method: 'GET',
+      method: "GET",
     })
       .then((response) => {
         if (response.ok) {
@@ -40,7 +40,7 @@ class KoppelVerkoopTable extends Component {
             const parsed = JSON.parse(msg);
             onError(parsed.message);
           } catch (error) {
-            onError('Connection failed');
+            onError("Verbinding mislukt");
           }
         });
         return null;
@@ -55,7 +55,7 @@ class KoppelVerkoopTable extends Component {
 
   renderTable() {
     const { data } = this.state;
-    if (typeof data === 'undefined' || data === null || data.length < 1) {
+    if (typeof data === "undefined" || data === null || data.length < 1) {
       return null;
     }
     const table = [];
@@ -66,7 +66,7 @@ class KoppelVerkoopTable extends Component {
         <th scope="row" colSpan="2" className="text-center">
           {key.name}
         </th>
-      </tr>,
+      </tr>
     );
     newData.splice(0, 1);
     newData.forEach((dataKey) => {
@@ -74,7 +74,7 @@ class KoppelVerkoopTable extends Component {
         <tr key={dataKey.name}>
           <th>{dataKey.name}</th>
           <td>{dataKey.count}</td>
-        </tr>,
+        </tr>
       );
     });
     return table;

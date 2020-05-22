@@ -6,7 +6,7 @@ from blueprints.koppelverkoop import koppelverkoop_bp
 
 
 # Register the blueprints
-app.register_blueprint(inventory_bp, url_prefix="/inventory")
+app.register_blueprint(inventory_bp, url_prefix="/inventaris")
 app.register_blueprint(product_bp, url_prefix="/product")
-app.register_blueprint(sales_bp, url_prefix="/sales")
+app.register_blueprint(sales_bp, url_prefix="/verkoop")
 app.register_blueprint(koppelverkoop_bp, url_prefix="/koppelverkoop")

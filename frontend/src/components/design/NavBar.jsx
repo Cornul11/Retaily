@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
 const NavBar = () => (
-  <nav className="navbar navbar-expand-lg navbar-light bg-light static-top mb-5 shadow">
+  <nav className="navbar navbar-expand-lg navbar-light bg-light static-top shadow">
     <div className="container">
       <a className="navbar-brand" href="/">
         <img src="/logo-transparent.png" alt="logo" />
@@ -30,17 +30,17 @@ const NavBar = () => (
           {/*  </a> */}
           {/* </li> */}
           <li className="nav-item active">
-            <a className="nav-link" href="/simple/productinfo">
+            <a className="nav-link" href="/standaard/productinfo">
               Standaard Product Info
             </a>
           </li>
           <li className="nav-item active">
-            <a className="nav-link" href="/extended/productinfo">
+            <a className="nav-link" href="/uitgebreide/productinfo">
               Uitgebreide Product info
             </a>
           </li>
           <li className="nav-item active">
-            <a className="nav-link" href="/salesinfo">
+            <a className="nav-link" href="/transactie_informatie">
               Transactie Informatie
             </a>
           </li>
