@@ -114,6 +114,7 @@ const ProductAutosuggest = class extends Component {
         shouldRenderSuggestions={shouldRenderSuggestions}
         onSuggestionSelected={this.onSuggestionSelectedByUser}
         inputProps={inputProps}
+        focusInputOnSuggestionClick={false}
       />
     );
   }
