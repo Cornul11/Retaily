@@ -102,6 +102,7 @@ class IntervalDatePicker extends Component {
                 locale={nl}
                 showWeekNumbers={interval === 'week'}
                 showMonthDropdown
+                showYearDropdown
                 filterDate={this.filterDate}
               />
             </div>
@@ -118,6 +119,7 @@ class IntervalDatePicker extends Component {
                 locale={nl}
                 showWeekNumbers={interval === 'week'}
                 showMonthDropdown
+                showYearDropdown
                 filterDate={this.filterDate}
               />
             </div>
