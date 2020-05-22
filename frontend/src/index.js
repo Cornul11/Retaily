@@ -1,10 +1,10 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter, Route } from 'react-router-dom';
-import ProductInfoPage from './pages/ProductInfoPage';
-import HomePage from './pages/HomePage';
-import SalesInfoPage from './pages/SalesInfoPage';
-import Absolute from './components/Absolute';
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter, Route } from "react-router-dom";
+import ProductInfoPage from "./pages/ProductInfoPage";
+import HomePage from "./pages/HomePage";
+import SalesInfoPage from "./pages/SalesInfoPage";
+import Absolute from "./components/Absolute";
 
 const App = () => (
   // eslint-disable-next-line react/jsx-filename-extension
@@ -14,15 +14,15 @@ const App = () => (
       {/* Not needed for now
       <Route path="/inventorybarchart" component={InventoryBarchartPage} /> */}
       <Route
-        path="/extended/productinfo"
+        path="/uitgebreide/productinfo"
         render={(props) => <ProductInfoPage {...props} extended />}
       />
       <Route
-        path="/simple/productinfo"
+        path="/standaard/productinfo"
         render={(props) => <ProductInfoPage {...props} extended={false} />}
       />
-      <Route path="/salesinfo" component={SalesInfoPage} />
+      <Route path="/transactie_informatie" component={SalesInfoPage} />
     </BrowserRouter>
   </Absolute.Provider>
 );
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById("root"));

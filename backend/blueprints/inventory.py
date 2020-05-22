@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, abort
 from models import Product, ProductInfo
 
 # Define the blueprint
-inventory_bp = Blueprint("inventory", __name__)
+inventory_bp = Blueprint("inventaris", __name__)
 
 
 def get_counts(result):
