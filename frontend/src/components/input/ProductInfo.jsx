@@ -38,6 +38,7 @@ const ProductInfo = class extends Component {
 
   handleTextChangeByAutosuggest(text) {
     this.setState({ text });
+    this.retrieveInChild();
   }
 
   handleTextChange(event) {
@@ -63,6 +64,13 @@ const ProductInfo = class extends Component {
   handleKeyDown(e) {
     if (e.key === 'Enter') {
       this.retrieveInChild();
+      this.handleBlur();
+    }
+  }
+
+  handleBlur() {
+    if (this.input !== null) {
+      this.input.blur();
     }
   }
 
@@ -100,6 +108,7 @@ const ProductInfo = class extends Component {
         className="form-control"
         placeholder={extended ? '' : 'EAN-code'}
         onChange={this.handleTextChange}
+        ref={(c) => { this.input = c; }}
       />
     );
   }
