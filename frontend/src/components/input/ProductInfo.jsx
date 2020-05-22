@@ -28,8 +28,11 @@ const ProductInfo = class extends Component {
   }
 
   onDetected(result) {
-    this.setState({ scanning: false, text: result });
-    this.retrieveInChild();
+    const { scanning } = this.state;
+    if (scanning) {
+      this.setState({ scanning: false, text: result });
+      this.retrieveInChild();
+    }
   }
 
   handleScanButton() {
