@@ -98,12 +98,13 @@ class SalesChart extends Component {
                 {
                   type: 'time',
                   time: {
+                    isoWeekday: true,
                     unit: interval === 'half_an_hour' ? 'hour' : interval,
                     displayFormats: {
-                      hour: 'HH:mm',
-                      day: 'D MMM',
-                      week: 'D MMM',
-                      month: 'MMM',
+                      hour: 'D-M-YYYY    HH:mm',
+                      day: 'D-M-YYYY',
+                      week: 'D-M-YYYY (WW)',
+                      month: 'M-YYYY',
                     },
                   },
                   offset: true,
