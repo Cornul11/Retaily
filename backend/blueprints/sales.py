@@ -147,7 +147,7 @@ def sales():
         )
 
 
-@sales_bp.route("/quick/", methods=["GET"])
+@sales_bp.route("/kort/", methods=["GET"])
 def quick():
     if request.method == "GET":
         plu = request.args.get("plu", None)
