@@ -82,7 +82,7 @@ class ProductInfoTable extends Component {
       });
     url = `${
       absolute ? "https://retaily.site:7000" : ""
-    }/sales/quick/?${identifier}=${text}`;
+    }/verkoop/kort/?${identifier}=${text}`;
     await fetch(url, {
       method: "GET",
     })
