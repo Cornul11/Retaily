@@ -21,14 +21,14 @@ class BarcodeScanner extends Component {
 
   async componentDidMount() {
     /** Request camera footage from user */
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-      this.setState({ stream });
-    } catch (err) {
-      return;
-    }
-    const { stream } = this.state;
-    this.ref.current.srcObject = stream;
+    // try {
+    //   const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    //   this.setState({ stream });
+    // } catch (err) {
+    //   return;
+    // }
+    // const { stream } = this.state;
+    // this.ref.current.srcObject = stream;
     /** Initialize the scanner */
     Quagga.init(
       {
@@ -36,8 +36,8 @@ class BarcodeScanner extends Component {
           type: 'LiveStream',
           target: document.getElementById('camera'),
           constraints: {
-            width: 960,
-            height: 640,
+            width: { min: 960 },
+            height: { min: 640 },
             facingMode: 'environment',
           },
         },
@@ -69,8 +69,13 @@ class BarcodeScanner extends Component {
 
   render() {
     return (
-      <div style={styles}>
-        <video muted id="camera" width="480" height="320" ref={this.ref} autoPlay />
+      <div id="interactive" className="viewport" style={styles}>
+        <video autoPlay muted playsInline width="360" height="480" />
+        {/*
+    <div style={styles}>
+      <video muted id="camera" width="480" height="320" ref={this.ref} autoPlay/>
+    </div>;
+    */}
       </div>
     );
   }
