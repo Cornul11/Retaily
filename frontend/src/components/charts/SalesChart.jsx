@@ -80,7 +80,10 @@ class SalesChart extends Component {
 
   roundData() {
     const { data } = this.state;
-    const roundedData = data.map((elem) => Number(elem.toFixed(2)));
+    const roundedData = data;
+    for (let i = 0; i < roundedData.length; i += 1) {
+      roundedData[i].y = roundedData[i].y.toFixed(2);
+    }
     this.setState({ data: roundedData });
   }
 
