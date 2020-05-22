@@ -175,14 +175,14 @@ class SalesChart extends Component {
             className="btn btn-secondary form-control mr-sm-2 mr-1"
             onClick={this.zoomOut}
           >
-            zoom out (-)
+            Zoom uit (-)
           </button>
           <button
             type="button"
             className="btn btn-secondary form-control ml-sm-2 ml-1"
             onClick={this.zoomIn}
           >
-            zoom in (+)
+            Zoom in (+)
           </button>
         </div>
       </div>
