@@ -36,7 +36,7 @@ const ProductInfo = class extends Component {
   }
 
   handleScanButton() {
-    this.setState((prevState) => ({ scanning: !prevState.scanning }));
+    this.setState((prevState) => ({ scanning: !prevState.scanning, text: '' }));
   }
 
   handleTextChangeByAutosuggest(text) {

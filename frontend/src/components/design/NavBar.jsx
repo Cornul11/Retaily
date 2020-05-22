@@ -1,7 +1,7 @@
 import React from 'react';
 
 const NavBar = () => (
-  <nav className="navbar navbar-expand-lg navbar-light bg-light static-top mb-5 shadow">
+  <nav className="navbar navbar-expand-lg navbar-light bg-light static-top shadow">
     <div className="container">
       <a className="navbar-brand" href="/">
         <img src="/logo-transparent.png" alt="logo" />
