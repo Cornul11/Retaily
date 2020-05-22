@@ -29,6 +29,7 @@ class ProductInfoTable extends Component {
         Naam: null,
         Inkoopprijs: null,
         Verkoopprijs: null,
+        Winstmarge: null,
         "Verkocht afgelopen week": null,
         "Verkocht afgelopen maand": null,
         "Verkocht afgelopen kwartaal": null,
@@ -77,6 +78,7 @@ class ProductInfoTable extends Component {
           if (extended) {
             newData.Inkoopprijs = response.buying_price;
             newData.Verkoopprijs = response.selling_price;
+            newData.Winstmarge = (newData.Inkoopprijs / newData.Verkoopprijs) * 100;
           }
         }
       });
