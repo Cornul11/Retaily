@@ -68,7 +68,8 @@ class DataSender:
                             transaction_amount = float(product['cash_payment_amount'].replace(',', '.'))
                 transaction_datetime = datetime.strptime(transaction['journal_record_date'], '%Y-%m-%d %H:%M:%S')
                 mysql_insert_query = last_query = (
-                        """INSERT INTO transaction (id, date_time, receipt_number, total_amount) VALUES ('%d', '%s', '%d', '%f')"""
+                        """INSERT INTO transaction (id, date_time, receipt_number, total_amount) VALUES ('%d', '%s', 
+                        '%d', '%f') """
                         % (
                             transaction_id,
                             transaction_datetime,
@@ -162,47 +163,5 @@ class DataSender:
                 cursor.close()
         except Error as error:
             logger.error('Error while inserting/selecting transaction data into the database: %s\nWhile executing: %s',
-                         error, last_query)
-            print("Failed to insert record into table {}".format(error), file=sys.stderr)
-
-    def send_product_info(self, product):
-        last_query = ''
-        try:
-            product_plu = int(product["product_plu"])
-            mysql_select_query = last_query = """SELECT * FROM product_info WHERE plu = '%d'""" % product_plu
-            cursor = self.connection.cursor(buffered=True)
-            cursor.execute(mysql_select_query)
-            result = cursor.fetchone()
-            product_price = float(product["product_price"].replace(",", "."))
-            if result is None:
-                product_name = product["product_name"]
-                mysql_insert_query = last_query = (
-                        """INSERT INTO product_info (plu, name, selling_price) VALUES ('%d', '%s', '%f')"""
-                        % (
-                            product_plu,
-                            product_name,
-                            product_price,
-                        )
-                )
-                cursor.execute(mysql_insert_query)
-                self.connection.commit()
-                cursor.close()
-            else:
-                # if the price of the product in database differs from the one that the price was sold at,
-                # we update the price in the database
-                if result[3] != product_price:
-                    mysql_update_query = last_query = (
-                            """UPDATE product_info SET selling_price = '%d' WHERE plu = '%d'"""
-                            % (
-                                product_price,
-                                product_plu
-                            )
-                    )
-                    cursor.execute(mysql_update_query)
-                    self.connection.commit()
-                cursor.close()
-        except Error as error:
-            logger.error('Error while inserting/updating/selecting product data into the database: %s\nWhile '
-                         'executing: %s',
                          error, last_query)
             print("Failed to insert record into table {}".format(error), file=sys.stderr)
