@@ -1,9 +1,8 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import ProductAutosuggest from "./ProductAutosuggest";
-import BarcodeScanner from "../barcode/BarcodeScanner";
-import "../charts/App.css";
-import Wrapper from "./wrappers/Wrapper";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import ProductAutosuggest from './ProductAutosuggest';
+import BarcodeScanner from '../barcode/BarcodeScanner';
+import Wrapper from './wrappers/Wrapper';
 
 /** Component that retrieves information about an individual product */
 
@@ -11,15 +10,15 @@ const ProductInfo = class extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      identifier: "plu",
-      text: "",
+      identifier: 'plu',
+      text: '',
       scanning: false,
-      chartType: "productInfoTable",
+      chartType: 'productInfoTable',
     };
     this.handleIdentifierChange = this.handleIdentifierChange.bind(this);
     this.handleTextChange = this.handleTextChange.bind(this);
     this.handleTextChangeByAutosuggest = this.handleTextChangeByAutosuggest.bind(
-      this
+      this,
     );
     this.handleScanButton = this.handleScanButton.bind(this);
     this.onDetected = this.onDetected.bind(this);
@@ -33,7 +32,7 @@ const ProductInfo = class extends Component {
   }
 
   handleScanButton() {
-    this.setState((prevState) => ({ text: "", scanning: !prevState.scanning }));
+    this.setState((prevState) => ({ text: '', scanning: !prevState.scanning }));
   }
 
   handleTextChangeByAutosuggest(text) {
@@ -45,15 +44,15 @@ const ProductInfo = class extends Component {
   }
 
   handleIdentifierChange(event) {
-    this.setState({ identifier: event.target.value, text: "" });
+    this.setState({ identifier: event.target.value, text: '' });
   }
 
   scanButtonText() {
     const { scanning } = this.state;
     if (scanning) {
-      return "stop scanner";
+      return 'stop scanner';
     }
-    return "start scanner";
+    return 'start scanner';
   }
 
   handleChartTypeChange(event) {
@@ -61,7 +60,7 @@ const ProductInfo = class extends Component {
   }
 
   handleKeyDown(e) {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       this.retrieveInChild();
     }
   }
@@ -84,7 +83,7 @@ const ProductInfo = class extends Component {
   renderInputText() {
     const { identifier, text } = this.state;
     const { extended } = this.props;
-    if (identifier === "name") {
+    if (identifier === 'name') {
       return (
         <ProductAutosuggest
           text={text}
@@ -98,7 +97,7 @@ const ProductInfo = class extends Component {
         type="number"
         value={text}
         className="form-control"
-        placeholder={extended ? "" : "EAN-code"}
+        placeholder={extended ? '' : 'EAN-code'}
         onChange={this.handleTextChange}
       />
     );
@@ -107,14 +106,14 @@ const ProductInfo = class extends Component {
   renderScanButton() {
     const { extended } = this.props;
     const { identifier } = this.state;
-    if (identifier === "plu") {
+    if (identifier === 'plu') {
       return (
         <button
           type="button"
           className={
             extended
-              ? "btn btn-secondary"
-              : "btn btn-primary btn-lg btn-block mb-2"
+              ? 'btn btn-secondary'
+              : 'btn btn-primary btn-lg btn-block mb-2'
           }
           onClick={this.handleScanButton}
         >
@@ -156,7 +155,7 @@ const ProductInfo = class extends Component {
   renderProductInfoTableWrapper() {
     const { chartType, identifier, text } = this.state;
     const { extended } = this.props;
-    if (chartType === "productInfoTable") {
+    if (chartType === 'productInfoTable') {
       return (
         <Wrapper
           wrapperType="productInfo"
@@ -175,7 +174,7 @@ const ProductInfo = class extends Component {
 
   renderProductSalesChartWrapper() {
     const { chartType, identifier, text } = this.state;
-    if (chartType === "productSales") {
+    if (chartType === 'productSales') {
       return (
         <Wrapper
           wrapperType="productSalesChart"
@@ -192,7 +191,7 @@ const ProductInfo = class extends Component {
 
   renderKoppelVerkoopTableWrapper() {
     const { identifier, text, chartType } = this.state;
-    if (chartType === "koppelverkoop") {
+    if (chartType === 'koppelverkoop') {
       return (
         <Wrapper
           wrapperType="koppelverkoop"

@@ -1,10 +1,11 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { BrowserRouter, Route } from "react-router-dom";
-import ProductInfoPage from "./pages/ProductInfoPage";
-import HomePage from "./pages/HomePage";
-import SalesInfoPage from "./pages/SalesInfoPage";
-import Absolute from "./components/Absolute";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
+import ProductInfoPage from './pages/ProductInfoPage';
+import HomePage from './pages/HomePage';
+import SalesInfoPage from './pages/SalesInfoPage';
+import Absolute from './components/Absolute';
+import './App.css';
 
 const App = () => (
   // eslint-disable-next-line react/jsx-filename-extension
@@ -25,4 +26,4 @@ const App = () => (
     </BrowserRouter>
   </Absolute.Provider>
 );
-ReactDOM.render(<App />, document.getElementById("root"));
+ReactDOM.render(<App />, document.getElementById('root'));
