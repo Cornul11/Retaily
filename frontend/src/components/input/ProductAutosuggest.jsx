@@ -77,7 +77,7 @@ const ProductAutosuggest = class extends Component {
     const absolute = this.context;
     const url = `${
       absolute ? "https://retaily.site:7000" : ""
-    }/inventaris/list`;
+    }/inventaris/tabel`;
     await fetch(url, {
       method: "GET",
     })

@@ -50,7 +50,7 @@ def inventory():
         return abort(400)
 
 
-@inventory_bp.route('/list', methods=['GET'])
+@inventory_bp.route('/tabel', methods=['GET'])
 def list_products():
     if request.method == 'GET':
         products = ProductInfo.query.all()
