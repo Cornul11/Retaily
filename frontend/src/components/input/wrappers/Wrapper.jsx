@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
-import ProductSalesChart from '../../charts/ProductSalesChart';
 import IntervalDatePicker from '../IntervalDatePicker';
 import ProductInfoTable from '../../charts/ProductInfoTable';
 import KoppelVerkoopTable from '../../charts/KoppelVerkoopTable';
@@ -15,7 +14,7 @@ class Wrapper extends Component {
     this.state = {
       startDate: new Date(),
       endDate: new Date(),
-      interval: 'hour',
+      interval: 'day',
       retrieve: false,
       error: '',
     };
@@ -86,6 +85,8 @@ class Wrapper extends Component {
     return (
       <SalesChart
         retrieve={retrieve}
+        identifier={null}
+        text={null}
         start={format(startDate, 'yyyy-MM-dd')}
         end={format(endDate, 'yyyy-MM-dd')}
         interval={interval}
@@ -102,7 +103,7 @@ class Wrapper extends Component {
     } = this.state;
     const { identifier, text } = this.props;
     return (
-      <ProductSalesChart
+      <SalesChart
         retrieve={retrieve}
         identifier={identifier}
         text={text}

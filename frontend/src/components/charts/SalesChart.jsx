@@ -29,12 +29,16 @@ class SalesChart extends Component {
     this.setState({ loading: true });
     const absolute = this.context;
     const {
-      start, end, interval, onError, onLoaded, saleType,
+      identifier, text, start, end, interval, onError, onLoaded, saleType,
     } = this.props;
     const {
       multiplier,
     } = this.state;
-    let url = `${absolute ? 'https://retaily.site:7000' : ''}/sales/?start=${start}&end=${end}&interval=${interval}`;
+    let url = `${absolute ? 'https://retaily.site:7000' : ''}/sales/?`;
+    if (identifier !== null) {
+      url += `${identifier}=${text}&`;
+    }
+    url += `start=${start}&end=${end}&interval=${interval}`;
     if (saleType === 'revenue') {
       url += '&revenue';
     }
@@ -169,6 +173,8 @@ class SalesChart extends Component {
 SalesChart.contextType = Absolute;
 SalesChart.propTypes = {
   retrieve: PropTypes.bool.isRequired,
+  identifier: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
   onLoaded: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
   start: PropTypes.string.isRequired,
