@@ -1,14 +1,14 @@
-import React, { Component } from "react";
-import { Chart } from "chart.js";
-import PropTypes from "prop-types";
-import Absolute from "../Absolute";
-import "./charts.css";
+import React, { Component } from 'react';
+import { Chart } from 'chart.js';
+import PropTypes from 'prop-types';
+import Absolute from '../Absolute';
+import './charts.css';
 
 class SalesChart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      width: "1000",
+      width: '1000',
       chart: null,
       loading: false,
       multiplier: 20,
@@ -39,16 +39,16 @@ class SalesChart extends Component {
       saleType,
     } = this.props;
     const { multiplier } = this.state;
-    let url = `${absolute ? "https://retaily.site:7000" : ""}/verkoop/?`;
+    let url = `${absolute ? 'https://retaily.site:7000' : ''}/verkoop/?`;
     if (identifier !== null) {
       url += `${identifier}=${text}&`;
     }
     url += `start=${start}&end=${end}&interval=${interval}`;
-    if (saleType === "revenue") {
-      url += "&revenue";
+    if (saleType === 'revenue') {
+      url += '&revenue';
     }
     await fetch(url, {
-      method: "GET",
+      method: 'GET',
     })
       .then((response) => {
         if (response.ok) {
@@ -59,7 +59,7 @@ class SalesChart extends Component {
             const parsed = JSON.parse(msg);
             onError(parsed.message);
           } catch (error) {
-            onError("Verbinding mislukt");
+            onError('Verbinding mislukt');
           }
         });
         return null;
@@ -72,9 +72,16 @@ class SalesChart extends Component {
           });
         }
       });
+    this.roundData();
     this.drawChart();
     onLoaded();
     this.setState({ loading: false });
+  }
+
+  roundData() {
+    const { data } = this.state;
+    const roundedData = data.map((elem) => Number(elem.toFixed(2)));
+    this.setState({ data: roundedData });
   }
 
   drawChart() {
@@ -84,13 +91,13 @@ class SalesChart extends Component {
       chart.destroy();
     }
     this.setState({
-      chart: new Chart(document.getElementById("myChart").getContext("2d"), {
-        type: "bar",
+      chart: new Chart(document.getElementById('myChart').getContext('2d'), {
+        type: 'bar',
         data: {
           datasets: [
             {
               data,
-              backgroundColor: "rgba(55,155,255,0.5)",
+              backgroundColor: 'rgba(55,155,255,0.5)',
             },
           ],
         },
@@ -103,15 +110,15 @@ class SalesChart extends Component {
           scales: {
             xAxes: [
               {
-                type: "time",
+                type: 'time',
                 time: {
                   isoWeekday: true,
-                  unit: interval === "half_an_hour" ? "hour" : interval,
+                  unit: interval === 'half_an_hour' ? 'hour' : interval,
                   displayFormats: {
-                    hour: "D-M-YYYY    HH:mm",
-                    day: "D-M-YYYY",
-                    week: "D-M-YYYY (WW)",
-                    month: "M-YYYY",
+                    hour: 'D-M-YYYY    HH:mm',
+                    day: 'D-M-YYYY',
+                    week: 'D-M-YYYY (WW)',
+                    month: 'M-YYYY',
                   },
                 },
                 offset: true,
@@ -128,7 +135,7 @@ class SalesChart extends Component {
           tooltips: {
             callbacks: {
               title() {
-                return "";
+                return '';
               },
             },
           },
@@ -142,7 +149,7 @@ class SalesChart extends Component {
     if (multiplier < 80) {
       this.setState(
         { multiplier: multiplier * 2, width: width * 2 },
-        this.drawChart
+        this.drawChart,
       );
     }
   }
@@ -152,7 +159,7 @@ class SalesChart extends Component {
     if (multiplier > 5) {
       this.setState(
         { multiplier: multiplier / 2, width: width / 2 },
-        this.drawChart
+        this.drawChart,
       );
     }
   }
@@ -164,7 +171,7 @@ class SalesChart extends Component {
         <div className="chartWrapper" role="textbox">
           <div
             className="chartWrapper2"
-            style={{ width: `${width}px`, height: "500px" }}
+            style={{ width: `${width}px`, height: '500px' }}
           >
             <canvas id="myChart" />
           </div>
