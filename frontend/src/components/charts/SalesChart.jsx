@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import { Chart } from 'chart.js';
-import PropTypes from 'prop-types';
-import Absolute from '../Absolute';
-import './charts.css';
+import React, { Component } from "react";
+import { Chart } from "chart.js";
+import PropTypes from "prop-types";
+import Absolute from "../Absolute";
+import "./charts.css";
 
 class SalesChart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      width: '1000',
+      width: "1000",
       chart: null,
       loading: false,
       multiplier: 20,
@@ -29,21 +29,26 @@ class SalesChart extends Component {
     this.setState({ loading: true });
     const absolute = this.context;
     const {
-      identifier, text, start, end, interval, onError, onLoaded, saleType,
+      identifier,
+      text,
+      start,
+      end,
+      interval,
+      onError,
+      onLoaded,
+      saleType,
     } = this.props;
-    const {
-      multiplier,
-    } = this.state;
-    let url = `${absolute ? 'https://retaily.site:7000' : ''}/sales/?`;
+    const { multiplier } = this.state;
+    let url = `${absolute ? "https://retaily.site:7000" : ""}/verkoop/?`;
     if (identifier !== null) {
       url += `${identifier}=${text}&`;
     }
     url += `start=${start}&end=${end}&interval=${interval}`;
-    if (saleType === 'revenue') {
-      url += '&revenue';
+    if (saleType === "revenue") {
+      url += "&revenue";
     }
     await fetch(url, {
-      method: 'GET',
+      method: "GET",
     })
       .then((response) => {
         if (response.ok) {
@@ -54,7 +59,7 @@ class SalesChart extends Component {
             const parsed = JSON.parse(msg);
             onError(parsed.message);
           } catch (error) {
-            onError('Connection failed');
+            onError("Verbinding mislukt");
           }
         });
         return null;
@@ -79,73 +84,76 @@ class SalesChart extends Component {
       chart.destroy();
     }
     this.setState({
-      chart: new Chart(
-        document.getElementById('myChart').getContext('2d'),
-        {
-          type: 'bar',
-          data: {
-            datasets: [
+      chart: new Chart(document.getElementById("myChart").getContext("2d"), {
+        type: "bar",
+        data: {
+          datasets: [
+            {
+              data,
+              backgroundColor: "rgba(55,155,255,0.5)",
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          legend: {
+            display: false,
+          },
+          scales: {
+            xAxes: [
               {
-                data,
-                backgroundColor: 'rgba(55,155,255,0.5)',
+                type: "time",
+                time: {
+                  isoWeekday: true,
+                  unit: interval === "half_an_hour" ? "hour" : interval,
+                  displayFormats: {
+                    hour: "D-M-YYYY    HH:mm",
+                    day: "D-M-YYYY",
+                    week: "D-M-YYYY (WW)",
+                    month: "M-YYYY",
+                  },
+                },
+                offset: true,
+              },
+            ],
+            yAxes: [
+              {
+                ticks: {
+                  beginAtZero: true,
+                },
               },
             ],
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            legend: {
-              display: false,
-            },
-            scales: {
-              xAxes: [
-                {
-                  type: 'time',
-                  time: {
-                    isoWeekday: true,
-                    unit: interval === 'half_an_hour' ? 'hour' : interval,
-                    displayFormats: {
-                      hour: 'D-M-YYYY    HH:mm',
-                      day: 'D-M-YYYY',
-                      week: 'D-M-YYYY (WW)',
-                      month: 'M-YYYY',
-                    },
-                  },
-                  offset: true,
-                },
-              ],
-              yAxes: [
-                {
-                  ticks: {
-                    beginAtZero: true,
-                  },
-                },
-              ],
-            },
-            tooltips: {
-              callbacks: {
-                title() {
-                  return '';
-                },
+          tooltips: {
+            callbacks: {
+              title() {
+                return "";
               },
             },
           },
         },
-      ),
+      }),
     });
   }
 
   zoomIn() {
     const { multiplier, width } = this.state;
     if (multiplier < 80) {
-      this.setState({ multiplier: multiplier * 2, width: width * 2 }, this.drawChart);
+      this.setState(
+        { multiplier: multiplier * 2, width: width * 2 },
+        this.drawChart
+      );
     }
   }
 
   zoomOut() {
     const { multiplier, width } = this.state;
     if (multiplier > 5) {
-      this.setState({ multiplier: multiplier / 2, width: width / 2 }, this.drawChart);
+      this.setState(
+        { multiplier: multiplier / 2, width: width / 2 },
+        this.drawChart
+      );
     }
   }
 
@@ -156,14 +164,26 @@ class SalesChart extends Component {
         <div className="chartWrapper" role="textbox">
           <div
             className="chartWrapper2"
-            style={{ width: `${width}px`, height: '500px' }}
+            style={{ width: `${width}px`, height: "500px" }}
           >
             <canvas id="myChart" />
           </div>
         </div>
         <div className="input-group mt-2">
-          <button type="button" className="btn btn-secondary form-control mr-sm-2 mr-1" onClick={this.zoomOut}>zoom out (-)</button>
-          <button type="button" className="btn btn-secondary form-control ml-sm-2 ml-1" onClick={this.zoomIn}>zoom in (+)</button>
+          <button
+            type="button"
+            className="btn btn-secondary form-control mr-sm-2 mr-1"
+            onClick={this.zoomOut}
+          >
+            zoom out (-)
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary form-control ml-sm-2 ml-1"
+            onClick={this.zoomIn}
+          >
+            zoom in (+)
+          </button>
         </div>
       </div>
     );

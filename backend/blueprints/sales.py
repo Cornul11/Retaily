@@ -8,7 +8,7 @@ import datetime
 time_format = "%Y-%m-%d %H:%M"
 
 # Define the blueprint
-sales_bp = Blueprint("sales", __name__)
+sales_bp = Blueprint("verkoop", __name__)
 
 
 def get_sales(items, start, end, interval, product, revenue, addHalfInterval):
