@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
-import IntervalDatePicker from '../IntervalDatePicker';
-import ProductInfoTable from '../../charts/ProductInfoTable';
-import KoppelVerkoopTable from '../../charts/KoppelVerkoopTable';
-import SalesChart from '../../charts/SalesChart';
-import RetrieveButton from '../../design/RetrieveButton';
-import RetrieveError from '../../design/RetrieveError';
+import IntervalDatePicker from './IntervalDatePicker';
+import ProductInfoTable from '../charts/ProductInfoTable';
+import KoppelVerkoopTable from '../charts/KoppelVerkoopTable';
+import SalesChart from '../charts/SalesChart';
+import RetrieveButton from '../design/RetrieveButton';
+import RetrieveError from '../design/RetrieveError';
 
 class Wrapper extends Component {
   constructor(props) {

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ProductAutosuggest from './ProductAutosuggest';
 import BarcodeScanner from '../barcode/BarcodeScanner';
-import Wrapper from './wrappers/Wrapper';
+import Wrapper from './Wrapper';
 
 /** Component that retrieves information about an individual product */
 

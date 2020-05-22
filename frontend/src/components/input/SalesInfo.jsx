@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Wrapper from './wrappers/Wrapper';
+import Wrapper from './Wrapper';
 
 const SalesInfo = class extends Component {
   constructor(props) {
