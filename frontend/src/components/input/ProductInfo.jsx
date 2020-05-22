@@ -28,15 +28,12 @@ const ProductInfo = class extends Component {
   }
 
   onDetected(result) {
-    const { scanning } = this.state;
-    if (scanning) {
-      this.setState({ scanning: false, text: result });
-      this.retrieveInChild();
-    }
+    this.setState({ scanning: false, text: result });
+    this.retrieveInChild();
   }
 
   handleScanButton() {
-    this.setState((prevState) => ({ scanning: !prevState.scanning, text: '' }));
+    this.setState((prevState) => ({ text: '', scanning: !prevState.scanning }));
   }
 
   handleTextChangeByAutosuggest(text) {

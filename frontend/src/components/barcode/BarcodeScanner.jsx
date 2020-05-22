@@ -13,7 +13,6 @@ class BarcodeScanner extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      stream: undefined,
       loaded: false,
     };
     this.ref = React.createRef();
@@ -57,11 +56,11 @@ class BarcodeScanner extends Component {
   }
 
   componentWillUnmount() {
-    const { stream } = this.state;
-    if (stream !== undefined) {
+    const { loaded } = this.state;
+    if (loaded) {
       Quagga.stop();
+      this.setState({ loaded: false });
     }
-    this.setState({ loaded: false });
   }
 
   onDetected(result) {
