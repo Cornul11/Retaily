@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, abort
+
 from models import Product, ProductInfo
 
 # Define the blueprint
@@ -47,7 +48,7 @@ def inventory():
         result = get_counts([product.serialized for product in products])
         if len(result) > 0:
             return jsonify(result[0])
-        return abort(400)
+        return abort(500)
 
 
 @inventory_bp.route('/tabel', methods=['GET'])
@@ -59,4 +60,4 @@ def list_products():
             result.append({'name': product.name})
         if len(result) > 0:
             return jsonify(result)
-        return abort(400)
+        return abort(500)

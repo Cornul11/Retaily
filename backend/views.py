@@ -1,9 +1,8 @@
 from app import app
 from blueprints.inventory import inventory_bp
+from blueprints.koppelverkoop import koppelverkoop_bp
 from blueprints.product import product_bp
 from blueprints.sales import sales_bp
-from blueprints.koppelverkoop import koppelverkoop_bp
-
 
 # Register the blueprints
 app.register_blueprint(inventory_bp, url_prefix="/inventaris")

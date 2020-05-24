@@ -1,7 +1,9 @@
-from flask import Blueprint, request, make_response, jsonify, abort
-from models import Product, Transaction
-from app import db
 import datetime
+
+from flask import Blueprint, request, make_response, jsonify, abort
+
+from app import db
+from models import Product, Transaction
 
 # Define the blueprint
 koppelverkoop_bp = Blueprint("koppelverkoop", __name__)
@@ -31,7 +33,7 @@ def get_koppel_products(plu, name, start, end):
                 count = 1
         final.append({"name": k_name, "count": count})
     final.sort(key=lambda x: x["count"], reverse=True)
-    return ([{"name": "Geselecteerd Product: " + name, "count": ""}] + final[:10])
+    return [{"name": "Geselecteerd Product: " + name, "count": ""}] + final[:10]
 
 
 def get_id(plu, name, start, end):
@@ -39,8 +41,8 @@ def get_id(plu, name, start, end):
         data = []
         items = (
             db.session.query(Product, Transaction)
-            .join(Transaction)
-            .filter(
+                .join(Transaction)
+                .filter(
                 (Product.plu == plu)
                 & (Transaction.date_time >= start)
                 & (Transaction.date_time <= end)
@@ -53,8 +55,8 @@ def get_id(plu, name, start, end):
         data = []
         items = (
             db.session.query(Product, Transaction)
-            .join(Transaction)
-            .filter(
+                .join(Transaction)
+                .filter(
                 (Product.name == name)
                 & (Transaction.date_time >= start)
                 & (Transaction.date_time <= end)
@@ -91,7 +93,7 @@ def lijst():
                 response = make_response(
                     jsonify(message="EAN code not found"), 400)
                 abort(response)
-            name = (product.serialized)["name"]
+            name = product.serialized["name"]
         elif plu is None:
             product = Product.query.filter(Product.name == name).first()
             if product is None:

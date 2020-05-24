@@ -1,6 +1,7 @@
 from flask import Blueprint, request, make_response, jsonify, abort
-from models import ProductInfo
+
 from app import db
+from models import ProductInfo
 
 # Define the blueprint
 product_bp = Blueprint("product", __name__)
@@ -42,14 +43,14 @@ def product():
             product = ProductInfo.query.filter(ProductInfo.plu == plu).first()
             if product is None:
                 response = make_response(
-                    jsonify(message="EAN code niet gevonden."), 400)
+                    jsonify(message="EAN code niet gevonden."), 404)
                 abort(response)
         elif name is not None:
             product = ProductInfo.query.filter(
                 ProductInfo.name == name).first()
             if product is None:
                 response = make_response(
-                    jsonify(message="Product naam niet gevonden."), 400)
+                    jsonify(message="Product naam niet gevonden."), 404)
                 abort(response)
         else:
             products = ProductInfo.query
