@@ -80,7 +80,7 @@ class ProductInfoTable extends Component {
           if (extended) {
             newData.Inkoopprijs = response.buying_price;
             newData.Verkoopprijs = response.selling_price;
-            newData.Winstmarge = `${((newData.Inkoopprijs / newData.Verkoopprijs) * 100).toFixed(2)}%`;
+            newData.Winstmarge = `${(100 * ((newData.Verkoopprijs - newData.Inkoopprijs) / newData.Inkoopprijs)).toFixed(2)}%`;
           }
         }
       });
