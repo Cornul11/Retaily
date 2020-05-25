@@ -81,23 +81,23 @@ def lijst():
             abort(400)
         if plu is None and name == "":
             response = make_response(
-                jsonify(message="please enter a product name"), 400)
+                jsonify(message="Voer een product naam in"), 400)
             abort(response)
         elif plu == "" and name is None:
             response = make_response(
-                jsonify(message="please enter a plu"), 400)
+                jsonify(message="Voer een PLU code in"), 400)
             abort(response)
         if name is None:
             product = Product.query.filter(Product.plu == plu).first()
             if product is None:
                 response = make_response(
-                    jsonify(message="EAN code not found"), 400)
+                    jsonify(message="EAN code niet gevonden"), 400)
                 abort(response)
             name = product.serialized["name"]
         elif plu is None:
             product = Product.query.filter(Product.name == name).first()
             if product is None:
                 response = make_response(
-                    jsonify(message="product name not found"), 400)
+                    jsonify(message="Product naam niet gevonden"), 400)
                 abort(response)
         return jsonify(get_koppel_products(plu, name, start, end))
