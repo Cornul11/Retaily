@@ -2,6 +2,7 @@ import os
 import sys
 import time
 from zipfile import ZipFile
+
 from tqdm import tqdm
 
 from journal_parser.parser import parse_file
