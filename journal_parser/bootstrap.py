@@ -26,13 +26,15 @@ if __name__ == '__main__':
     files_in_0002 = [src_path + '/0002/' + file for file in os.listdir(src_path + '/0002')]
 
     print('0001:')
-    with tqdm(files_in_0001) as pbar:
+    with tqdm(files_in_0001.sort()) as pbar:
         for filename in pbar:
             pbar.set_postfix_str(s=filename[-27:], refresh=True)
-            process(filename)
+            time.sleep(0.1)
+            #process(filename)
 
     print('0002:')
-    with tqdm(files_in_0002) as pbar:
+    with tqdm(files_in_0002.sort()) as pbar:
         for filename in pbar:
             pbar.set_postfix_str(s=filename[-27:], refresh=True)
-            process(filename)
+            time.sleep(0.1)
+            #process(filename)
