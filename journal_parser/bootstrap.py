@@ -32,5 +32,7 @@ if __name__ == '__main__':
             process(filename)
 
     print('0002:')
-    for filename in tqdm(files_in_0002):
-        process(filename)
+    with tqdm(files_in_0002) as pbar:
+        for filename in pbar:
+            pbar.set_postfix_str(s=filename[-27:], refresh=True)
+            process(filename)
