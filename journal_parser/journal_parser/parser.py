@@ -142,7 +142,7 @@ def parse_components(string: str, filename: str, data_sender: DataSender) -> Lis
 
         elif 'PLU' in product:
             local_product = parse_product(product)
-            #data_sender.send_product_info(local_product)
+            data_sender.send_product_info(local_product)
             products.append(dict(local_product))
 
         elif any(elem in product for elem in ignored_components):

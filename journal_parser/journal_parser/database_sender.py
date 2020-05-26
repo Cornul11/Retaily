@@ -149,7 +149,7 @@ class DataSender:
                 # we update the price in the database
                 if result[3] != product_price:
                     mysql_update_query = last_query = (
-                            """UPDATE product_info SET selling_price = '%d' WHERE plu = '%d'"""
+                            """UPDATE product_info SET selling_price = '%f' WHERE plu = '%d'"""
                             % (
                                 product_price,
                                 product_plu
