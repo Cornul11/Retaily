@@ -1,7 +1,7 @@
 import logging
 import sys
 from typing import Dict, Tuple, Optional, List
-
+import pprint
 from journal_parser.database_sender import DataSender
 
 logger = logging.getLogger(__name__)
@@ -70,7 +70,8 @@ def parse_file(filepath: str) -> object:
                 'journal_record_type': record_type,
                 'journal_record_products': products,
             }
-
+            pp = pprint.PrettyPrinter()
+            pp.pprint(local_record)
             data_sender.send_transaction_info(local_record)
 
             records.append(dict(local_record))
@@ -141,7 +142,7 @@ def parse_components(string: str, filename: str, data_sender: DataSender) -> Lis
 
         elif 'PLU' in product:
             local_product = parse_product(product)
-            data_sender.send_product_info(local_product)
+            #data_sender.send_product_info(local_product)
             products.append(dict(local_product))
 
         elif any(elem in product for elem in ignored_components):

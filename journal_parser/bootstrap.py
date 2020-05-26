@@ -18,18 +18,19 @@ def process(src_path):
 
 
 if __name__ == '__main__':
-    src_path = sys.argv[1] if len(sys.argv) > 1 else '.'
-    print('Journal parser for uploading started at: ', time.ctime())
-    print('Uploading everything in ', src_path)
-    files_in_0001 = [src_path + '/0001/' + file for file in os.listdir(src_path + '/0001')]
-    files_in_0002 = [src_path + '/0002/' + file for file in os.listdir(src_path + '/0002')]
-
-    print('0001:')
-    with tqdm(files_in_0001) as pbar:
-        for filename in pbar:
-            pbar.set_postfix_str(s=filename[-27:], refresh=True)
-            process(filename)
-
-    print('0002:')
-    for filename in tqdm(files_in_0002):
-        process(filename)
+    # src_path = sys.argv[1] if len(sys.argv) > 1 else '.'
+    # print('Journal parser for uploading started at: ', time.ctime())
+    # print('Uploading everything in ', src_path)
+    # files_in_0001 = [src_path + '/0001/' + file for file in os.listdir(src_path + '/0001')]
+    # files_in_0002 = [src_path + '/0002/' + file for file in os.listdir(src_path + '/0002')]
+    #
+    # print('0001:')
+    # with tqdm(files_in_0001) as pbar:
+    #     for filename in pbar:
+    #         pbar.set_postfix_str(s=filename[-27:], refresh=True)
+    #         process(filename)
+    #
+    # print('0002:')
+    # for filename in tqdm(files_in_0002):
+    #     process(filename)
+    parse_file(sys.argv[1])
