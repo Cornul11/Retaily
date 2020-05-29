@@ -70,10 +70,10 @@ class SalesChart extends Component {
             data: response,
             width: (response.length * multiplier).toString(),
           });
+          this.roundData();
+          this.drawChart();
         }
       });
-    this.roundData();
-    this.drawChart();
     onLoaded();
     this.setState({ loading: false });
   }
@@ -210,7 +210,11 @@ SalesChart.propTypes = {
   start: PropTypes.string.isRequired,
   end: PropTypes.string.isRequired,
   interval: PropTypes.string.isRequired,
-  saleType: PropTypes.string.isRequired,
+  saleType: PropTypes.string,
+};
+
+SalesChart.defaultProps = {
+  saleType: '',
 };
 
 export default SalesChart;
