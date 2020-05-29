@@ -6,7 +6,6 @@ const RetrieveError = class extends Component {
     super(props);
     this.state = {
       errorMessages: [],
-      index: 0,
     };
     this.clearMessages = this.clearMessages.bind(this);
   }
@@ -16,9 +15,10 @@ const RetrieveError = class extends Component {
     setClear(this.clearMessages);
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     const { error } = this.props;
-    if (error !== '') {
+    const { errorMessages } = this.state;
+    if ((prevProps.error !== error || errorMessages.length === 0) && error !== '') {
       this.addNewErrorMessage();
     }
   }
@@ -28,18 +28,18 @@ const RetrieveError = class extends Component {
   }
 
   addNewErrorMessage() {
-    const { errorMessages, index } = this.state;
+    const { errorMessages } = this.state;
     const { error, handleError } = this.props;
     const newMessages = errorMessages;
     newMessages.push(
-      <div key={index} className="alert alert-warning fade show" role="alert">
+      <div key={error} className="alert alert-warning fade show" role="alert">
         <strong>
-          Fout:
+          {'Fout: '}
           {error}
         </strong>
       </div>,
     );
-    this.setState({ index: index + 1, errorMessages: newMessages });
+    this.setState({ errorMessages: newMessages });
     handleError('');
   }
 
