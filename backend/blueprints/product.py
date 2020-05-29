@@ -2,6 +2,7 @@ from flask import Blueprint, request, make_response, jsonify, abort
 
 from app import db
 from models import ProductInfo
+from error import pluError, nameError, undefinedError
 
 # Define the blueprint
 product_bp = Blueprint("product", __name__)
@@ -14,22 +15,21 @@ def get_price(price_identifier):
         name = request.args.get("name", None)
         price = request.args.get("price", None)
         if price is None:
-            abort(400)
+            undefinedError()
         elif plu is not None:
             ProductInfo.query.filter(ProductInfo.plu == plu).update(
                 {price_identifier: price}
             )
             db.session.commit()
-            product = ProductInfo.query.filter(ProductInfo.plu == plu).first()
+            product = pluError(plu)
         elif name is not None:
             ProductInfo.query.filter(ProductInfo.name == name).update(
                 {price_identifier: price}
             )
             db.session.commit()
-            product = ProductInfo.query.filter(
-                ProductInfo.name == name).first()
+            product = nameError(name)
         else:
-            abort(400)
+            undefinedError()
         return jsonify(product.serialized)
 
 
@@ -40,18 +40,9 @@ def product():
         plu = request.args.get("plu", None)
         name = request.args.get("name", None)
         if plu is not None:
-            product = ProductInfo.query.filter(ProductInfo.plu == plu).first()
-            if product is None:
-                response = make_response(
-                    jsonify(message="EAN code niet gevonden."), 404)
-                abort(response)
+            product = pluError(plu)
         elif name is not None:
-            product = ProductInfo.query.filter(
-                ProductInfo.name == name).first()
-            if product is None:
-                response = make_response(
-                    jsonify(message="Product naam niet gevonden."), 404)
-                abort(response)
+            product = nameError(name)
         else:
             products = ProductInfo.query
             if products is not None:

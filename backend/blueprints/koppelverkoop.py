@@ -4,6 +4,7 @@ from flask import Blueprint, request, make_response, jsonify, abort
 
 from app import db
 from models import Product, Transaction
+from error import pluError, nameError, serverError
 
 # Define the blueprint
 koppelverkoop_bp = Blueprint("koppelverkoop", __name__)
@@ -41,8 +42,8 @@ def get_id(plu, name, start, end):
         data = []
         items = (
             db.session.query(Product, Transaction)
-                .join(Transaction)
-                .filter(
+            .join(Transaction)
+            .filter(
                 (Product.plu == plu)
                 & (Transaction.date_time >= start)
                 & (Transaction.date_time <= end)
@@ -55,8 +56,8 @@ def get_id(plu, name, start, end):
         data = []
         items = (
             db.session.query(Product, Transaction)
-                .join(Transaction)
-                .filter(
+            .join(Transaction)
+            .filter(
                 (Product.name == name)
                 & (Transaction.date_time >= start)
                 & (Transaction.date_time <= end)
@@ -78,26 +79,10 @@ def lijst():
             start = datetime.datetime.strptime(start, "%Y-%m-%d")
             end = datetime.datetime.strptime(end, "%Y-%m-%d")
         except:
-            abort(400)
-        if plu is None and name == "":
-            response = make_response(
-                jsonify(message="Voer een product naam in"), 400)
-            abort(response)
-        elif plu == "" and name is None:
-            response = make_response(
-                jsonify(message="Voer een PLU code in"), 400)
-            abort(response)
+            serverError()
         if name is None:
-            product = Product.query.filter(Product.plu == plu).first()
-            if product is None:
-                response = make_response(
-                    jsonify(message="EAN code niet gevonden"), 400)
-                abort(response)
+            product = pluError(plu)
             name = product.serialized["name"]
         elif plu is None:
-            product = Product.query.filter(Product.name == name).first()
-            if product is None:
-                response = make_response(
-                    jsonify(message="Product naam niet gevonden"), 400)
-                abort(response)
+            nameError(name)
         return jsonify(get_koppel_products(plu, name, start, end))
