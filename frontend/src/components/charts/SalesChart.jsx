@@ -27,14 +27,11 @@ class SalesChart extends Component {
 
   async loadChart() {
     this.setState({ loading: true });
-    const { multiplier } = this.state;
     const { onLoaded } = this.props;
     const url = this.createURL();
-    const data = await this.fetchData(url);
+    await this.fetchData(url);
+    const { data } = this.state;
     if (data != null) {
-      this.setState({
-        data, width: (data.length * multiplier).toString(),
-      });
       this.roundData();
       this.drawChart();
     }
@@ -113,16 +110,32 @@ class SalesChart extends Component {
 
   async fetchData(url) {
     const { onError } = this.props;
-    try {
-      const result = await fetch(url, {
-        method: 'GET',
+    const { multiplier } = this.state;
+    fetch(url, {
+      method: 'GET',
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        response.text().then((msg) => {
+          try {
+            const parsed = JSON.parse(msg);
+            onError(parsed.message);
+          } catch (error) {
+            onError('Verbinding mislukt');
+          }
+        });
+        return null;
+      })
+      .then((response) => {
+        if (response != null) {
+          this.setState({
+            data: response,
+            width: (response.length * multiplier).toString(),
+          });
+        }
       });
-      const data = await result.json();
-      return data;
-    } catch (e) {
-      onError('Verbinding mislukt');
-      return null;
-    }
   }
 
   createURL() {
