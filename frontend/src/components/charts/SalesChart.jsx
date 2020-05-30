@@ -27,53 +27,17 @@ class SalesChart extends Component {
 
   async loadChart() {
     this.setState({ loading: true });
-    const absolute = this.context;
-    const {
-      identifier,
-      text,
-      start,
-      end,
-      interval,
-      onError,
-      onLoaded,
-      saleType,
-    } = this.props;
     const { multiplier } = this.state;
-    let url = `${absolute ? 'https://retaily.site:7000' : ''}/verkoop/?`;
-    if (identifier !== null) {
-      url += `${identifier}=${text}&`;
-    }
-    url += `start=${start}&end=${end}&interval=${interval}`;
-    if (saleType === 'revenue') {
-      url += '&revenue';
-    }
-    await fetch(url, {
-      method: 'GET',
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        response.text().then((msg) => {
-          try {
-            const parsed = JSON.parse(msg);
-            onError(parsed.message);
-          } catch (error) {
-            onError('Verbinding mislukt');
-          }
-        });
-        return null;
-      })
-      .then((response) => {
-        if (response != null) {
-          this.setState({
-            data: response,
-            width: (response.length * multiplier).toString(),
-          });
-          this.roundData();
-          this.drawChart();
-        }
+    const { onLoaded } = this.props;
+    const url = this.createURL();
+    const data = await this.fetchData(url);
+    if (data != null) {
+      this.setState({
+        data, width: (data.length * multiplier).toString(),
       });
+      this.roundData();
+      this.drawChart();
+    }
     onLoaded();
     this.setState({ loading: false });
   }
@@ -147,6 +111,41 @@ class SalesChart extends Component {
     });
   }
 
+  async fetchData(url) {
+    const { onError } = this.props;
+    try {
+      const result = await fetch(url, {
+        method: 'GET',
+      });
+      const data = await result.json();
+      return data;
+    } catch (e) {
+      onError('Verbinding mislukt');
+      return null;
+    }
+  }
+
+  createURL() {
+    const absolute = this.context;
+    const {
+      identifier,
+      text,
+      start,
+      end,
+      interval,
+      saleType,
+    } = this.props;
+    let url = `${absolute ? 'https://retaily.site:7000' : ''}/verkoop/?`;
+    if (identifier !== null) {
+      url += `${identifier}=${text}&`;
+    }
+    url += `start=${start}&end=${end}&interval=${interval}`;
+    if (saleType === 'revenue') {
+      url += '&revenue';
+    }
+    return url;
+  }
+
   zoomIn() {
     const { multiplier, width } = this.state;
     if (multiplier < 80) {
@@ -203,18 +202,19 @@ class SalesChart extends Component {
 SalesChart.contextType = Absolute;
 SalesChart.propTypes = {
   retrieve: PropTypes.bool.isRequired,
-  identifier: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired,
+  identifier: PropTypes.string,
+  text: PropTypes.string,
   onLoaded: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
   start: PropTypes.string.isRequired,
   end: PropTypes.string.isRequired,
   interval: PropTypes.string.isRequired,
-  saleType: PropTypes.string,
+  saleType: PropTypes.string.isRequired,
 };
 
 SalesChart.defaultProps = {
-  saleType: '',
+  identifier: PropTypes.string,
+  text: PropTypes.string,
 };
 
 export default SalesChart;
