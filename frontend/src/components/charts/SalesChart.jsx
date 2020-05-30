@@ -209,10 +209,11 @@ SalesChart.propTypes = {
   start: PropTypes.string.isRequired,
   end: PropTypes.string.isRequired,
   interval: PropTypes.string.isRequired,
-  saleType: PropTypes.string.isRequired,
+  saleType: PropTypes.string,
 };
 
 SalesChart.defaultProps = {
+  saleType: '',
   identifier: PropTypes.string,
   text: PropTypes.string,
 };
