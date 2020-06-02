@@ -159,7 +159,7 @@ class Wrapper extends Component {
             <IntervalDatePicker
               onChangeStartDate={this.handleStartDateChange}
               onChangeEndDate={this.handleEndDateChange}
-              OnIntervalChange={this.handleIntervalChange}
+              onIntervalChange={this.handleIntervalChange}
               startDate={startDate}
               endDate={endDate}
               interval={interval}
