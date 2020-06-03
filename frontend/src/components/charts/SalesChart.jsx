@@ -143,7 +143,8 @@ class SalesChart extends Component {
     } = this.props;
     let url = `${absolute ? 'https://retaily.site:7000' : ''}/verkoop/?`;
     if (identifier !== null) {
-      url += `${identifier}=${text}&`;
+      const encodedComponent = encodeURIComponent(text);
+      url += `${identifier}=${encodedComponent}&`;
     }
     url += `start=${start}&end=${end}&interval=${interval}`;
     if (saleType === 'revenue') {
