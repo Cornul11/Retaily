@@ -27,6 +27,7 @@ class KoppelVerkoopTable extends Component {
       identifier, text, start, end, onError, onLoaded,
     } = this.props;
     const absolute = this.context;
+    this.text = encodeURIComponent(text);
     const url = `${
       absolute ? 'https://retaily.site:7000' : ''
     }/koppelverkoop/lijst/?${identifier}=${text}&start=${start}&end=${end}`;

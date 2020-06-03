@@ -53,6 +53,7 @@ class ProductInfoTable extends Component {
       extended, identifier, text, onError, onLoaded,
     } = this.props;
     const absolute = this.context;
+    this.text = encodeURIComponent(text);
     let url = `${
       absolute ? 'https://retaily.site:7000' : ''
     }/product/?${identifier}=${text}`;
