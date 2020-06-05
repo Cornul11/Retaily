@@ -24,6 +24,7 @@ const ProductInfo = class extends Component {
     this.onDetected = this.onDetected.bind(this);
     this.handleChartTypeChange = this.handleChartTypeChange.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.retrieveInChild = () => { };
   }
 
   onDetected(result) {
@@ -32,7 +33,7 @@ const ProductInfo = class extends Component {
   }
 
   handleScanButton() {
-    this.setState((prevState) => ({ text: '', scanning: !prevState.scanning }));
+    this.setState((prevState) => ({ scanning: !prevState.scanning }));
   }
 
   handleTextChangeByAutosuggest(text) {
@@ -44,7 +45,7 @@ const ProductInfo = class extends Component {
   }
 
   handleIdentifierChange(event) {
-    this.setState({ identifier: event.target.value, text: '' });
+    this.setState({ identifier: event.target.value });
   }
 
   scanButtonText() {
@@ -143,7 +144,7 @@ const ProductInfo = class extends Component {
         id="chartType"
         value={chartType}
         onChange={this.handleChartTypeChange}
-        className="form-control"
+        className="selectChart form-control"
       >
         <option value="productInfoTable">Huidige informatie</option>
         <option value="productSales">Verkoopcijfers</option>
