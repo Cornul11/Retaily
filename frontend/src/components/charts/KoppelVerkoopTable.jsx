@@ -23,14 +23,10 @@ class KoppelVerkoopTable extends Component {
 
   async loadTable() {
     this.setState({ loading: true });
+    const url = this.createURL();
     const {
-      identifier, text, start, end, onError, onLoaded,
+      onError, onLoaded,
     } = this.props;
-    const absolute = this.context;
-    const encodedComponent = encodeURIComponent(text);
-    const url = `${
-      absolute ? 'https://retaily.site:7000' : ''
-    }/koppelverkoop/lijst/?${identifier}=${encodedComponent}&start=${start}&end=${end}`;
     await fetch(url, {
       method: 'GET',
     })
@@ -54,6 +50,17 @@ class KoppelVerkoopTable extends Component {
 
     onLoaded();
     this.setState({ loading: false });
+  }
+
+  createURL() {
+    const {
+      text, identifier, start, end,
+    } = this.props;
+    const absolute = this.context;
+    const encodedComponent = encodeURIComponent(text);
+    return `${
+      absolute ? 'https://retaily.site:7000' : ''
+    }/koppelverkoop/lijst/?${identifier}=${encodedComponent}&start=${start}&end=${end}`;
   }
 
   renderTable() {
