@@ -47,14 +47,24 @@ class ProductInfoTable extends Component {
   }
 
   async loadTable() {
-    this.setState({ loading: true });
-    const newData = this.getEmptyData();
-    const {
-      extended, identifier, text, onError, onLoaded,
-    } = this.props;
+    this.setState({ loading: true, newData: this.getEmptyData() }, async () => {
+      await this.retrieveProductData();
+      await this.retrieveSalesData();
+      const { onLoaded } = this.props;
+      onLoaded();
+      const { newData } = this.state;
+      this.setState({ data: newData, loading: false });
+    });
+  }
+
+  async retrieveProductData() {
     const absolute = this.context;
+    const {
+      identifier, text, onError, extended,
+    } = this.props;
+    const { newData } = this.state;
     const encodedComponent = encodeURIComponent(text);
-    let url = `${
+    const url = `${
       absolute ? 'https://retaily.site:7000' : ''
     }/product/?${identifier}=${encodedComponent}`;
     await fetch(url, {
@@ -85,7 +95,14 @@ class ProductInfoTable extends Component {
           }
         }
       });
-    url = `${
+  }
+
+  async retrieveSalesData() {
+    const absolute = this.context;
+    const { identifier, text } = this.props;
+    const { newData } = this.state;
+    const encodedComponent = encodeURIComponent(text);
+    const url = `${
       absolute ? 'https://retaily.site:7000' : ''
     }/verkoop/kort/?${identifier}=${encodedComponent}`;
     await fetch(url, {
@@ -103,8 +120,6 @@ class ProductInfoTable extends Component {
           console.log(error);
         },
       );
-    onLoaded();
-    this.setState({ data: newData, loading: false });
   }
 
   renderTable() {
