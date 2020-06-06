@@ -1,6 +1,5 @@
 import React from 'react';
 import { shallow, mount } from 'enzyme';
-import fetchMock from 'fetch-mock';
 import SalesChart from '../../components/charts/SalesChart';
 
 describe('retrieve when retrieve prop is true', () => {
@@ -26,7 +25,7 @@ describe('retrieve when retrieve prop is true', () => {
 });
 
 describe('test createURL', () => {
-  const salesChart = mount(<SalesChart
+  const salesChart = shallow(<SalesChart
     retrieve={false}
     identifier=""
     text=""
@@ -37,16 +36,26 @@ describe('test createURL', () => {
     interval="interval"
   />);
   it('should exclude identifier and text', () => {
-    expect(salesChart.instance().createURL()).toEqual('/verkoop/?=&start=start&end=end&interval=interval');
+    expect(salesChart.instance().createURL()).toEqual(
+      'https://retaily.site:7000/verkoop/?=&start=start&end=end&interval=interval',
+    );
   });
   it('should include identifier and text', () => {
     salesChart.setProps({ identifier: 'identifier', text: 'text' });
-    expect(salesChart.instance().createURL()).toEqual('/verkoop/?identifier=text&start=start&end=end&interval=interval');
+    expect(salesChart.instance().createURL()).toEqual(
+      'https://retaily.site:7000/verkoop/?identifier=text&start=start&end=end&interval=interval',
+    );
   });
 });
 
 describe('test fetchData', () => {
-  const salesChart = mount(<SalesChart
+  const data = [{ t: '2020', y: 100 }, { t: '2021', y: 200 }];
+  global.fetch = jest.fn();
+  fetch.mockImplementation(() => Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve(data),
+  }));
+  const salesChart = shallow(<SalesChart
     retrieve={false}
     identifier=""
     text=""
@@ -56,16 +65,14 @@ describe('test fetchData', () => {
     end=""
     interval=""
   />);
-  salesChart.instance().setState({ data: [], multiplier: 10 });
-  fetchMock.get('/verkoop/?=&start=&end=&interval=', [{ t: '2020', y: 100 }, { t: '2021', y: 200 }]);
-  it('test fetchData', () => {
-    expect(salesChart.instance().fetchData('/verkoop/?=&start=&end=&interval='))
-      .resolves.toEqual([{ t: '2020', y: 100 }, { t: '2021', y: 200 }]);
+  it('test fetchData', async () => {
+    const result = await salesChart.instance().fetchData('url');
+    expect(result).toEqual(data);
   });
 });
 
 describe('test roundData', () => {
-  const salesChart = mount(<SalesChart
+  const salesChart = shallow(<SalesChart
     retrieve
     identifier=""
     text=""
