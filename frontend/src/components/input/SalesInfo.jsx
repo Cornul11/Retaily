@@ -9,6 +9,7 @@ const SalesInfo = class extends Component {
     };
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleSaleTypeChange = this.handleSaleTypeChange.bind(this);
+    this.retrieveInChild = () => { };
   }
 
   handleSaleTypeChange(event) {
