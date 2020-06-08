@@ -24,6 +24,7 @@ class Wrapper extends Component {
     this.handleRetrieveButton = this.handleRetrieveButton.bind(this);
     this.onLoaded = this.onLoaded.bind(this);
     this.handleError = this.handleError.bind(this);
+    this.clearErrorMessages = () => { };
   }
 
   componentDidMount() {
