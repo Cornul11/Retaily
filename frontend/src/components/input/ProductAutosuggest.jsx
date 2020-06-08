@@ -3,11 +3,9 @@ import Autosuggest from 'react-autosuggest';
 import PropTypes from 'prop-types';
 import Absolute from '../Absolute';
 
-const products = [];
-
 const escapeRegexCharacters = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-const getSuggestions = (value) => {
+const getSuggestions = (value, products) => {
   const escapedValue = escapeRegexCharacters(value.trim());
 
   if (escapedValue === '') {
@@ -38,6 +36,7 @@ const ProductAutosuggest = class extends Component {
     super(props);
     this.state = {
       suggestions: [],
+      products: [],
     };
     this.handleTextChange = this.handleTextChange.bind(this);
     this.onSuggestionSelectedByUser = this.onSuggestionSelectedByUser.bind(
@@ -56,8 +55,9 @@ const ProductAutosuggest = class extends Component {
   }
 
   onSuggestionsFetchRequested({ value }) {
+    const { products } = this.state;
     this.setState({
-      suggestions: getSuggestions(value),
+      suggestions: getSuggestions(value, products),
     });
   }
 
@@ -74,6 +74,7 @@ const ProductAutosuggest = class extends Component {
 
   async fillProductsArray() {
     const absolute = this.context;
+    const products = [];
     const url = `${
       absolute ? 'https://retaily.site:7000' : ''
     }/inventaris/tabel`;
@@ -86,6 +87,7 @@ const ProductAutosuggest = class extends Component {
           Object.keys(response).forEach((product) => {
             products.push(response[product]);
           });
+          this.setState({ products });
         },
         (error) => {
           console.log(error);
