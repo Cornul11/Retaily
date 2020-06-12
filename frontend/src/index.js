@@ -12,8 +12,6 @@ const App = () => (
   <Absolute.Provider value={false}>
     <BrowserRouter>
       <Route exact path="/" component={HomePage} />
-      {/* Not needed for now
-      <Route path="/inventorybarchart" component={InventoryBarchartPage} /> */}
       <Route
         path="/uitgebreide/productinfo"
         render={(props) => <ProductInfoPage {...props} extended />}

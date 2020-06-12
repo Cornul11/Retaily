@@ -24,11 +24,6 @@ const NavBar = () => (
               Home
             </a>
           </li>
-          {/* <li className="nav-item active"> */}
-          {/*  <a className="nav-link" href="/inventorybarchart"> */}
-          {/*    Products sold */}
-          {/*  </a> */}
-          {/* </li> */}
           <li className="nav-item active">
             <a className="nav-link" href="/standaard/productinfo">
               Standaard Product Info
