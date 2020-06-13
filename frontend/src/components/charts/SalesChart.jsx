@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Chart } from 'chart.js';
 import PropTypes from 'prop-types';
 import Absolute from '../Absolute';
+import './charts.css';
 
 class SalesChart extends Component {
   constructor(props) {
@@ -10,7 +11,10 @@ class SalesChart extends Component {
       width: '1000',
       chart: null,
       loading: false,
+      multiplier: 20,
     };
+    this.zoomIn = this.zoomIn.bind(this);
+    this.zoomOut = this.zoomOut.bind(this);
   }
 
   componentDidUpdate() {
@@ -23,46 +27,39 @@ class SalesChart extends Component {
 
   async loadChart() {
     this.setState({ loading: true });
-    const absolute = this.context;
-    const {
-      start, end, interval, onError, onLoaded, saleType,
-    } = this.props;
-    let url = `${absolute ? 'https://retaily.site:7000' : ''}/sales/?start=${start}&end=${end}&interval=${interval}`;
-    if (saleType === 'revenue') {
-      url += '&revenue';
-    }
-    await fetch(url, {
-      method: 'GET',
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        response.text().then((msg) => {
-          try {
-            const parsed = JSON.parse(msg);
-            onError(parsed.message);
-          } catch (error) {
-            onError('Connection failed');
-          }
-        });
-        return null;
-      })
-      .then((response) => {
-        if (response != null) {
-          this.setState({
-            data: response,
-            width: (response.length * 40).toString(),
-          });
-        }
+    const { multiplier } = this.state;
+    const { onLoaded } = this.props;
+    const url = this.createURL();
+    const data = await this.fetchData(url);
+    if (data != null) {
+      this.setState({
+        data,
+        width: (data.length * multiplier).toString(),
       });
+      this.roundData();
+      this.drawChart();
+    }
+    onLoaded();
+    this.setState({ loading: false });
+  }
+
+  roundData() {
+    const { data } = this.state;
+    const roundedData = data;
+    for (let i = 0; i < roundedData.length; i += 1) {
+      roundedData[i].y = roundedData[i].y.toFixed(2);
+    }
+    this.setState({ data: roundedData });
+  }
+
+  drawChart() {
+    const { interval } = this.props;
     const { chart, data } = this.state;
     if (chart !== null) {
       chart.destroy();
     }
-    this.state.chart = new Chart(
-      document.getElementById('myChart').getContext('2d'),
-      {
+    this.setState({
+      chart: new Chart(document.getElementById('myChart').getContext('2d'), {
         type: 'bar',
         data: {
           datasets: [
@@ -83,12 +80,13 @@ class SalesChart extends Component {
               {
                 type: 'time',
                 time: {
+                  isoWeekday: true,
                   unit: interval === 'half_an_hour' ? 'hour' : interval,
                   displayFormats: {
-                    hour: 'HH:mm',
-                    day: 'D MMM',
-                    week: 'D MMM',
-                    month: 'MMM',
+                    hour: 'D-M-YYYY    HH:mm',
+                    day: 'D-M-YYYY',
+                    week: 'D-M-YYYY (WW)',
+                    month: 'M-YYYY',
                   },
                 },
                 offset: true,
@@ -110,21 +108,98 @@ class SalesChart extends Component {
             },
           },
         },
-      },
-    );
-    onLoaded();
-    this.setState({ loading: false });
+      }),
+    });
+  }
+
+  async fetchData(url) {
+    const { onError } = this.props;
+    const result = await fetch(url, {
+      method: 'GET',
+    });
+    if (result.ok) {
+      return result.json();
+    }
+    result.text().then((msg) => {
+      try {
+        const parsed = JSON.parse(msg);
+        onError(parsed.message);
+      } catch (e) {
+        onError('Verbinding mislukt');
+      }
+    });
+    return null;
+  }
+
+  createURL() {
+    const absolute = this.context;
+    const {
+      identifier,
+      text,
+      start,
+      end,
+      interval,
+      saleType,
+    } = this.props;
+    let url = `${absolute ? 'https://retaily.site:7000' : ''}/verkoop/?`;
+    if (identifier !== null) {
+      const encodedComponent = encodeURIComponent(text);
+      url += `${identifier}=${encodedComponent}&`;
+    }
+    url += `start=${start}&end=${end}&interval=${interval}`;
+    if (saleType === 'revenue') {
+      url += '&revenue';
+    }
+    return url;
+  }
+
+  zoomIn() {
+    const { multiplier, width } = this.state;
+    if (multiplier < 80) {
+      this.setState(
+        { multiplier: multiplier * 2, width: width * 2 },
+        this.drawChart,
+      );
+    }
+  }
+
+  zoomOut() {
+    const { multiplier, width } = this.state;
+    if (multiplier > 5) {
+      this.setState(
+        { multiplier: multiplier / 2, width: width / 2 },
+        this.drawChart,
+      );
+    }
   }
 
   render() {
     const { width } = this.state;
     return (
-      <div className="chartWrapper">
-        <div
-          className="chartWrapper2"
-          style={{ width: `${width}px`, height: '500px' }}
-        >
-          <canvas id="myChart" />
+      <div>
+        <div className="chartWrapper" role="textbox">
+          <div
+            className="chartWrapper2"
+            style={{ width: `${width}px`, height: '500px' }}
+          >
+            <canvas id="myChart" />
+          </div>
+        </div>
+        <div className="input-group mt-2">
+          <button
+            type="button"
+            className="btn btn-secondary form-control mr-sm-2 mr-1"
+            onClick={this.zoomOut}
+          >
+            Zoom uit (-)
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary form-control ml-sm-2 ml-1"
+            onClick={this.zoomIn}
+          >
+            Zoom in (+)
+          </button>
         </div>
       </div>
     );
@@ -132,12 +207,22 @@ class SalesChart extends Component {
 }
 
 SalesChart.contextType = Absolute;
-SalesChart.propTypes = { retrieve: PropTypes.bool.isRequired };
-SalesChart.propTypes = { onLoaded: PropTypes.func.isRequired };
-SalesChart.propTypes = { onError: PropTypes.func.isRequired };
-SalesChart.propTypes = { start: PropTypes.string.isRequired };
-SalesChart.propTypes = { end: PropTypes.string.isRequired };
-SalesChart.propTypes = { interval: PropTypes.string.isRequired };
-SalesChart.propTypes = { saleType: PropTypes.string.isRequired };
+SalesChart.propTypes = {
+  retrieve: PropTypes.bool.isRequired,
+  identifier: PropTypes.string,
+  text: PropTypes.string,
+  onLoaded: PropTypes.func.isRequired,
+  onError: PropTypes.func.isRequired,
+  start: PropTypes.string.isRequired,
+  end: PropTypes.string.isRequired,
+  interval: PropTypes.string.isRequired,
+  saleType: PropTypes.string,
+};
+
+SalesChart.defaultProps = {
+  saleType: '',
+  identifier: PropTypes.string,
+  text: PropTypes.string,
+};
 
 export default SalesChart;

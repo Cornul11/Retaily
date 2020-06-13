@@ -1,14 +1,17 @@
-from flask import Blueprint, request, make_response, jsonify, abort
-from models import Product, Transaction
-from app import db
 import datetime
+
+from flask import Blueprint, request, make_response, jsonify, abort
+
+from app import db
+from models import Product, Transaction
+from error import pluError, nameError, serverError
 
 # Define the blueprint
 koppelverkoop_bp = Blueprint("koppelverkoop", __name__)
 
 
 def get_koppel_products(plu, name, start, end):
-    name, trans_ids = get_id(plu, name, start, end)
+    trans_ids = get_id(plu, name, start, end)
     trans_ids = list(set(trans_ids))
     data = []
     for trans_id in trans_ids:
@@ -31,7 +34,7 @@ def get_koppel_products(plu, name, start, end):
                 count = 1
         final.append({"name": k_name, "count": count})
     final.sort(key=lambda x: x["count"], reverse=True)
-    return ([{"name": "Geselecteerd Product: " + name, "count": ""}] + final[:10])
+    return [{"name": "Geselecteerd Product: " + name, "count": ""}] + final[:10]
 
 
 def get_id(plu, name, start, end):
@@ -46,20 +49,9 @@ def get_id(plu, name, start, end):
                 & (Transaction.date_time <= end)
             )
         )
-        length = 0
         for item in items:
             data.append(item.Product.serialized["transaction_id"])
-            length = length + 1
-        if length == 0:
-            product = Product.query.filter(Product.plu == plu).first()
-            if product is None:
-                response = make_response(
-                    jsonify(message="EAN code not found"), 400)
-                abort(response)
-            name = (product.serialized)["name"]
-        else:
-            name = items[0].Product.serialized["name"]
-        return name, data
+        return data
     else:
         data = []
         items = (
@@ -73,7 +65,7 @@ def get_id(plu, name, start, end):
         )
         for item in items:
             data.append(item.Product.serialized["transaction_id"])
-        return name, data
+        return data
 
 
 @koppelverkoop_bp.route("/lijst/", methods=["GET"])
@@ -87,9 +79,10 @@ def lijst():
             start = datetime.datetime.strptime(start, "%Y-%m-%d")
             end = datetime.datetime.strptime(end, "%Y-%m-%d")
         except:
-            abort(400)
-        if (plu is None or plu is "") and (name is None or name is ""):
-            response = make_response(
-                jsonify(message="EAN code not found"), 400)
-            abort(response)
+            serverError()
+        if name is None:
+            product = pluError(plu)
+            name = product.serialized["name"]
+        elif plu is None:
+            nameError(name)
         return jsonify(get_koppel_products(plu, name, start, end))

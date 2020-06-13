@@ -12,13 +12,15 @@ const RetrieveButton = (props) => {
     >
       {retrieve ? (
         <div className="spinner-border" role="status">
-          <span className="sr-only">Loading...</span>
+          <span className="sr-only">Bezig met laden...</span>
         </div>
-      ) : 'retrieve'}
+      ) : ('Ophalen')}
     </button>
   );
 };
 
-RetrieveButton.propTypes = { retrieve: PropTypes.bool.isRequired };
-RetrieveButton.propTypes = { handleRetrieveButton: PropTypes.func.isRequired };
+RetrieveButton.propTypes = {
+  retrieve: PropTypes.bool.isRequired,
+  handleRetrieveButton: PropTypes.func.isRequired,
+};
 export default RetrieveButton;

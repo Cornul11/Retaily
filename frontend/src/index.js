@@ -1,29 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route } from 'react-router-dom';
-import InventoryBarchartPage from './pages/InventoryBarchartPage';
 import ProductInfoPage from './pages/ProductInfoPage';
-import KoppelVerkoopPage from './pages/KoppelVerkoopPage';
 import HomePage from './pages/HomePage';
 import SalesInfoPage from './pages/SalesInfoPage';
 import Absolute from './components/Absolute';
+import './App.css';
 
 const App = () => (
   // eslint-disable-next-line react/jsx-filename-extension
   <Absolute.Provider value={false}>
     <BrowserRouter>
       <Route exact path="/" component={HomePage} />
-      <Route path="/inventorybarchart" component={InventoryBarchartPage} />
       <Route
-        path="/extended/productinfo"
+        path="/uitgebreide/productinfo"
         render={(props) => <ProductInfoPage {...props} extended />}
       />
       <Route
-        path="/simple/productinfo"
+        path="/standaard/productinfo"
         render={(props) => <ProductInfoPage {...props} extended={false} />}
       />
-      <Route path="/koppelverkoop" component={KoppelVerkoopPage} />
-      <Route path="/salesinfo" component={SalesInfoPage} />
+      <Route path="/transactie_informatie" component={SalesInfoPage} />
     </BrowserRouter>
   </Absolute.Provider>
 );

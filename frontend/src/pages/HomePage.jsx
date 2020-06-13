@@ -5,10 +5,24 @@ const HomePage = () => (
   <BlueprintPage
     content={(
       <div>
-        <a className="btn btn-primary btn-block mb-4" href="/simple/productinfo">Simple Product Info</a>
-        <a className="btn btn-primary btn-block mb-4" href="/extended/productinfo">Extended Product Info</a>
-        <a className="btn btn-primary btn-block mb-4" href="/inventorybarchart">Overview of sales</a>
-        <a className="btn btn-primary btn-block mb-1" href="/koppelverkoop">KoppelVerkoop</a>
+        <a
+          className="btn btn-primary btn-block mb-4"
+          href="/standaard/productinfo"
+        >
+          Standaard Product Info
+        </a>
+        <a
+          className="btn btn-primary btn-block mb-4"
+          href="/uitgebreide/productinfo"
+        >
+          Uitgebreide Product Info
+        </a>
+        <a
+          className="btn btn-primary btn-block mb-1"
+          href="/transactie_informatie"
+        >
+          Transactie Informatie
+        </a>
       </div>
     )}
   />

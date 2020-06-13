@@ -1,10 +1,10 @@
 import React from 'react';
 
 const NavBar = () => (
-  <nav className="navbar navbar-expand-lg navbar-light bg-light static-top mb-5 shadow">
+  <nav className="navbar navbar-expand-lg navbar-light bg-light static-top shadow">
     <div className="container">
       <a className="navbar-brand" href="/">
-        <img src="/logo-transparent.png" alt="logo" />
+        <img src="/retaily.png" alt="logo" style={{ width: '150px' }} />
       </a>
       <button
         className="navbar-toggler"
@@ -25,28 +25,18 @@ const NavBar = () => (
             </a>
           </li>
           <li className="nav-item active">
-            <a className="nav-link" href="/inventorybarchart">
-              Products sold
+            <a className="nav-link" href="/standaard/productinfo">
+              Standaard Product Info
             </a>
           </li>
           <li className="nav-item active">
-            <a className="nav-link" href="/extended/productinfo">
-              Extended Product info
+            <a className="nav-link" href="/uitgebreide/productinfo">
+              Uitgebreide Product info
             </a>
           </li>
           <li className="nav-item active">
-            <a className="nav-link" href="/simple/productinfo">
-              Simple Product Info
-            </a>
-          </li>
-          <li className="nav-item active">
-            <a className="nav-link" href="/koppelverkoop">
-              KoppelVerkoop
-            </a>
-          </li>
-          <li className="nav-item active">
-            <a className="nav-link" href="/salesinfo">
-              Sales Info
+            <a className="nav-link" href="/transactie_informatie">
+              Transactie Informatie
             </a>
           </li>
         </ul>

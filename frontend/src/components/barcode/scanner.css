@@ -1,3 +1,19 @@
-#camera {
+#cam {
   width: 100%;
+}
+
+#posFix {
+  margin-bottom: -480px;
+}
+/* Using bootstrap sm (small) */
+@media only screen and (min-width: 768px){
+  #cam {
+    width: 75%;
+  } 
+}
+/* Using bootstrap md (medium) */
+@media only screen and (min-width: 992px){
+  #cam {
+    width: 50%;
+  } 
 }

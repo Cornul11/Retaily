@@ -1,8 +1,10 @@
 from flask import Blueprint, request, jsonify, abort
+
 from models import Product, ProductInfo
+from error import serverError
 
 # Define the blueprint
-inventory_bp = Blueprint("inventory", __name__)
+inventory_bp = Blueprint("inventaris", __name__)
 
 
 def get_counts(result):
@@ -34,7 +36,8 @@ def inventory():
                 Product.name
             )
             return jsonify(
-                {"products": get_counts([product.serialized for product in products])}
+                {"products": get_counts(
+                    [product.serialized for product in products])}
             )
         elif plu is not None:
             products = Product.query.filter(
@@ -47,10 +50,10 @@ def inventory():
         result = get_counts([product.serialized for product in products])
         if len(result) > 0:
             return jsonify(result[0])
-        return abort(400)
+        serverError()
 
 
-@inventory_bp.route('/list', methods=['GET'])
+@inventory_bp.route('/tabel', methods=['GET'])
 def list_products():
     if request.method == 'GET':
         products = ProductInfo.query.all()
@@ -59,4 +62,4 @@ def list_products():
             result.append({'name': product.name})
         if len(result) > 0:
             return jsonify(result)
-        return abort(400)
+        serverError()

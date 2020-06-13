@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import Autosuggest from 'react-autosuggest';
 import PropTypes from 'prop-types';
-
-const products = [];
+import Absolute from '../Absolute';
 
 const escapeRegexCharacters = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-const getSuggestions = (value) => {
+const getSuggestions = (value, products) => {
   const escapedValue = escapeRegexCharacters(value.trim());
 
   if (escapedValue === '') {
@@ -37,18 +36,28 @@ const ProductAutosuggest = class extends Component {
     super(props);
     this.state = {
       suggestions: [],
+      products: [],
     };
     this.handleTextChange = this.handleTextChange.bind(this);
-    this.onSuggestionSelectedByUser = this.onSuggestionSelectedByUser.bind(this);
-    this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
-    this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
+    this.onSuggestionSelectedByUser = this.onSuggestionSelectedByUser.bind(
+      this,
+    );
+    this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(
+      this,
+    );
+    this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(
+      this,
+    );
+  }
 
+  componentDidMount() {
     this.fillProductsArray();
   }
 
   onSuggestionsFetchRequested({ value }) {
+    const { products } = this.state;
     this.setState({
-      suggestions: getSuggestions(value),
+      suggestions: getSuggestions(value, products),
     });
   }
 
@@ -64,16 +73,21 @@ const ProductAutosuggest = class extends Component {
   }
 
   async fillProductsArray() {
-    await fetch('https://retaily.site:7000/inventory/list', {
+    const absolute = this.context;
+    const products = [];
+    const url = `${
+      absolute ? 'https://retaily.site:7000' : ''
+    }/inventaris/tabel`;
+    await fetch(url, {
       method: 'GET',
-      mode: 'cors',
     })
       .then((response) => response.json())
       .then(
         (response) => {
-          for (const product in response) {
+          Object.keys(response).forEach((product) => {
             products.push(response[product]);
-          }
+          });
+          this.setState({ products });
         },
         (error) => {
           console.log(error);
@@ -90,7 +104,7 @@ const ProductAutosuggest = class extends Component {
     const { text } = this.props;
     const { suggestions } = this.state;
     const inputProps = {
-      placeholder: 'Test input',
+      placeholder: 'Naam van product',
       value: text,
       onChange: this.handleTextChange,
     };
@@ -109,9 +123,12 @@ const ProductAutosuggest = class extends Component {
   }
 };
 
-ProductAutosuggest.propTypes = { text: PropTypes.string.isRequired };
-ProductAutosuggest.propTypes = { onTextChangeAuto: PropTypes.func.isRequired };
-ProductAutosuggest.propTypes = { onTextChange: PropTypes.func.isRequired };
+ProductAutosuggest.propTypes = {
+  text: PropTypes.string.isRequired,
+  onTextChangeAuto: PropTypes.func.isRequired,
+  onTextChange: PropTypes.func.isRequired,
+};
 
+ProductAutosuggest.contextType = Absolute;
 
 export default ProductAutosuggest;

@@ -6,44 +6,41 @@ const RetrieveError = class extends Component {
     super(props);
     this.state = {
       errorMessages: [],
-      index: 0,
     };
+    this.clearMessages = this.clearMessages.bind(this);
   }
 
-  componentDidUpdate() {
+  componentDidMount() {
+    const { setClear } = this.props;
+    setClear(this.clearMessages);
+  }
+
+  componentDidUpdate(prevProps) {
     const { error } = this.props;
-    if (error !== '') {
+    const { errorMessages } = this.state;
+    if ((prevProps.error !== error || errorMessages.length === 0) && error !== '') {
       this.addNewErrorMessage();
     }
   }
 
+  clearMessages() {
+    this.setState({ errorMessages: [] });
+  }
+
   addNewErrorMessage() {
-    const { errorMessages, index } = this.state;
+    const { errorMessages } = this.state;
     const { error, handleError } = this.props;
     const newMessages = errorMessages;
     newMessages.push(
-      <div
-        key={index}
-        className="alert alert-warning alert-dismissible fade show"
-        role="alert"
-      >
+      <div key={error} className="alert alert-warning fade show" role="alert">
         <strong>
-          Error:
-          {' '}
+          {'Fout: '}
           {error}
         </strong>
-        <button
-          type="button"
-          className="close"
-          data-dismiss="alert"
-          aria-label="Close"
-          onClose={handleError('')}
-        >
-          <span aria-hidden="true">&times;</span>
-        </button>
       </div>,
     );
-    this.setState({ index: index + 1, errorMessages: newMessages });
+    this.setState({ errorMessages: newMessages });
+    handleError('');
   }
 
   render() {
@@ -52,6 +49,9 @@ const RetrieveError = class extends Component {
   }
 };
 
-RetrieveError.propTypes = { error: PropTypes.string.isRequired };
-RetrieveError.propTypes = { handleError: PropTypes.func.isRequired };
+RetrieveError.propTypes = {
+  error: PropTypes.string.isRequired,
+  setClear: PropTypes.func.isRequired,
+  handleError: PropTypes.func.isRequired,
+};
 export default RetrieveError;

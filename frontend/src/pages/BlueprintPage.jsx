@@ -8,7 +8,7 @@ const BluePrintPage = (props) => {
     <div>
       <NavBar />
       <div className="container">
-        <div className="card border-0 shadow my-5">
+        <div className="card border-0 shadow my-md-4 my-3">
           <div className="card-body p-xs-0 p-md-5">
             {content}
           </div>

@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ProductAutosuggest from './ProductAutosuggest';
 import BarcodeScanner from '../barcode/BarcodeScanner';
-import ProductSalesChartWrapper from './wrappers/ProductSalesChartWrapper';
-import ProductInfoTableWrapper from './wrappers/ProductInfoTableWrapper';
-import '../charts/App.css';
-
+import Wrapper from './Wrapper';
 
 /** Component that retrieves information about an individual product */
 
@@ -27,6 +24,7 @@ const ProductInfo = class extends Component {
     this.onDetected = this.onDetected.bind(this);
     this.handleChartTypeChange = this.handleChartTypeChange.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.retrieveInChild = () => { };
   }
 
   onDetected(result) {
@@ -47,15 +45,15 @@ const ProductInfo = class extends Component {
   }
 
   handleIdentifierChange(event) {
-    this.setState({ identifier: event.target.value, text: '' });
+    this.setState({ identifier: event.target.value });
   }
 
   scanButtonText() {
     const { scanning } = this.state;
     if (scanning) {
-      return 'stop scanner';
+      return 'Stop scanner';
     }
-    return 'start scanner';
+    return 'Start scanner';
   }
 
   handleChartTypeChange(event) {
@@ -77,8 +75,8 @@ const ProductInfo = class extends Component {
         onChange={this.handleIdentifierChange}
         className="form-control btn btn-primary"
       >
-        <option value="plu">plu</option>
-        <option value="name">name</option>
+        <option value="plu">PLU</option>
+        <option value="name">Naam</option>
       </select>
     );
   }
@@ -97,10 +95,10 @@ const ProductInfo = class extends Component {
     }
     return (
       <input
-        type="text"
+        type="number"
         value={text}
         className="form-control"
-        placeholder={extended ? '' : 'EAN-code'}
+        placeholder={extended ? '' : 'PLU van product'}
         onChange={this.handleTextChange}
       />
     );
@@ -113,7 +111,11 @@ const ProductInfo = class extends Component {
       return (
         <button
           type="button"
-          className={extended ? 'btn btn-secondary' : 'btn btn-primary btn-lg btn-block mb-2'}
+          className={
+            extended
+              ? 'btn btn-secondary'
+              : 'btn btn-primary btn-lg btn-block mb-2'
+          }
           onClick={this.handleScanButton}
         >
           {this.scanButtonText()}
@@ -142,26 +144,29 @@ const ProductInfo = class extends Component {
         id="chartType"
         value={chartType}
         onChange={this.handleChartTypeChange}
-        className="form-control"
+        className="selectChart form-control"
       >
-        <option value="productInfoTable">current product information</option>
-        <option value="productSales">product sales</option>
+        <option value="productInfoTable">Huidige informatie</option>
+        <option value="productSales">Verkoopcijfers</option>
+        <option value="koppelverkoop">Koppelverkoop</option>
       </select>
     );
   }
 
   renderProductInfoTableWrapper() {
-    const {
-      chartType, identifier, text, extended,
-    } = this.state;
+    const { chartType, identifier, text } = this.state;
+    const { extended } = this.props;
     if (chartType === 'productInfoTable') {
       return (
-        <ProductInfoTableWrapper
+        <Wrapper
+          wrapperType="productInfo"
           id="table-wrapper"
           identifier={identifier}
           text={text}
           extended={extended}
-          setRetrieve={(retrieve) => { this.retrieveInChild = retrieve; }}
+          setRetrieve={(retrieve) => {
+            this.retrieveInChild = retrieve;
+          }}
         />
       );
     }
@@ -172,10 +177,31 @@ const ProductInfo = class extends Component {
     const { chartType, identifier, text } = this.state;
     if (chartType === 'productSales') {
       return (
-        <ProductSalesChartWrapper
+        <Wrapper
+          wrapperType="productSalesChart"
           identifier={identifier}
           text={text}
-          setRetrieve={(retrieve) => { this.retrieveInChild = retrieve; }}
+          setRetrieve={(retrieve) => {
+            this.retrieveInChild = retrieve;
+          }}
+        />
+      );
+    }
+    return null;
+  }
+
+  renderKoppelVerkoopTableWrapper() {
+    const { identifier, text, chartType } = this.state;
+    if (chartType === 'koppelverkoop') {
+      return (
+        <Wrapper
+          wrapperType="koppelverkoop"
+          id="table-wrapper"
+          identifier={identifier}
+          text={text}
+          setRetrieve={(retrieve) => {
+            this.retrieveInChild = retrieve;
+          }}
         />
       );
     }
@@ -186,7 +212,7 @@ const ProductInfo = class extends Component {
     const { extended } = this.props;
     if (extended) {
       return (
-        <div role="textbox" tabIndex={0} onKeyDown={this.handleKeyDown}>
+        <div role="textbox" tabIndex={-1} onKeyDown={this.handleKeyDown}>
           <div className="input-group mb-2">
             <div className="input-group-prepend">
               {this.renderSelectIdentifier()}
@@ -198,12 +224,13 @@ const ProductInfo = class extends Component {
           {this.renderSelectChartType()}
           {this.renderProductInfoTableWrapper()}
           {this.renderProductSalesChartWrapper()}
+          {this.renderKoppelVerkoopTableWrapper()}
         </div>
       );
     }
     /* Less options, but easier to use */
     return (
-      <div role="textbox" tabIndex={0} onKeyDown={this.handleKeyDown}>
+      <div role="textbox" tabIndex={-1} onKeyDown={this.handleKeyDown}>
         {this.renderScanButton()}
         {this.renderScanner()}
         <center>

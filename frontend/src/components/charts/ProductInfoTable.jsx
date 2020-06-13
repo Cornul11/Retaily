@@ -25,35 +25,48 @@ class ProductInfoTable extends Component {
     const { extended } = this.props;
     if (extended) {
       return {
-        plu: null,
-        name: null,
-        buying_price: null,
-        selling_price: null,
-        discount: null,
-        sales_last_week: null,
-        sales_last_month: null,
-        sales_last_quarter: null,
-        sales_last_year: null,
+        PLU: null,
+        Naam: null,
+        Inkoopprijs: null,
+        Verkoopprijs: null,
+        Winstmarge: null,
+        'Verkocht afgelopen week': null,
+        'Verkocht afgelopen maand': null,
+        'Verkocht afgelopen kwartaal': null,
+        'Verkocht afgelopen jaar': null,
       };
     }
     return {
-      plu: null,
-      name: null,
-      sales_last_week: null,
-      sales_last_month: null,
-      sales_last_quarter: null,
-      sales_last_year: null,
+      PLU: null,
+      Naam: null,
+      'Verkocht afgelopen week': null,
+      'Verkocht afgelopen maand': null,
+      'Verkocht afgelopen kwartaal': null,
+      'Verkocht afgelopen jaar': null,
     };
   }
 
   async loadTable() {
-    this.setState({ loading: true });
-    const newData = this.getEmptyData();
-    const {
-      extended, identifier, text, onError, onLoaded,
-    } = this.props;
+    this.setState({ loading: true, newData: this.getEmptyData() }, async () => {
+      await this.retrieveProductData();
+      await this.retrieveSalesData();
+      const { onLoaded } = this.props;
+      onLoaded();
+      const { newData } = this.state;
+      this.setState({ data: newData, loading: false });
+    });
+  }
+
+  async retrieveProductData() {
     const absolute = this.context;
-    let url = `${absolute ? 'https://retaily.site:7000' : ''}/product/?${identifier}=${text}`;
+    const {
+      identifier, text, onError, extended,
+    } = this.props;
+    const { newData } = this.state;
+    const encodedComponent = encodeURIComponent(text);
+    const url = `${
+      absolute ? 'https://retaily.site:7000' : ''
+    }/product/?${identifier}=${encodedComponent}`;
     await fetch(url, {
       method: 'GET',
     })
@@ -66,40 +79,47 @@ class ProductInfoTable extends Component {
             const parsed = JSON.parse(msg);
             onError(parsed.message);
           } catch (error) {
-            onError('Connection failed');
+            onError('Verbinding mislukt');
           }
         });
         return null;
       })
       .then((response) => {
         if (response != null) {
-          newData.plu = response.plu;
-          newData.name = response.name;
+          newData.PLU = response.plu;
+          newData.Naam = response.name;
           if (extended) {
-            newData.buying_price = response.buying_price;
-            newData.selling_price = response.selling_price;
-            newData.discount = response.discount;
+            newData.Inkoopprijs = response.buying_price;
+            newData.Verkoopprijs = response.selling_price;
+            newData.Winstmarge = `${(100 * ((newData.Verkoopprijs - newData.Inkoopprijs) / newData.Inkoopprijs)).toFixed(2)}%`;
           }
         }
       });
-    url = `${absolute ? 'https://retaily.site:7000' : ''}/sales/quick/?${identifier}=${text}`;
+  }
+
+  async retrieveSalesData() {
+    const absolute = this.context;
+    const { identifier, text } = this.props;
+    const { newData } = this.state;
+    const encodedComponent = encodeURIComponent(text);
+    const url = `${
+      absolute ? 'https://retaily.site:7000' : ''
+    }/verkoop/kort/?${identifier}=${encodedComponent}`;
     await fetch(url, {
       method: 'GET',
     })
       .then((response) => response.json())
       .then(
         (response) => {
-          newData.sales_last_week = response.sales_last_week;
-          newData.sales_last_month = response.sales_last_month;
-          newData.sales_last_quarter = response.sales_last_quarter;
-          newData.sales_last_year = response.sales_last_year;
+          newData['Verkocht afgelopen week'] = response.sales_last_week;
+          newData['Verkocht afgelopen maand'] = response.sales_last_month;
+          newData['Verkocht afgelopen kwartaal'] = response.sales_last_quarter;
+          newData['Verkocht afgelopen jaar'] = response.sales_last_year;
         },
         (error) => {
           console.log(error);
         },
       );
-    onLoaded();
-    this.setState({ data: newData, loading: false });
   }
 
   renderTable() {
@@ -130,11 +150,14 @@ class ProductInfoTable extends Component {
 }
 
 ProductInfoTable.contextType = Absolute;
-ProductInfoTable.propTypes = { extended: PropTypes.bool.isRequired };
-ProductInfoTable.propTypes = { retrieve: PropTypes.bool.isRequired };
-ProductInfoTable.propTypes = { onLoaded: PropTypes.func.isRequired };
-ProductInfoTable.propTypes = { onError: PropTypes.func.isRequired };
-ProductInfoTable.propTypes = { identifier: PropTypes.string.isRequired };
-ProductInfoTable.propTypes = { text: PropTypes.string.isRequired };
+
+ProductInfoTable.propTypes = {
+  extended: PropTypes.bool.isRequired,
+  retrieve: PropTypes.bool.isRequired,
+  onLoaded: PropTypes.func.isRequired,
+  onError: PropTypes.func.isRequired,
+  identifier: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+};
 
 export default ProductInfoTable;

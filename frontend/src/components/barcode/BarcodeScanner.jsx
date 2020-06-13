@@ -12,24 +12,22 @@ import styles from './scanner.css';
 class BarcodeScanner extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      loaded: false,
+    };
     this.ref = React.createRef();
     this.onDetected = this.onDetected.bind(this);
   }
 
   async componentDidMount() {
-    /** Request camera footage from user */
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    this.ref.current.srcObject = stream;
-    /** Initialize the scanner */
     Quagga.init(
       {
         inputStream: {
           type: 'LiveStream',
-          target: document.getElementById('camera'),
           constraints: {
-            width: 960,
-            height: 640,
             facingMode: 'environment',
+            width: { min: 960 },
+            height: { min: 640 },
           },
         },
         decoder: {
@@ -38,17 +36,21 @@ class BarcodeScanner extends Component {
       },
       (err) => {
         if (err) {
-          console.log(err);
           return;
         }
         Quagga.start();
       },
     );
     Quagga.onDetected(this.onDetected);
+    this.setState({ loaded: true });
   }
 
   componentWillUnmount() {
-    Quagga.stop();
+    const { loaded } = this.state;
+    if (loaded) {
+      Quagga.stop();
+      this.setState({ loaded: false });
+    }
   }
 
   onDetected(result) {
@@ -57,9 +59,10 @@ class BarcodeScanner extends Component {
   }
 
   render() {
+    const { loaded } = this.state;
     return (
-      <div style={styles}>
-        <video muted id="camera" width="480" height="320" ref={this.ref} autoPlay />
+      <div id="interactive" className={`text-center viewport${loaded ? 'posFix' : ''} `} style={styles}>
+        <video id="cam" autoPlay muted playsInline />
       </div>
     );
   }

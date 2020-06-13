@@ -25,7 +25,7 @@ class IntervalDatePicker extends Component {
   }
 
   handleIntervalChange(event) {
-    const { startDate, endDate, OnIntervalChange } = this.props;
+    const { startDate, endDate, onIntervalChange } = this.props;
     let startDateF = new Date(startDate);
     let endDateF = new Date(endDate);
     if (event.target.value === 'week') {
@@ -44,7 +44,7 @@ class IntervalDatePicker extends Component {
         endDateF = addDays(endDateF, 1);
       }
     }
-    OnIntervalChange(event.target.value, startDateF, endDateF);
+    onIntervalChange(event.target.value, startDateF, endDateF);
   }
 
   filterDate(date) {
@@ -58,31 +58,6 @@ class IntervalDatePicker extends Component {
     return true;
   }
 
-  renderIntervalSelect() {
-    const { interval } = this.props;
-    return (
-      <div className="input-group mt-2">
-        <div className="input-group-prepend">
-          <span className="input-group-text" id="basic-addon1">
-            Interval
-          </span>
-        </div>
-        <select
-          id="interval"
-          value={interval}
-          onChange={this.handleIntervalChange}
-          className="form-control"
-        >
-          <option value="half_an_hour">half an hour</option>
-          <option value="hour">hour</option>
-          <option value="day">day</option>
-          <option value="week">week</option>
-          <option value="month">month</option>
-        </select>
-      </div>
-    );
-  }
-
   render() {
     const {
       startDate, endDate, interval, useInterval,
@@ -91,7 +66,7 @@ class IntervalDatePicker extends Component {
       <div>
         <div className="input-group justify-content-center">
           <div className="card text-center mt-2 mr-md-3">
-            <div className="card-header">start date</div>
+            <div className="card-header">start datum</div>
             <div className="card-body">
               <DatePicker
                 selected={startDate}
@@ -102,12 +77,13 @@ class IntervalDatePicker extends Component {
                 locale={nl}
                 showWeekNumbers={interval === 'week'}
                 showMonthDropdown
+                showYearDropdown
                 filterDate={this.filterDate}
               />
             </div>
           </div>
           <div className="card text-center mt-2">
-            <div className="card-header">end date</div>
+            <div className="card-header">eind datum</div>
             <div className="card-body">
               <DatePicker
                 selected={endDate}
@@ -118,23 +94,50 @@ class IntervalDatePicker extends Component {
                 locale={nl}
                 showWeekNumbers={interval === 'week'}
                 showMonthDropdown
+                showYearDropdown
                 filterDate={this.filterDate}
               />
             </div>
           </div>
         </div>
-        {useInterval ? this.renderIntervalSelect() : ''}
+        <div className={`input-group mt-2${useInterval ? '' : ' invisible'}`}>
+          <div className="input-group-prepend">
+            <span className="input-group-text" id="basic-addon1">
+              Interval
+            </span>
+          </div>
+          <select
+            id="interval"
+            value={interval}
+            onChange={this.handleIntervalChange}
+            className="form-control"
+          >
+            <option value="half_an_hour">Half uur</option>
+            <option value="hour">Uur</option>
+            <option value="day">Dag</option>
+            <option value="week">Week</option>
+            <option value="month">Maand</option>
+          </select>
+        </div>
       </div>
     );
   }
 }
 
-IntervalDatePicker.propTypes = { useInterval: PropTypes.bool.isRequired };
-IntervalDatePicker.propTypes = { onChangeStartDate: PropTypes.func.isRequired };
-IntervalDatePicker.propTypes = { onChangeEndDate: PropTypes.func.isRequired };
-IntervalDatePicker.propTypes = { OnIntervalChange: PropTypes.func.isRequired };
-IntervalDatePicker.propTypes = { startDate: PropTypes.string.isRequired };
-IntervalDatePicker.propTypes = { endDate: PropTypes.string.isRequired };
-IntervalDatePicker.propTypes = { interval: PropTypes.string.isRequired };
+IntervalDatePicker.propTypes = {
+  useInterval: PropTypes.bool,
+  onChangeStartDate: PropTypes.func.isRequired,
+  onChangeEndDate: PropTypes.func.isRequired,
+  onIntervalChange: PropTypes.func,
+  startDate: PropTypes.objectOf(Date).isRequired,
+  endDate: PropTypes.objectOf(Date).isRequired,
+  interval: PropTypes.string,
+};
+
+IntervalDatePicker.defaultProps = {
+  useInterval: false,
+  interval: '',
+  onIntervalChange: () => { },
+};
 
 export default IntervalDatePicker;

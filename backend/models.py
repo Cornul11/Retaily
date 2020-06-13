@@ -4,7 +4,7 @@ from app import db
 class Product(db.Model):
     id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
     plu = db.Column(db.BigInteger)
-    name = db.Column(db.String(50))
+    name = db.Column(db.String(128))
     buying_price = db.Column(db.Float, nullable=True)
     selling_price = db.Column(db.Float, nullable=True)
     discount = db.Column(db.Float, nullable=True)
@@ -30,8 +30,6 @@ class Transaction(db.Model):
     date_time = db.Column(db.DateTime, nullable=True)
     receipt_number = db.Column(db.BigInteger, nullable=True)
     total_amount = db.Column(db.Float, nullable=True)
-    card_serial = db.Column(db.BigInteger, nullable=True)
-    change = db.Column(db.Float, nullable=True)
     products = db.relationship("Product", backref="contains")
 
     @property
@@ -41,17 +39,14 @@ class Transaction(db.Model):
             "date_time": self.date_time,
             "receipt_number": self.receipt_number,
             "total_amount": self.total_amount,
-            "card_serial": self.card_serial,
-            "change": self.change,
         }
 
 
 class ProductInfo(db.Model):
     plu = db.Column(db.BigInteger, primary_key=True)
-    name = db.Column(db.String(50))
+    name = db.Column(db.String(128))
     buying_price = db.Column(db.Float, nullable=True)
     selling_price = db.Column(db.Float, nullable=True)
-    discount = db.Column(db.Float, nullable=True)
 
     @property
     def serialized(self):
@@ -60,5 +55,4 @@ class ProductInfo(db.Model):
             "name": self.name,
             "buying_price": self.buying_price,
             "selling_price": self.selling_price,
-            "discount": self.discount,
         }

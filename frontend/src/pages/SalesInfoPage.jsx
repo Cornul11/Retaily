@@ -1,8 +1,8 @@
 import React from 'react';
-import SalesInfoWrapper from '../components/input/wrappers/SalesInfoWrapper';
+import SalesInfo from '../components/input/SalesInfo';
 import BlueprintPage from './BlueprintPage';
 
 const SalesInfoPage = () => (
-  <BlueprintPage content={<SalesInfoWrapper />} />
+  <BlueprintPage content={<SalesInfo />} />
 );
 export default SalesInfoPage;

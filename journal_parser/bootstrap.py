@@ -14,6 +14,8 @@ logger = logging.getLogger(__name__)
 
 
 def process(event):
+    # wait for 60 seconds to make sure that the file that will be processed is completely copied
+    time.sleep(60)
     with ZipFile(event.src_path, 'r') as zip_file:
         logger.info('Extracting \'%s\'', event.src_path)
         zip_file.extractall('temp')

@@ -1,17 +1,19 @@
-from flask import Blueprint, request, jsonify, abort
-from models import Product, Transaction
-from app import db
-from dateutil.relativedelta import *
 import datetime
 
+from dateutil.relativedelta import *
+from flask import Blueprint, request, jsonify, abort, make_response
+
+from app import db
+from models import Product, Transaction, ProductInfo
+from error import pluError, nameError, serverError
 
 time_format = "%Y-%m-%d %H:%M"
 
 # Define the blueprint
-sales_bp = Blueprint("sales", __name__)
+sales_bp = Blueprint("verkoop", __name__)
 
 
-def get_sales(items, start, end, interval, product, revenue):
+def get_sales(items, start, end, interval, product, revenue, add_half_interval):
     data = []
     count = 0
     for item in items:
@@ -20,9 +22,12 @@ def get_sales(items, start, end, interval, product, revenue):
         else:
             time = item.serialized["date_time"]
         while time > (start + interval):
-            data.append(
-                {"t": (start + (interval / 2)).strftime(time_format), "y": count}
-            )
+            if add_half_interval:
+                data.append(
+                    {"t": (start + (interval / 2)).strftime(time_format), "y": count}
+                )
+            else:
+                data.append({"t": start.strftime(time_format), "y": count})
             count = 0
             start = start + interval
         if revenue is not None:
@@ -32,10 +37,18 @@ def get_sales(items, start, end, interval, product, revenue):
                 count += item.serialized["total_amount"]
         else:
             count += 1
-    data.append({"t": (start + (interval / 2)).strftime(time_format), "y": count})
+    if add_half_interval:
+        data.append(
+            {"t": (start + (interval / 2)).strftime(time_format), "y": count})
+    else:
+        data.append({"t": start.strftime(time_format), "y": count})
     start = start + interval
     while start < end:
-        data.append({"t": (start + (interval / 2)).strftime(time_format), "y": 0})
+        if add_half_interval:
+            data.append(
+                {"t": (start + (interval / 2)).strftime(time_format), "y": 0})
+        else:
+            data.append({"t": start.strftime(time_format), "y": 0})
         start = start + interval
     return data
 
@@ -75,15 +88,19 @@ def sales():
         interval = request.args.get("interval", None)
         revenue = request.args.get("revenue", None)
 
+        add_half_interval = False
+
         try:
             start = datetime.datetime.strptime(start, "%Y-%m-%d")
             end = datetime.datetime.strptime(end, "%Y-%m-%d")
             if interval == "half_an_hour":
                 interval = datetime.timedelta(minutes=30)
                 end += datetime.timedelta(days=1)
+                add_half_interval = True
             elif interval == "hour":
                 interval = datetime.timedelta(hours=1)
                 end += datetime.timedelta(days=1)
+                add_half_interval = True
             elif interval == "day":
                 interval = datetime.timedelta(days=1)
                 end += datetime.timedelta(days=1)
@@ -94,19 +111,24 @@ def sales():
                 interval = relativedelta(months=1)
                 end += relativedelta(months=1)
             else:
-                abort(400)
+                serverError()
         except:
-            abort(400)
+            serverError()
         if plu is None and name is None:
             items = (
                 db.session.query(Transaction)
                 .filter(
-                    (Transaction.date_time >= start) & (Transaction.date_time <= end)
+                    (Transaction.date_time >= start) & (
+                        Transaction.date_time <= end)
                 )
                 .order_by(Transaction.date_time)
             )
-            return jsonify(get_sales(items, start, end, interval, False, revenue))
+            return jsonify(
+                get_sales(items, start, end, interval,
+                          False, revenue, add_half_interval)
+            )
         elif plu is not None:
+            pluError(plu)
             items = (
                 db.session.query(Product, Transaction)
                 .join(Transaction)
@@ -118,6 +140,7 @@ def sales():
                 .order_by(Transaction.date_time)
             )
         else:
+            nameError(name)
             items = (
                 db.session.query(Product, Transaction)
                 .join(Transaction)
@@ -127,16 +150,21 @@ def sales():
                     & (Transaction.date_time <= end)
                 )
             )
-        return jsonify(get_sales(items, start, end, interval, True, revenue))
+        return jsonify(
+            get_sales(items, start, end, interval,
+                      True, revenue, add_half_interval)
+        )
 
 
-@sales_bp.route("/quick/", methods=["GET"])
+@sales_bp.route("/kort/", methods=["GET"])
 def quick():
     if request.method == "GET":
         plu = request.args.get("plu", None)
         name = request.args.get("name", None)
-        if (plu is None or plu == "") and (name is None or name == ""):
-            abort(400)
+        if (plu is not None):
+            pluError(plu)
+        elif (name is not None):
+            nameError(name)
         end = datetime.datetime.now()
         return jsonify(
             {

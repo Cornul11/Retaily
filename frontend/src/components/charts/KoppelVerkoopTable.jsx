@@ -23,11 +23,10 @@ class KoppelVerkoopTable extends Component {
 
   async loadTable() {
     this.setState({ loading: true });
+    const url = this.createURL();
     const {
-      identifier, text, start, end, onError, onLoaded,
+      onError, onLoaded,
     } = this.props;
-    const absolute = this.context;
-    const url = `${absolute ? 'https://retaily.site:7000' : ''}/koppelverkoop/lijst/?${identifier}=${text}&start=${start}&end=${end}`;
     await fetch(url, {
       method: 'GET',
     })
@@ -40,7 +39,7 @@ class KoppelVerkoopTable extends Component {
             const parsed = JSON.parse(msg);
             onError(parsed.message);
           } catch (error) {
-            onError('Connection failed');
+            onError('Verbinding mislukt');
           }
         });
         return null;
@@ -51,6 +50,17 @@ class KoppelVerkoopTable extends Component {
 
     onLoaded();
     this.setState({ loading: false });
+  }
+
+  createURL() {
+    const {
+      text, identifier, start, end,
+    } = this.props;
+    const absolute = this.context;
+    const encodedComponent = encodeURIComponent(text);
+    return `${
+      absolute ? 'https://retaily.site:7000' : ''
+    }/koppelverkoop/lijst/?${identifier}=${encodedComponent}&start=${start}&end=${end}`;
   }
 
   renderTable() {
@@ -92,12 +102,14 @@ class KoppelVerkoopTable extends Component {
 }
 
 KoppelVerkoopTable.contextType = Absolute;
-KoppelVerkoopTable.propTypes = { retrieve: PropTypes.bool.isRequired };
-KoppelVerkoopTable.propTypes = { onLoaded: PropTypes.func.isRequired };
-KoppelVerkoopTable.propTypes = { onError: PropTypes.func.isRequired };
-KoppelVerkoopTable.propTypes = { identifier: PropTypes.string.isRequired };
-KoppelVerkoopTable.propTypes = { start: PropTypes.string.isRequired };
-KoppelVerkoopTable.propTypes = { end: PropTypes.string.isRequired };
-KoppelVerkoopTable.propTypes = { text: PropTypes.string.isRequired };
+KoppelVerkoopTable.propTypes = {
+  retrieve: PropTypes.bool.isRequired,
+  onLoaded: PropTypes.func.isRequired,
+  onError: PropTypes.func.isRequired,
+  identifier: PropTypes.string.isRequired,
+  start: PropTypes.string.isRequired,
+  end: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+};
 
 export default KoppelVerkoopTable;
