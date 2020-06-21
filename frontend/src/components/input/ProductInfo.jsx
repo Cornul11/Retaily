@@ -98,7 +98,7 @@ const ProductInfo = class extends Component {
         type="number"
         value={text}
         className="form-control"
-        placeholder={extended ? '' : 'EAN-code'}
+        placeholder={extended ? '' : 'PLU van product'}
         onChange={this.handleTextChange}
       />
     );

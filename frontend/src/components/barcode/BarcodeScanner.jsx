@@ -20,16 +20,6 @@ class BarcodeScanner extends Component {
   }
 
   async componentDidMount() {
-    /** Request camera footage from user */
-    // try {
-    //   const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    //   this.setState({ stream });
-    // } catch (err) {
-    //   return;
-    // }
-    // const { stream } = this.state;
-    // this.ref.current.srcObject = stream;
-    /** Initialize the scanner */
     Quagga.init(
       {
         inputStream: {
