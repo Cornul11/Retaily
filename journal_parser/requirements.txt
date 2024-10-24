@@ -1,4 +1,4 @@
-mysql-connector-python==8.0.20
+mysql-connector-python==9.1.0
 pathtools==0.1.2
 protobuf==3.18.3
 six==1.15.0
